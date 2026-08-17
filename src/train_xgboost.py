@@ -34,6 +34,7 @@ FEATURE_COLS = [
     "h2h_home_ppg", "h2h_n_precedenti",
     "poisson_exp_goals_home", "poisson_exp_goals_away", "poisson_exp_goals_diff",
     "poisson_prob_home", "poisson_prob_draw", "poisson_prob_away",
+    "home_squad_value", "away_squad_value", "squad_value_diff",
 ]
 CLASSES = ["A", "D", "H"]
 FIRST_TEST_SEASON_INDEX = 5

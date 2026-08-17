@@ -36,6 +36,7 @@ LOGREG_FEATURES = [
 XGB_FEATURES = LOGREG_FEATURES + [
     "poisson_exp_goals_home", "poisson_exp_goals_away", "poisson_exp_goals_diff",
     "poisson_prob_home", "poisson_prob_draw", "poisson_prob_away",
+    "home_squad_value", "away_squad_value", "squad_value_diff",
 ]
 CLASSES = ["A", "D", "H"]
 LABEL_TO_INT = {"A": 0, "D": 1, "H": 2}
