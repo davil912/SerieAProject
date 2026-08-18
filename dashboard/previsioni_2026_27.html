@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serie A 2026/2027 — Previsioni</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --success-text:   #006300;
+    --series-blue:    #2a78d6;
+    --series-blue-soft: #cde2fb;
+    --series-orange:  #eb6834;
+    --series-red:     #e34948;
+    --draw-fill:      #c3c2b7;
+    --tint-cl:        rgba(42,120,214,0.09);
+    --tint-europa:    rgba(42,120,214,0.045);
+    --tint-releg:     rgba(227,73,72,0.09);
+    --shadow: 0 1px 2px rgba(11,11,11,0.06), 0 1px 1px rgba(11,11,11,0.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page-plane:     #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --success-text:   #0ca30c;
+      --series-blue:    #3987e5;
+      --series-blue-soft: #184f95;
+      --series-orange:  #d95926;
+      --series-red:     #e66767;
+      --draw-fill:      #52514e;
+      --tint-cl:        rgba(57,135,229,0.14);
+      --tint-europa:    rgba(57,135,229,0.07);
+      --tint-releg:     rgba(230,103,103,0.14);
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 1px 1px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --success-text:   #0ca30c;
+    --series-blue:    #3987e5;
+    --series-blue-soft: #184f95;
+    --series-orange:  #d95926;
+    --series-red:     #e66767;
+    --draw-fill:      #52514e;
+    --tint-cl:        rgba(57,135,229,0.14);
+    --tint-europa:    rgba(57,135,229,0.07);
+    --tint-releg:     rgba(230,103,103,0.14);
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 1px 1px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.45;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px 64px;
+  }
+
+  /* ---------- Header / banner ---------- */
+  header.banner {
+    background: linear-gradient(135deg, var(--series-blue) 0%, #184f95 100%);
+    color: #ffffff;
+    padding: 36px 20px 30px;
+    margin-bottom: 28px;
+  }
+  .banner-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  header.banner h1 {
+    margin: 0 0 8px;
+    font-size: clamp(24px, 3.4vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header.banner .subtitle {
+    margin: 0 0 16px;
+    max-width: 860px;
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.88);
+  }
+  .meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 12.5px;
+    color: #fff;
+  }
+  details.limitations {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 10px;
+    padding: 10px 14px;
+    max-width: 860px;
+  }
+  details.limitations summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: #fff;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  details.limitations summary::-webkit-details-marker { display: none; }
+  details.limitations summary::before {
+    content: "ⓘ";
+    font-weight: 700;
+  }
+  details.limitations[open] summary { margin-bottom: 8px; }
+  details.limitations ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.92);
+  }
+  details.limitations li { margin-bottom: 6px; }
+  details.limitations li:last-child { margin-bottom: 0; }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 40px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-head h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .section-note {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin: -6px 0 14px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+  .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+    flex: none;
+  }
+  .swatch.cl { background: var(--series-blue); }
+  .swatch.europa { background: var(--series-blue-soft); }
+  .swatch.releg { background: var(--series-red); }
+  .swatch.home { background: var(--series-blue); }
+  .swatch.draw { background: var(--draw-fill); }
+  .swatch.away { background: var(--series-orange); }
+
+  /* ---------- Classifica table ---------- */
+  .table-wrap {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    min-width: 880px;
+  }
+  thead th {
+    text-align: left;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--gridline);
+    white-space: nowrap;
+  }
+  thead th.num, thead th.prob-cell { text-align: right; }
+  tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gridline);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.col-pos {
+    color: var(--text-muted);
+    font-weight: 600;
+    width: 30px;
+  }
+  td.col-team {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-variant-numeric: normal;
+  }
+  td.num { text-align: right; color: var(--text-secondary); }
+  td.wdl { color: var(--text-muted); font-size: 12.5px; }
+  tr.zone-cl { background: var(--tint-cl); }
+  tr.zone-europa { background: var(--tint-europa); }
+  tr.zone-releg { background: var(--tint-releg); }
+
+  td.prob-cell {
+    text-align: right;
+  }
+  .bar-track {
+    display: inline-block;
+    vertical-align: middle;
+    width: 56px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--gridline);
+    overflow: hidden;
+    margin-right: 8px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+  }
+  .bar-fill.pos { background: var(--series-blue); }
+  .bar-fill.neg { background: var(--series-red); }
+  .prob-value {
+    display: inline-block;
+    min-width: 40px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  /* ---------- Controls row ---------- */
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .controls-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .controls-row select,
+  .controls-row input[type="text"] {
+    font: inherit;
+    font-size: 14px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--baseline);
+    background: var(--page-plane);
+    color: var(--text-primary);
+    min-width: 150px;
+  }
+  .controls-row select:focus,
+  .controls-row input[type="text"]:focus {
+    outline: 2px solid var(--series-blue);
+    outline-offset: 1px;
+  }
+  .btn-group { display: flex; gap: 4px; }
+  .btn-group button, .icon-btn {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--baseline);
+    background: var(--page-plane);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .btn-group button:hover, .icon-btn:hover { background: var(--tint-cl); }
+  .checkbox-label {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 6px !important;
+    text-transform: none !important;
+    font-size: 13px !important;
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+  }
+  .checkbox-label input { width: 16px; height: 16px; accent-color: var(--series-blue); }
+  .results-info {
+    margin-left: auto;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    align-self: center;
+  }
+  .outcome-legend { margin-bottom: 14px; }
+
+  /* ---------- Match cards ---------- */
+  .matches-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .match-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 12px 14px;
+  }
+  .match-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .md-badge {
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+  .match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 14.5px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .match-teams .team {
+    flex: 1;
+    color: var(--text-secondary);
+  }
+  .match-teams .team.away { text-align: right; }
+  .match-teams .team.winner { color: var(--text-primary); }
+  .match-teams .vs {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 12px;
+    flex: none;
+  }
+  .prob-bar {
+    display: flex;
+    gap: 2px;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background: var(--gridline);
+  }
+  .prob-bar .seg { height: 100%; }
+  .prob-bar .seg.home { background: var(--series-blue); border-radius: 4px 0 0 4px; }
+  .prob-bar .seg.draw { background: var(--draw-fill); }
+  .prob-bar .seg.away { background: var(--series-orange); border-radius: 0 4px 4px 0; }
+  .prob-badges {
+    display: flex;
+    gap: 6px;
+  }
+  .badge {
+    flex: 1;
+    text-align: center;
+    padding: 4px 4px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    background: var(--page-plane);
+    border: 1px solid var(--gridline);
+  }
+  .badge.emph {
+    font-weight: 700;
+    color: #fff;
+  }
+  .badge.home.emph { background: var(--series-blue); border-color: var(--series-blue); }
+  .badge.draw.emph { background: var(--draw-fill); border-color: var(--draw-fill); color: var(--text-primary); }
+  .badge.away.emph { background: var(--series-orange); border-color: var(--series-orange); }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  footer {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 720px) {
+    header.banner { padding: 26px 16px 22px; }
+    .controls-row { flex-direction: column; align-items: stretch; }
+    .controls-row select, .controls-row input[type="text"] { min-width: 0; width: 100%; }
+    .results-info { margin-left: 0; }
+    .matches-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="banner">
+  <div class="banner-inner">
+    <h1>Serie A 2026/2027 — Previsioni</h1>
+    <p class="subtitle">
+      Proiezioni pre-stagione basate su 5.000 simulazioni Monte Carlo dell'intero campionato,
+      generate il 18 agosto 2026. Il modello combina un ensemble Logistic Regression + XGBoost
+      con una componente Poisson per i gol attesi (Elo, forma recente e scontri diretti evolvono
+      dentro ogni simulazione man mano che si "giocano" i risultati), validato con backtest
+      walk-forward su 16 stagioni storiche (~53.7% di accuratezza sull'esito 1X2, a fronte di un
+      benchmark quote di mercato ~54.6%).
+    </p>
+    <div class="meta-chips">
+      <span class="meta-chip">5.000 simulazioni Monte Carlo</span>
+      <span class="meta-chip">Ensemble LogReg + XGBoost + Poisson xG</span>
+      <span class="meta-chip">Backtest 16 stagioni · ~53.7% accuratezza</span>
+      <span class="meta-chip">Generato il 18/08/2026</span>
+    </div>
+    <details class="limitations">
+      <summary>Limiti e avvertenze del modello</summary>
+      <ul>
+        <li><strong>Neopromosse (Frosinone, Monza, Venezia):</strong> per queste 3 squadre l'ultimo
+          dato Elo/forma disponibile risale alla loro ultima presenza in Serie A (2024/25), non alla
+          stagione di Serie B 2025/26 appena vinta sul campo — il punto di partenza del modello è
+          quindi meno aggiornato per loro rispetto alle altre 17 squadre.</li>
+        <li><strong>Valore rosa:</strong> per Frosinone e Monza la copertura dei dati Transfermarkt è
+          sotto la soglia di affidabilità considerata accettabile, per cui la stima del valore di
+          rosa per queste due squadre va trattata con cautela.</li>
+        <li><strong>Incertezza crescente nel tempo:</strong> le previsioni sulle giornate più lontane
+          sono naturalmente più incerte di quelle sulle prime giornate e andranno riviste quando il
+          modello verrà ri-eseguito incorporando i risultati reali via via disponibili durante la
+          stagione.</li>
+      </ul>
+    </details>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section id="classifica">
+    <div class="section-head">
+      <h2>Classifica prevista</h2>
+      <div class="legend">
+        <span class="legend-item"><span class="swatch cl"></span>Zona Champions (1°–4°)</span>
+        <span class="legend-item"><span class="swatch europa"></span>Zona Europa (5°–6°)</span>
+        <span class="legend-item"><span class="swatch releg"></span>Zona retrocessione (18°–20°)</span>
+      </div>
+    </div>
+    <p class="section-note">
+      Valori medi sulle 5.000 simulazioni della stagione. Le barre nelle colonne di probabilità sono
+      su scala 0–100%.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Squadra</th>
+            <th class="num">Pt</th>
+            <th class="num">GF</th>
+            <th class="num">GS</th>
+            <th class="num">DR</th>
+            <th class="num">V-N-P</th>
+            <th class="prob-cell">Titolo %</th>
+            <th class="prob-cell">Champions %</th>
+            <th class="prob-cell">Europa %</th>
+            <th class="prob-cell">Retro. %</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr class="zone-cl"><td class="col-pos">1</td><td class="col-team">Inter</td><td class="num">82.9</td><td class="num">93.9</td><td class="num">48.6</td><td class="num">+45.3</td><td class="num wdl">25.1-7.6-5.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:60.5%"></div></div><span class="prob-value">60.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:93.5%"></div></div><span class="prob-value">93.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:98.1%"></div></div><span class="prob-value">98.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">2</td><td class="col-team">Napoli</td><td class="num">71.2</td><td class="num">76.8</td><td class="num">51.4</td><td class="num">+25.3</td><td class="num wdl">20.7-9.0-8.2</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:11.5%"></div></div><span class="prob-value">11.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:61.0%"></div></div><span class="prob-value">61.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:81.0%"></div></div><span class="prob-value">81.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">3</td><td class="col-team">Roma</td><td class="num">68.6</td><td class="num">72.8</td><td class="num">53.3</td><td class="num">+19.5</td><td class="num wdl">19.8-9.2-9.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:8.4%"></div></div><span class="prob-value">8.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.8%"></div></div><span class="prob-value">49.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:72.6%"></div></div><span class="prob-value">72.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">4</td><td class="col-team">Juventus</td><td class="num">68.2</td><td class="num">71.0</td><td class="num">51.0</td><td class="num">+20.0</td><td class="num wdl">19.6-9.4-9.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.6%"></div></div><span class="prob-value">6.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.5%"></div></div><span class="prob-value">49.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:71.4%"></div></div><span class="prob-value">71.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-europa"><td class="col-pos">5</td><td class="col-team">Milan</td><td class="num">65.9</td><td class="num">75.9</td><td class="num">57.2</td><td class="num">+18.6</td><td class="num wdl">18.8-9.4-9.8</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.3%"></div></div><span class="prob-value">4.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:40.4%"></div></div><span class="prob-value">40.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:64.0%"></div></div><span class="prob-value">64.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td></tr>
+<tr class="zone-europa"><td class="col-pos">6</td><td class="col-team">Atalanta</td><td class="num">65.1</td><td class="num">76.9</td><td class="num">59.1</td><td class="num">+17.9</td><td class="num wdl">18.5-9.6-9.9</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.2%"></div></div><span class="prob-value">4.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:37.0%"></div></div><span class="prob-value">37.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:60.2%"></div></div><span class="prob-value">60.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td></tr>
+<tr><td class="col-pos">7</td><td class="col-team">Como</td><td class="num">62.4</td><td class="num">70.1</td><td class="num">57.7</td><td class="num">+12.4</td><td class="num wdl">17.5-9.7-10.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.4%"></div></div><span class="prob-value">2.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:27.1%"></div></div><span class="prob-value">27.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.4%"></div></div><span class="prob-value">49.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td></tr>
+<tr><td class="col-pos">8</td><td class="col-team">Lazio</td><td class="num">57.8</td><td class="num">68.9</td><td class="num">61.0</td><td class="num">+7.9</td><td class="num wdl">16.0-9.9-12.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:15.2%"></div></div><span class="prob-value">15.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:32.7%"></div></div><span class="prob-value">32.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:1.0%"></div></div><span class="prob-value">1.0%</span></td></tr>
+<tr><td class="col-pos">9</td><td class="col-team">Bologna</td><td class="num">56.9</td><td class="num">66.2</td><td class="num">61.2</td><td class="num">+5.1</td><td class="num wdl">15.6-10.0-12.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:12.8%"></div></div><span class="prob-value">12.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:29.2%"></div></div><span class="prob-value">29.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td></tr>
+<tr><td class="col-pos">10</td><td class="col-team">Fiorentina</td><td class="num">52.2</td><td class="num">65.7</td><td class="num">64.5</td><td class="num">+1.2</td><td class="num wdl">14.0-10.1-13.9</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.2%"></div></div><span class="prob-value">6.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:15.4%"></div></div><span class="prob-value">15.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:2.7%"></div></div><span class="prob-value">2.7%</span></td></tr>
+<tr><td class="col-pos">11</td><td class="col-team">Torino</td><td class="num">47.0</td><td class="num">56.0</td><td class="num">62.4</td><td class="num">-6.4</td><td class="num wdl">12.2-10.3-15.5</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.2%"></div></div><span class="prob-value">2.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.8%"></div></div><span class="prob-value">6.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:8.0%"></div></div><span class="prob-value">8.0%</span></td></tr>
+<tr><td class="col-pos">12</td><td class="col-team">Udinese</td><td class="num">46.4</td><td class="num">60.3</td><td class="num">68.3</td><td class="num">-7.9</td><td class="num wdl">12.1-10.2-15.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.0%"></div></div><span class="prob-value">2.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:5.9%"></div></div><span class="prob-value">5.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:7.5%"></div></div><span class="prob-value">7.5%</span></td></tr>
+<tr><td class="col-pos">13</td><td class="col-team">Sassuolo</td><td class="num">45.3</td><td class="num">64.2</td><td class="num">75.3</td><td class="num">-11.1</td><td class="num wdl">11.7-10.2-16.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.3%"></div></div><span class="prob-value">1.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.8%"></div></div><span class="prob-value">4.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:10.3%"></div></div><span class="prob-value">10.3%</span></td></tr>
+<tr><td class="col-pos">14</td><td class="col-team">Genoa</td><td class="num">42.6</td><td class="num">53.7</td><td class="num">66.6</td><td class="num">-12.9</td><td class="num wdl">10.8-10.2-17.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.7%"></div></div><span class="prob-value">2.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:15.4%"></div></div><span class="prob-value">15.4%</span></td></tr>
+<tr><td class="col-pos">15</td><td class="col-team">Parma</td><td class="num">42.5</td><td class="num">54.1</td><td class="num">67.1</td><td class="num">-13.0</td><td class="num wdl">10.8-10.2-17.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.9%"></div></div><span class="prob-value">2.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:15.7%"></div></div><span class="prob-value">15.7%</span></td></tr>
+<tr><td class="col-pos">16</td><td class="col-team">Cagliari</td><td class="num">41.4</td><td class="num">56.6</td><td class="num">73.2</td><td class="num">-16.6</td><td class="num wdl">10.4-10.1-17.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.0%"></div></div><span class="prob-value">2.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:18.9%"></div></div><span class="prob-value">18.9%</span></td></tr>
+<tr><td class="col-pos">17</td><td class="col-team">Lecce</td><td class="num">36.9</td><td class="num">47.7</td><td class="num">67.8</td><td class="num">-20.1</td><td class="num wdl">8.9-10.1-19.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.7%"></div></div><span class="prob-value">0.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:32.4%"></div></div><span class="prob-value">32.4%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">18</td><td class="col-team">Venezia</td><td class="num">33.1</td><td class="num">50.0</td><td class="num">76.5</td><td class="num">-26.5</td><td class="num wdl">7.9-9.5-20.6</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:49.3%"></div></div><span class="prob-value">49.3%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">19</td><td class="col-team">Monza</td><td class="num">30.4</td><td class="num">49.6</td><td class="num">76.6</td><td class="num">-27.0</td><td class="num wdl">7.1-9.2-21.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:60.9%"></div></div><span class="prob-value">60.9%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">20</td><td class="col-team">Frosinone</td><td class="num">26.8</td><td class="num">51.7</td><td class="num">83.5</td><td class="num">-31.9</td><td class="num wdl">6.0-8.9-23.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:76.6%"></div></div><span class="prob-value">76.6%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="partite">
+    <div class="section-head">
+      <h2>Partite</h2>
+    </div>
+    <p class="section-note">
+      380 partite previste (38 giornate). Filtra per giornata o cerca una squadra per vederne tutte
+      le partite della stagione.
+    </p>
+
+    <div class="controls-row">
+      <label>Giornata
+        <select id="matchday-select">
+<option value="1">Giornata 1</option>
+<option value="2">Giornata 2</option>
+<option value="3">Giornata 3</option>
+<option value="4">Giornata 4</option>
+<option value="5">Giornata 5</option>
+<option value="6">Giornata 6</option>
+<option value="7">Giornata 7</option>
+<option value="8">Giornata 8</option>
+<option value="9">Giornata 9</option>
+<option value="10">Giornata 10</option>
+<option value="11">Giornata 11</option>
+<option value="12">Giornata 12</option>
+<option value="13">Giornata 13</option>
+<option value="14">Giornata 14</option>
+<option value="15">Giornata 15</option>
+<option value="16">Giornata 16</option>
+<option value="17">Giornata 17</option>
+<option value="18">Giornata 18</option>
+<option value="19">Giornata 19</option>
+<option value="20">Giornata 20</option>
+<option value="21">Giornata 21</option>
+<option value="22">Giornata 22</option>
+<option value="23">Giornata 23</option>
+<option value="24">Giornata 24</option>
+<option value="25">Giornata 25</option>
+<option value="26">Giornata 26</option>
+<option value="27">Giornata 27</option>
+<option value="28">Giornata 28</option>
+<option value="29">Giornata 29</option>
+<option value="30">Giornata 30</option>
+<option value="31">Giornata 31</option>
+<option value="32">Giornata 32</option>
+<option value="33">Giornata 33</option>
+<option value="34">Giornata 34</option>
+<option value="35">Giornata 35</option>
+<option value="36">Giornata 36</option>
+<option value="37">Giornata 37</option>
+<option value="38">Giornata 38</option>
+        </select>
+      </label>
+      <div class="btn-group">
+        <button type="button" id="md-prev" aria-label="Giornata precedente">‹</button>
+        <button type="button" id="md-next" aria-label="Giornata successiva">›</button>
+      </div>
+      <label>Cerca squadra
+        <input type="text" id="team-search" placeholder="Es. Inter, Napoli…" autocomplete="off">
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="big-match-toggle">
+        Solo big match (Top 6)
+      </label>
+      <span class="results-info" id="results-info"></span>
+    </div>
+
+    <div class="legend outcome-legend">
+      <span class="legend-item"><span class="swatch home"></span>Vittoria casa</span>
+      <span class="legend-item"><span class="swatch draw"></span>Pareggio</span>
+      <span class="legend-item"><span class="swatch away"></span>Vittoria trasferta</span>
+    </div>
+
+    <div class="matches-list" id="matches-list"></div>
+  </section>
+
+</div>
+
+<footer>
+  Fonte dati: simulazione interna (classifica_prevista_2026_27.csv, 20 squadre — previsioni_partite_2026_27.csv, 380 partite su 38 giornate). Nessuna chiamata di rete esterna: tutti i dati sono incorporati nel file al momento della generazione.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Embedded data (build-time constants; no network calls) ----
+  // TEAMS: [pos, teamName]
+  var TEAMS = [[1,"Inter"],[2,"Napoli"],[3,"Roma"],[4,"Juventus"],[5,"Milan"],[6,"Atalanta"],[7,"Como"],[8,"Lazio"],[9,"Bologna"],[10,"Fiorentina"],[11,"Torino"],[12,"Udinese"],[13,"Sassuolo"],[14,"Genoa"],[15,"Parma"],[16,"Cagliari"],[17,"Lecce"],[18,"Venezia"],[19,"Monza"],[20,"Frosinone"]];
+  // MATCHES: [matchday, date, homeTeam, awayTeam, probHome, probDraw, probAway]
+  var MATCHES = [[1,"2026-08-22","Inter","Monza",83.1,11.4,5.5],[1,"2026-08-22","Udinese","Como",27.4,27.9,44.7],[1,"2026-08-22","Genoa","Napoli",19.2,24.1,56.6],[1,"2026-08-22","Parma","Cagliari",43.5,31.9,24.7],[1,"2026-08-23","Venezia","Lecce",36.6,36.4,26.9],[1,"2026-08-23","Frosinone","Juventus",11.2,23.3,65.5],[1,"2026-08-23","Atalanta","Sassuolo",61.8,24.2,14.0],[1,"2026-08-23","Torino","Milan",26.0,25.9,48.1],[1,"2026-08-24","Bologna","Lazio",42.2,29.0,28.8],[1,"2026-08-24","Roma","Fiorentina",58.5,24.4,17.1],[2,"2026-08-28","Milan","Venezia",70.8,19.5,9.8],[2,"2026-08-29","Fiorentina","Frosinone",67.5,21.9,10.5],[2,"2026-08-29","Monza","Udinese",24.8,28.6,46.5],[2,"2026-08-29","Sassuolo","Torino",41.3,30.9,27.8],[2,"2026-08-29","Juventus","Parma",67.1,21.3,11.6],[2,"2026-08-30","Napoli","Como",52.0,27.9,20.1],[2,"2026-08-30","Cagliari","Inter",11.3,19.4,69.3],[2,"2026-08-30","Lazio","Genoa",55.0,26.8,18.2],[2,"2026-08-31","Lecce","Roma",16.5,24.2,59.4],[2,"2026-08-31","Atalanta","Bologna",51.8,27.2,21.0],[3,"2026-09-04","Genoa","Como",25.0,28.0,47.0],[3,"2026-09-05","Fiorentina","Torino",47.7,28.8,23.5],[3,"2026-09-05","Inter","Napoli",58.2,24.8,17.1],[3,"2026-09-05","Roma","Atalanta",48.4,28.0,23.6],[3,"2026-09-06","Frosinone","Venezia",33.5,31.8,34.7],[3,"2026-09-06","Parma","Monza",53.2,29.4,17.4],[3,"2026-09-06","Bologna","Sassuolo",54.0,26.8,19.2],[3,"2026-09-06","Juventus","Milan",47.0,27.7,25.3],[3,"2026-09-07","Cagliari","Lecce",46.0,30.3,23.7],[3,"2026-09-07","Udinese","Lazio",31.1,28.3,40.6],[4,"2026-09-11","Venezia","Fiorentina",23.7,26.4,49.9],[4,"2026-09-12","Genoa","Frosinone",58.0,27.5,14.5],[4,"2026-09-12","Lazio","Milan",36.0,28.4,35.6],[4,"2026-09-12","Atalanta","Cagliari",63.7,24.0,12.3],[4,"2026-09-13","Torino","Roma",23.4,25.8,50.8],[4,"2026-09-13","Como","Parma",61.6,24.1,14.4],[4,"2026-09-13","Lecce","Monza",49.6,28.7,21.7],[4,"2026-09-13","Napoli","Bologna",57.7,25.6,16.7],[4,"2026-09-13","Sassuolo","Juventus",22.7,24.2,53.2],[4,"2026-09-14","Inter","Udinese",73.8,17.9,8.2],[5,"2026-09-18","Monza","Sassuolo",25.7,27.5,46.8],[5,"2026-09-19","Bologna","Torino",51.9,27.5,20.6],[5,"2026-09-19","Udinese","Cagliari",45.7,29.7,24.6],[5,"2026-09-19","Roma","Inter",27.1,26.2,46.8],[5,"2026-09-19","Venezia","Lazio",20.4,25.7,53.9],[5,"2026-09-20","Fiorentina","Napoli",24.7,27.5,47.8],[5,"2026-09-20","Frosinone","Como",12.6,22.1,65.3],[5,"2026-09-20","Parma","Genoa",43.0,30.5,26.5],[5,"2026-09-20","Juventus","Atalanta",47.2,27.9,24.8],[5,"2026-09-20","Milan","Lecce",67.6,21.6,10.8],[6,"2026-10-11","Atalanta","Venezia",71.6,18.8,9.6],[6,"2026-10-11","Cagliari","Juventus",20.0,24.2,55.8],[6,"2026-10-11","Genoa","Fiorentina",33.2,30.5,36.2],[6,"2026-10-11","Como","Roma",37.6,28.1,34.3],[6,"2026-10-11","Torino","Udinese",42.9,29.8,27.2],[6,"2026-10-11","Inter","Parma",76.4,16.4,7.2],[6,"2026-10-11","Lazio","Monza",69.7,19.9,10.5],[6,"2026-10-11","Sassuolo","Milan",24.3,25.0,50.7],[6,"2026-10-11","Napoli","Frosinone",78.7,14.8,6.5],[6,"2026-10-11","Lecce","Bologna",23.9,27.4,48.7],[7,"2026-10-18","Fiorentina","Como",33.7,28.4,37.9],[7,"2026-10-18","Milan","Atalanta",45.6,28.7,25.7],[7,"2026-10-18","Monza","Cagliari",29.6,30.5,39.9],[7,"2026-10-18","Roma","Genoa",66.3,21.8,11.9],[7,"2026-10-18","Bologna","Inter",18.4,22.6,59.0],[7,"2026-10-18","Venezia","Napoli",13.2,22.1,64.7],[7,"2026-10-18","Frosinone","Sassuolo",22.7,27.4,50.0],[7,"2026-10-18","Juventus","Lazio",53.2,26.7,20.2],[7,"2026-10-18","Parma","Torino",38.2,30.3,31.5],[7,"2026-10-18","Udinese","Lecce",50.2,29.1,20.7],[8,"2026-10-25","Atalanta","Frosinone",75.2,17.2,7.7],[8,"2026-10-25","Cagliari","Bologna",27.7,28.7,43.5],[8,"2026-10-25","Genoa","Venezia",51.4,29.4,19.2],[8,"2026-10-25","Como","Sassuolo",59.4,24.9,15.8],[8,"2026-10-25","Torino","Monza",60.0,24.7,15.4],[8,"2026-10-25","Inter","Fiorentina",71.3,19.2,9.6],[8,"2026-10-25","Lazio","Parma",56.0,27.1,16.9],[8,"2026-10-25","Napoli","Roma",46.6,27.4,26.0],[8,"2026-10-25","Udinese","Milan",25.3,25.9,48.8],[8,"2026-10-25","Lecce","Juventus",17.2,23.7,59.1],[9,"2026-10-28","Fiorentina","Atalanta",30.6,27.9,41.5],[9,"2026-10-28","Milan","Bologna",52.0,26.2,21.8],[9,"2026-10-28","Monza","Napoli",11.5,19.7,68.8],[9,"2026-10-28","Roma","Cagliari",67.3,21.4,11.3],[9,"2026-10-28","Genoa","Juventus",21.1,25.3,53.7],[9,"2026-10-28","Torino","Como",28.0,28.6,43.5],[9,"2026-10-28","Venezia","Inter",9.3,17.5,73.2],[9,"2026-10-28","Frosinone","Lecce",29.2,32.0,38.7],[9,"2026-10-28","Parma","Udinese",38.4,30.7,30.9],[9,"2026-10-28","Sassuolo","Lazio",30.3,29.4,40.3],[10,"2026-11-01","Milan","Inter",24.2,24.0,51.9],[10,"2026-11-01","Atalanta","Parma",64.0,22.5,13.5],[10,"2026-11-01","Como","Venezia",69.7,20.5,9.7],[10,"2026-11-01","Bologna","Monza",68.5,20.7,10.8],[10,"2026-11-01","Frosinone","Torino",21.5,27.4,51.1],[10,"2026-11-01","Juventus","Napoli",41.4,28.3,30.3],[10,"2026-11-01","Lazio","Cagliari",57.7,25.3,17.0],[10,"2026-11-01","Sassuolo","Fiorentina",34.8,29.8,35.4],[10,"2026-11-01","Udinese","Roma",23.3,24.8,52.0],[10,"2026-11-01","Lecce","Genoa",36.6,30.7,32.7],[11,"2026-11-08","Fiorentina","Juventus",28.1,25.7,46.2],[11,"2026-11-08","Monza","Atalanta",14.3,23.2,62.5],[11,"2026-11-08","Roma","Sassuolo",64.7,21.8,13.6],[11,"2026-11-08","Cagliari","Frosinone",58.1,26.2,15.8],[11,"2026-11-08","Genoa","Milan",23.0,25.2,51.8],[11,"2026-11-08","Torino","Lecce",50.6,29.5,19.9],[11,"2026-11-08","Venezia","Udinese",28.6,30.0,41.4],[11,"2026-11-08","Inter","Como",65.9,20.4,13.7],[11,"2026-11-08","Parma","Bologna",28.4,28.2,43.4],[11,"2026-11-08","Napoli","Lazio",57.1,25.3,17.6],[12,"2026-11-22","Milan","Frosinone",75.6,16.9,7.6],[12,"2026-11-22","Monza","Fiorentina",21.4,25.2,53.4],[12,"2026-11-22","Atalanta","Inter",24.6,25.7,49.7],[12,"2026-11-22","Como","Cagliari",62.4,23.4,14.2],[12,"2026-11-22","Bologna","Udinese",52.4,27.4,20.2],[12,"2026-11-22","Juventus","Venezia",73.0,18.2,8.8],[12,"2026-11-22","Lazio","Lecce",61.6,24.6,13.8],[12,"2026-11-22","Parma","Roma",20.7,24.2,55.0],[12,"2026-11-22","Sassuolo","Genoa",44.8,30.9,24.2],[12,"2026-11-22","Napoli","Torino",65.6,21.8,12.7],[13,"2026-11-29","Roma","Monza",75.1,17.0,7.9],[13,"2026-11-29","Cagliari","Milan",22.1,24.6,53.3],[13,"2026-11-29","Como","Juventus",37.0,28.4,34.5],[13,"2026-11-29","Torino","Lazio",31.4,29.0,39.7],[13,"2026-11-29","Venezia","Bologna",20.8,24.8,54.5],[13,"2026-11-29","Frosinone","Parma",24.9,28.4,46.7],[13,"2026-11-29","Inter","Genoa",76.2,16.4,7.5],[13,"2026-11-29","Sassuolo","Napoli",20.8,25.2,54.0],[13,"2026-11-29","Udinese","Fiorentina",36.4,29.6,34.1],[13,"2026-11-29","Lecce","Atalanta",19.4,24.4,56.2],[14,"2026-12-06","Fiorentina","Cagliari",52.1,27.8,20.1],[14,"2026-12-06","Milan","Parma",64.1,22.9,13.0],[14,"2026-12-06","Monza","Como",15.4,24.0,60.6],[14,"2026-12-06","Genoa","Torino",38.4,30.1,31.5],[14,"2026-12-06","Bologna","Roma",32.1,27.5,40.3],[14,"2026-12-06","Venezia","Sassuolo",30.0,31.7,38.3],[14,"2026-12-06","Frosinone","Inter",7.8,15.6,76.5],[14,"2026-12-06","Juventus","Udinese",62.8,22.8,14.4],[14,"2026-12-06","Lazio","Atalanta",36.0,28.6,35.4],[14,"2026-12-06","Napoli","Lecce",71.2,19.6,9.2],[15,"2026-12-13","Atalanta","Genoa",63.8,22.1,14.1],[15,"2026-12-13","Cagliari","Venezia",50.4,29.3,20.3],[15,"2026-12-13","Como","Bologna",48.3,28.3,23.4],[15,"2026-12-13","Inter","Torino",73.6,17.9,8.5],[15,"2026-12-13","Juventus","Monza",74.8,17.2,8.0],[15,"2026-12-13","Lazio","Roma",33.7,28.8,37.6],[15,"2026-12-13","Parma","Fiorentina",32.5,29.3,38.2],[15,"2026-12-13","Napoli","Milan",49.3,26.8,23.9],[15,"2026-12-13","Udinese","Frosinone",62.9,23.5,13.6],[15,"2026-12-13","Lecce","Sassuolo",33.5,29.7,36.8],[16,"2026-12-20","Fiorentina","Bologna",39.4,28.7,31.9],[16,"2026-12-20","Milan","Como",47.4,26.4,26.2],[16,"2026-12-20","Roma","Juventus",44.0,28.5,27.5],[16,"2026-12-20","Atalanta","Napoli",37.2,27.6,35.2],[16,"2026-12-20","Genoa","Udinese",37.5,29.2,33.3],[16,"2026-12-20","Torino","Cagliari",47.1,29.9,23.1],[16,"2026-12-20","Venezia","Monza",44.4,30.4,25.2],[16,"2026-12-20","Frosinone","Lazio",15.5,23.4,61.1],[16,"2026-12-20","Sassuolo","Parma",45.0,30.0,25.0],[16,"2026-12-20","Lecce","Inter",10.6,18.5,70.9],[17,"2027-01-03","Fiorentina","Lazio",37.8,27.4,34.8],[17,"2027-01-03","Monza","Milan",14.1,22.2,63.8],[17,"2027-01-03","Roma","Frosinone",77.2,15.5,7.3],[17,"2027-01-03","Cagliari","Genoa",41.6,30.5,27.8],[17,"2027-01-03","Como","Lecce",66.0,21.4,12.6],[17,"2027-01-03","Bologna","Juventus",33.0,27.5,39.4],[17,"2027-01-03","Torino","Venezia",56.4,26.4,17.3],[17,"2027-01-03","Inter","Sassuolo",74.3,17.5,8.2],[17,"2027-01-03","Parma","Napoli",19.3,23.3,57.4],[17,"2027-01-03","Udinese","Atalanta",25.7,26.6,47.6],[18,"2027-01-06","Milan","Fiorentina",55.9,25.3,18.8],[18,"2027-01-06","Atalanta","Como",46.9,27.5,25.6],[18,"2027-01-06","Genoa","Monza",54.2,28.1,17.8],[18,"2027-01-06","Venezia","Roma",14.4,21.7,64.0],[18,"2027-01-06","Frosinone","Bologna",15.5,22.1,62.4],[18,"2027-01-06","Juventus","Torino",62.4,23.5,14.0],[18,"2027-01-06","Lazio","Inter",20.0,23.4,56.7],[18,"2027-01-06","Sassuolo","Udinese",41.0,29.1,29.9],[18,"2027-01-06","Napoli","Cagliari",69.0,20.3,10.8],[18,"2027-01-06","Lecce","Parma",36.6,30.2,33.3],[19,"2027-01-10","Fiorentina","Lecce",55.7,27.4,17.0],[19,"2027-01-10","Monza","Frosinone",45.8,30.9,23.3],[19,"2027-01-10","Roma","Milan",47.3,27.6,25.1],[19,"2027-01-10","Cagliari","Sassuolo",37.9,29.7,32.4],[19,"2027-01-10","Como","Lazio",48.1,27.6,24.3],[19,"2027-01-10","Bologna","Genoa",55.5,27.4,17.1],[19,"2027-01-10","Torino","Atalanta",26.2,26.5,47.2],[19,"2027-01-10","Inter","Juventus",59.4,24.1,16.5],[19,"2027-01-10","Parma","Venezia",51.0,28.3,20.7],[19,"2027-01-10","Udinese","Napoli",21.7,23.8,54.5],[20,"2027-01-17","Milan","Torino",59.9,24.3,15.8],[20,"2027-01-17","Atalanta","Roma",40.0,27.5,32.5],[20,"2027-01-17","Cagliari","Como",24.8,26.1,49.1],[20,"2027-01-17","Venezia","Frosinone",48.3,30.6,21.1],[20,"2027-01-17","Juventus","Genoa",65.8,21.4,12.7],[20,"2027-01-17","Lazio","Bologna",44.7,27.9,27.3],[20,"2027-01-17","Parma","Inter",12.4,19.8,67.7],[20,"2027-01-17","Sassuolo","Monza",58.1,25.9,16.0],[20,"2027-01-17","Napoli","Fiorentina",61.0,22.8,16.3],[20,"2027-01-17","Lecce","Udinese",32.1,30.3,37.6],[21,"2027-01-24","Fiorentina","Sassuolo",48.7,28.7,22.5],[21,"2027-01-24","Monza","Lazio",18.4,24.1,57.4],[21,"2027-01-24","Roma","Udinese",62.9,22.6,14.5],[21,"2027-01-24","Genoa","Parma",42.5,29.3,28.1],[21,"2027-01-24","Como","Napoli",33.9,27.9,38.2],[21,"2027-01-24","Bologna","Atalanta",35.4,28.3,36.2],[21,"2027-01-24","Frosinone","Milan",12.2,21.2,66.6],[21,"2027-01-24","Inter","Venezia",80.7,13.2,6.1],[21,"2027-01-24","Juventus","Cagliari",66.3,21.9,11.7],[21,"2027-01-24","Lecce","Torino",31.0,29.6,39.4],[22,"2027-01-31","Milan","Juventus",41.0,28.4,30.6],[22,"2027-01-31","Monza","Roma",12.9,21.5,65.6],[22,"2027-01-31","Atalanta","Fiorentina",55.8,25.2,19.0],[22,"2027-01-31","Cagliari","Parma",40.9,29.1,30.0],[22,"2027-01-31","Genoa","Lecce",47.2,30.2,22.6],[22,"2027-01-31","Torino","Frosinone",63.1,23.1,13.8],[22,"2027-01-31","Lazio","Venezia",66.5,20.9,12.6],[22,"2027-01-31","Sassuolo","Como",26.9,27.5,45.6],[22,"2027-01-31","Napoli","Inter",30.4,25.9,43.7],[22,"2027-01-31","Udinese","Bologna",32.4,29.5,38.1],[23,"2027-02-07","Fiorentina","Udinese",47.8,28.3,23.8],[23,"2027-02-07","Roma","Torino",62.7,22.8,14.4],[23,"2027-02-07","Atalanta","Lazio",50.4,27.2,22.5],[23,"2027-02-07","Como","Monza",71.1,19.4,9.5],[23,"2027-02-07","Bologna","Milan",35.3,28.2,36.5],[23,"2027-02-07","Venezia","Genoa",31.6,30.3,38.1],[23,"2027-02-07","Inter","Cagliari",76.3,16.1,7.5],[23,"2027-02-07","Juventus","Sassuolo",63.7,22.7,13.6],[23,"2027-02-07","Parma","Frosinone",57.8,27.1,15.1],[23,"2027-02-07","Lecce","Napoli",16.0,22.6,61.4],[24,"2027-02-14","Monza","Lecce",33.9,31.1,35.0],[24,"2027-02-14","Roma","Parma",65.4,21.7,12.9],[24,"2027-02-14","Cagliari","Lazio",27.5,28.4,44.1],[24,"2027-02-14","Genoa","Atalanta",23.7,25.5,50.8],[24,"2027-02-14","Bologna","Como",37.2,27.9,34.9],[24,"2027-02-14","Torino","Sassuolo",43.2,28.8,28.0],[24,"2027-02-14","Frosinone","Fiorentina",18.9,24.4,56.7],[24,"2027-02-14","Inter","Milan",61.2,24.0,14.9],[24,"2027-02-14","Napoli","Juventus",45.8,27.3,26.9],[24,"2027-02-14","Udinese","Venezia",56.1,25.5,18.4],[25,"2027-02-21","Fiorentina","Inter",16.3,21.6,62.1],[25,"2027-02-21","Milan","Genoa",63.8,22.6,13.6],[25,"2027-02-21","Atalanta","Monza",72.9,17.9,9.2],[25,"2027-02-21","Como","Torino",57.4,24.7,17.9],[25,"2027-02-21","Venezia","Cagliari",33.3,30.0,36.8],[25,"2027-02-21","Juventus","Bologna",54.3,25.2,20.5],[25,"2027-02-21","Lazio","Napoli",30.2,26.4,43.3],[25,"2027-02-21","Sassuolo","Roma",23.3,25.3,51.4],[25,"2027-02-21","Udinese","Parma",45.4,28.8,25.8],[25,"2027-02-21","Lecce","Frosinone",51.9,28.7,19.4],[26,"2027-02-28","Monza","Juventus",13.5,21.9,64.6],[26,"2027-02-28","Roma","Venezia",73.5,17.8,8.7],[26,"2027-02-28","Cagliari","Udinese",37.0,30.6,32.4],[26,"2027-02-28","Genoa","Lazio",28.5,28.8,42.6],[26,"2027-02-28","Como","Milan",39.1,29.2,31.7],[26,"2027-02-28","Bologna","Lecce",59.6,25.4,15.0],[26,"2027-02-28","Torino","Fiorentina",37.1,29.6,33.4],[26,"2027-02-28","Frosinone","Napoli",10.6,19.1,70.3],[26,"2027-02-28","Inter","Atalanta",62.5,22.0,15.6],[26,"2027-02-28","Parma","Sassuolo",39.6,29.9,30.6],[27,"2027-03-07","Fiorentina","Venezia",61.5,23.7,14.8],[27,"2027-03-07","Milan","Cagliari",64.5,22.7,12.8],[27,"2027-03-07","Monza","Genoa",28.6,29.2,42.1],[27,"2027-03-07","Atalanta","Torino",59.7,24.1,16.2],[27,"2027-03-07","Juventus","Roma",44.2,27.4,28.4],[27,"2027-03-07","Lazio","Frosinone",70.9,18.8,10.3],[27,"2027-03-07","Sassuolo","Bologna",31.7,29.2,39.1],[27,"2027-03-07","Napoli","Parma",67.7,21.2,11.0],[27,"2027-03-07","Udinese","Inter",14.1,20.3,65.6],[27,"2027-03-07","Lecce","Como",21.3,25.2,53.5],[28,"2027-03-14","Milan","Sassuolo",61.4,23.4,15.2],[28,"2027-03-14","Cagliari","Fiorentina",31.5,29.3,39.2],[28,"2027-03-14","Genoa","Roma",21.1,23.9,55.0],[28,"2027-03-14","Como","Udinese",57.3,24.8,17.9],[28,"2027-03-14","Bologna","Napoli",29.2,26.4,44.4],[28,"2027-03-14","Torino","Inter",14.4,21.0,64.6],[28,"2027-03-14","Venezia","Atalanta",16.5,23.4,60.1],[28,"2027-03-14","Frosinone","Monza",38.4,30.7,30.9],[28,"2027-03-14","Lazio","Juventus",33.7,26.5,39.8],[28,"2027-03-14","Parma","Lecce",47.4,30.2,22.5],[29,"2027-03-21","Fiorentina","Genoa",50.9,27.8,21.3],[29,"2027-03-21","Monza","Bologna",19.0,24.6,56.4],[29,"2027-03-21","Roma","Lecce",69.4,20.0,10.5],[29,"2027-03-21","Atalanta","Milan",42.4,27.3,30.3],[29,"2027-03-21","Inter","Frosinone",82.4,12.0,5.7],[29,"2027-03-21","Juventus","Como",49.4,27.0,23.6],[29,"2027-03-21","Parma","Lazio",28.3,27.7,44.0],[29,"2027-03-21","Sassuolo","Cagliari",45.6,29.3,25.0],[29,"2027-03-21","Napoli","Venezia",74.5,17.2,8.3],[29,"2027-03-21","Udinese","Torino",42.6,28.6,28.8],[30,"2027-04-04","Milan","Monza",73.3,17.8,8.9],[30,"2027-04-04","Roma","Bologna",54.4,25.2,20.5],[30,"2027-04-04","Cagliari","Napoli",19.3,23.7,57.0],[30,"2027-04-04","Genoa","Inter",13.0,20.1,67.0],[30,"2027-04-04","Como","Fiorentina",52.2,26.7,21.0],[30,"2027-04-04","Torino","Juventus",24.0,25.6,50.4],[30,"2027-04-04","Venezia","Parma",32.0,30.9,37.1],[30,"2027-04-04","Frosinone","Udinese",22.7,27.4,49.9],[30,"2027-04-04","Sassuolo","Atalanta",25.1,25.9,48.9],[30,"2027-04-04","Lecce","Lazio",23.7,26.4,49.9],[31,"2027-04-11","Fiorentina","Milan",30.7,27.2,42.1],[31,"2027-04-11","Cagliari","Atalanta",22.8,24.3,52.9],[31,"2027-04-11","Bologna","Venezia",65.4,21.6,12.9],[31,"2027-04-11","Frosinone","Genoa",25.5,28.3,46.3],[31,"2027-04-11","Inter","Roma",58.5,23.9,17.6],[31,"2027-04-11","Juventus","Lecce",69.2,20.4,10.4],[31,"2027-04-11","Lazio","Torino",53.1,27.1,19.9],[31,"2027-04-11","Parma","Como",25.9,26.5,47.7],[31,"2027-04-11","Napoli","Sassuolo",66.3,20.6,13.1],[31,"2027-04-11","Udinese","Monza",58.9,24.9,16.2],[32,"2027-04-18","Fiorentina","Parma",51.0,28.4,20.6],[32,"2027-04-18","Milan","Napoli",38.5,27.6,33.9],[32,"2027-04-18","Monza","Inter",9.0,16.7,74.3],[32,"2027-04-18","Roma","Lazio",53.4,25.1,21.5],[32,"2027-04-18","Atalanta","Udinese",60.4,23.7,16.0],[32,"2027-04-18","Como","Frosinone",73.0,18.5,8.5],[32,"2027-04-18","Bologna","Cagliari",56.0,25.9,18.1],[32,"2027-04-18","Torino","Genoa",45.7,29.7,24.5],[32,"2027-04-18","Venezia","Juventus",15.3,22.4,62.3],[32,"2027-04-18","Sassuolo","Lecce",49.2,29.4,21.4],[33,"2027-04-25","Cagliari","Monza",52.7,27.7,19.6],[33,"2027-04-25","Genoa","Sassuolo",39.2,28.5,32.4],[33,"2027-04-25","Venezia","Torino",27.9,28.5,43.7],[33,"2027-04-25","Frosinone","Roma",11.7,20.4,67.9],[33,"2027-04-25","Inter","Bologna",67.9,20.5,11.6],[33,"2027-04-25","Juventus","Fiorentina",58.1,25.1,16.8],[33,"2027-04-25","Lazio","Como",39.4,28.3,32.2],[33,"2027-04-25","Parma","Atalanta",23.7,24.5,51.8],[33,"2027-04-25","Napoli","Udinese",65.0,21.8,13.2],[33,"2027-04-25","Lecce","Milan",19.6,24.3,56.1],[34,"2027-05-02","Milan","Lazio",51.3,26.4,22.3],[34,"2027-05-02","Monza","Venezia",39.4,30.9,29.7],[34,"2027-05-02","Roma","Napoli",40.9,27.8,31.3],[34,"2027-05-02","Atalanta","Juventus",40.6,27.6,31.9],[34,"2027-05-02","Como","Inter",23.7,25.4,51.0],[34,"2027-05-02","Bologna","Fiorentina",47.5,27.9,24.7],[34,"2027-05-02","Torino","Parma",46.3,29.1,24.5],[34,"2027-05-02","Sassuolo","Frosinone",60.9,24.0,15.0],[34,"2027-05-02","Udinese","Genoa",46.0,29.2,24.8],[34,"2027-05-02","Lecce","Cagliari",38.0,29.7,32.4],[35,"2027-05-09","Fiorentina","Roma",28.8,26.7,44.5],[35,"2027-05-09","Genoa","Cagliari",43.5,29.2,27.3],[35,"2027-05-09","Torino","Bologna",33.1,29.3,37.7],[35,"2027-05-09","Venezia","Como",18.0,23.9,58.1],[35,"2027-05-09","Frosinone","Atalanta",12.7,20.5,66.8],[35,"2027-05-09","Inter","Lecce",76.9,16.2,6.9],[35,"2027-05-09","Lazio","Sassuolo",54.3,26.1,19.6],[35,"2027-05-09","Parma","Milan",23.0,23.9,53.0],[35,"2027-05-09","Napoli","Monza",76.0,16.4,7.6],[35,"2027-05-09","Udinese","Juventus",24.5,25.6,49.9],[36,"2027-05-16","Milan","Roma",41.9,27.2,30.9],[36,"2027-05-16","Monza","Parma",29.5,30.0,40.5],[36,"2027-05-16","Cagliari","Torino",36.4,28.5,35.2],[36,"2027-05-16","Como","Atalanta",40.3,27.5,32.2],[36,"2027-05-16","Bologna","Frosinone",69.5,20.1,10.4],[36,"2027-05-16","Juventus","Inter",28.0,25.1,47.0],[36,"2027-05-16","Lazio","Udinese",52.7,27.2,20.1],[36,"2027-05-16","Sassuolo","Venezia",54.7,25.5,19.8],[36,"2027-05-16","Napoli","Genoa",67.3,21.0,11.7],[36,"2027-05-16","Lecce","Fiorentina",27.9,27.7,44.4],[37,"2027-05-23","Fiorentina","Monza",63.4,22.7,13.8],[37,"2027-05-23","Roma","Como",50.0,26.4,23.5],[37,"2027-05-23","Atalanta","Lecce",67.2,21.1,11.6],[37,"2027-05-23","Genoa","Bologna",29.3,27.2,43.5],[37,"2027-05-23","Torino","Napoli",22.6,23.8,53.5],[37,"2027-05-23","Venezia","Milan",16.5,23.3,60.2],[37,"2027-05-23","Frosinone","Cagliari",26.7,28.6,44.7],[37,"2027-05-23","Inter","Lazio",67.3,20.1,12.6],[37,"2027-05-23","Parma","Juventus",21.0,24.0,55.0],[37,"2027-05-23","Udinese","Sassuolo",43.8,29.5,26.6],[38,"2027-05-30","Milan","Udinese",60.7,22.9,16.4],[38,"2027-05-30","Monza","Torino",25.7,27.8,46.5],[38,"2027-05-30","Cagliari","Roma",20.9,22.9,56.2],[38,"2027-05-30","Como","Genoa",59.9,24.0,16.1],[38,"2027-05-30","Bologna","Parma",55.4,26.4,18.1],[38,"2027-05-30","Juventus","Frosinone",76.1,16.1,7.8],[38,"2027-05-30","Lazio","Fiorentina",48.8,27.8,23.4],[38,"2027-05-30","Sassuolo","Inter",13.9,19.0,67.1],[38,"2027-05-30","Napoli","Atalanta",49.7,26.1,24.2],[38,"2027-05-30","Lecce","Venezia",46.3,28.6,25.1]];
+  var MAX_MD = 38;
+
+  var BIG_TEAMS = new Set(TEAMS.filter(function (t) { return t[0] <= 6; }).map(function (t) { return t[1]; }));
+
+  // ---- Plain-JS UI state (no localStorage/sessionStorage) ----
+  var state = {
+    matchday: 1,
+    search: "",
+    bigOnly: false
+  };
+
+  var mdSelect = document.getElementById("matchday-select");
+  var mdPrev = document.getElementById("md-prev");
+  var mdNext = document.getElementById("md-next");
+  var searchInput = document.getElementById("team-search");
+  var bigToggle = document.getElementById("big-match-toggle");
+  var resultsInfo = document.getElementById("results-info");
+  var listEl = document.getElementById("matches-list");
+
+  var dateFmt;
+  try {
+    dateFmt = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "2-digit", month: "short" });
+  } catch (e) {
+    dateFmt = null;
+  }
+
+  function formatDate(iso) {
+    if (!dateFmt) return iso;
+    var parts = iso.split("-");
+    var d = new Date(Date.UTC(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10)));
+    var s = dateFmt.format(d);
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function normalize(s) {
+    return s.toLowerCase();
+  }
+
+  function outcomeIndex(pH, pD, pA) {
+    if (pH >= pD && pH >= pA) return 0;
+    if (pA >= pD && pA >= pH) return 2;
+    return 1;
+  }
+
+  function getFiltered() {
+    var list = MATCHES;
+    if (state.bigOnly) {
+      list = list.filter(function (m) { return BIG_TEAMS.has(m[2]) && BIG_TEAMS.has(m[3]); });
+    }
+    var q = state.search.trim();
+    if (q) {
+      var nq = normalize(q);
+      list = list.filter(function (m) {
+        return normalize(m[2]).indexOf(nq) !== -1 || normalize(m[3]).indexOf(nq) !== -1;
+      });
+    } else {
+      list = list.filter(function (m) { return m[0] === state.matchday; });
+    }
+    return list;
+  }
+
+  function makeCard(m) {
+    var md = m[0], date = m[1], home = m[2], away = m[3], pH = m[4], pD = m[5], pA = m[6];
+    var idx = outcomeIndex(pH, pD, pA);
+
+    var card = document.createElement("article");
+    card.className = "match-card";
+
+    var meta = document.createElement("div");
+    meta.className = "match-meta";
+    var mdBadge = document.createElement("span");
+    mdBadge.className = "md-badge";
+    mdBadge.textContent = "Giornata " + md;
+    var dateSpan = document.createElement("span");
+    dateSpan.className = "match-date";
+    dateSpan.textContent = formatDate(date);
+    meta.appendChild(mdBadge);
+    meta.appendChild(dateSpan);
+    card.appendChild(meta);
+
+    var teams = document.createElement("div");
+    teams.className = "match-teams";
+    var homeSpan = document.createElement("span");
+    homeSpan.className = "team home" + (idx === 0 ? " winner" : "");
+    homeSpan.textContent = home;
+    var vsSpan = document.createElement("span");
+    vsSpan.className = "vs";
+    vsSpan.textContent = "vs";
+    var awaySpan = document.createElement("span");
+    awaySpan.className = "team away" + (idx === 2 ? " winner" : "");
+    awaySpan.textContent = away;
+    teams.appendChild(homeSpan);
+    teams.appendChild(vsSpan);
+    teams.appendChild(awaySpan);
+    card.appendChild(teams);
+
+    var bar = document.createElement("div");
+    bar.className = "prob-bar";
+    bar.title = home + " " + pH + "% · Pareggio " + pD + "% · " + away + " " + pA + "%";
+    var segHome = document.createElement("div");
+    segHome.className = "seg home";
+    segHome.style.width = pH + "%";
+    var segDraw = document.createElement("div");
+    segDraw.className = "seg draw";
+    segDraw.style.width = pD + "%";
+    var segAway = document.createElement("div");
+    segAway.className = "seg away";
+    segAway.style.width = pA + "%";
+    bar.appendChild(segHome);
+    bar.appendChild(segDraw);
+    bar.appendChild(segAway);
+    card.appendChild(bar);
+
+    var badges = document.createElement("div");
+    badges.className = "prob-badges";
+    var labels = [["home", "1", pH], ["draw", "X", pD], ["away", "2", pA]];
+    labels.forEach(function (l, i) {
+      var b = document.createElement("span");
+      b.className = "badge " + l[0] + (i === idx ? " emph" : "");
+      b.textContent = l[1] + " · " + l[2] + "%";
+      badges.appendChild(b);
+    });
+    card.appendChild(badges);
+
+    return card;
+  }
+
+  function render() {
+    var filtered = getFiltered().slice().sort(function (a, b) {
+      if (a[0] !== b[0]) return a[0] - b[0];
+      if (a[1] !== b[1]) return a[1] < b[1] ? -1 : 1;
+      return 0;
+    });
+
+    listEl.textContent = "";
+    if (filtered.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "Nessuna partita trovata con questi filtri.";
+      listEl.appendChild(empty);
+    } else {
+      var frag = document.createDocumentFragment();
+      filtered.forEach(function (m) { frag.appendChild(makeCard(m)); });
+      listEl.appendChild(frag);
+    }
+
+    var q = state.search.trim();
+    if (q) {
+      resultsInfo.textContent = filtered.length + " partite trovate per \"" + q + "\" (tutte le giornate)";
+      mdSelect.disabled = true;
+      mdPrev.disabled = true;
+      mdNext.disabled = true;
+    } else {
+      resultsInfo.textContent = filtered.length + " partite — Giornata " + state.matchday;
+      mdSelect.disabled = false;
+      mdPrev.disabled = state.matchday <= 1;
+      mdNext.disabled = state.matchday >= MAX_MD;
+    }
+  }
+
+  mdSelect.addEventListener("change", function () {
+    state.matchday = parseInt(mdSelect.value, 10);
+    render();
+  });
+  mdPrev.addEventListener("click", function () {
+    if (state.matchday > 1) {
+      state.matchday -= 1;
+      mdSelect.value = String(state.matchday);
+      render();
+    }
+  });
+  mdNext.addEventListener("click", function () {
+    if (state.matchday < MAX_MD) {
+      state.matchday += 1;
+      mdSelect.value = String(state.matchday);
+      render();
+    }
+  });
+  searchInput.addEventListener("input", function () {
+    state.search = searchInput.value;
+    render();
+  });
+  bigToggle.addEventListener("change", function () {
+    state.bigOnly = bigToggle.checked;
+    render();
+  });
+
+  mdSelect.value = "1";
+  render();
+})();
+</script>
+
+</body>
+</html>
