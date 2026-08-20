@@ -19,6 +19,11 @@
     --series-blue:    #2a78d6;
     --series-blue-soft: #cde2fb;
     --series-orange:  #eb6834;
+    --series-aqua:    #1baf7a;
+    --series-yellow:  #eda100;
+    --series-magenta: #e87ba4;
+    --series-green:   #008300;
+    --series-violet:  #4a3aa7;
     --series-red:     #e34948;
     --draw-fill:      #c3c2b7;
     --tint-cl:        rgba(42,120,214,0.09);
@@ -41,6 +46,11 @@
       --series-blue:    #3987e5;
       --series-blue-soft: #184f95;
       --series-orange:  #d95926;
+      --series-aqua:    #199e70;
+      --series-yellow:  #c98500;
+      --series-magenta: #d55181;
+      --series-green:   #008300;
+      --series-violet:  #9085e9;
       --series-red:     #e66767;
       --draw-fill:      #52514e;
       --tint-cl:        rgba(57,135,229,0.14);
@@ -63,6 +73,11 @@
     --series-blue:    #3987e5;
     --series-blue-soft: #184f95;
     --series-orange:  #d95926;
+    --series-aqua:    #199e70;
+    --series-yellow:  #c98500;
+    --series-magenta: #d55181;
+    --series-green:   #008300;
+    --series-violet:  #9085e9;
     --series-red:     #e66767;
     --draw-fill:      #52514e;
     --tint-cl:        rgba(57,135,229,0.14);
@@ -436,6 +451,137 @@
     font-size: 14px;
   }
 
+  /* ---------- Section nav ---------- */
+  .section-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 24px;
+  }
+  .section-nav a {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface-1);
+    box-shadow: var(--shadow);
+  }
+  .section-nav a:hover { color: var(--text-primary); background: var(--tint-cl); }
+  .section-nav a:focus-visible { outline: 2px solid var(--series-blue); outline-offset: 1px; }
+
+  /* ---------- Cronologia chart ---------- */
+  .btn-group button.metric-btn.active {
+    background: var(--series-blue);
+    border-color: var(--series-blue);
+    color: #fff;
+  }
+  .chart-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 16px 16px 6px;
+  }
+  .chart-wrap {
+    position: relative;
+  }
+  .history-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .hx-gridline { stroke: var(--gridline); stroke-width: 1; }
+  .hx-axis-text { fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .hx-line { fill: none; stroke: var(--text-muted); stroke-width: 1.25; opacity: 0.32; }
+  .hx-line.active { stroke-width: 2.25; opacity: 1; stroke: var(--slot-color); }
+  .hx-line-projected { stroke-dasharray: 5 4; opacity: 0.55; }
+  .hx-line.active.hx-line-projected { opacity: 0.6; }
+  .hx-today-line { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+  .hx-today-label { font-size: 10.5px; fill: var(--text-muted); }
+  .hx-dot { fill: var(--text-muted); stroke: var(--surface-1); stroke-width: 2; }
+  .hx-dot.active { fill: var(--slot-color); }
+  .hx-endlabel { font-size: 11.5px; font-weight: 600; fill: var(--text-primary); }
+  .hx-leader { stroke: var(--text-muted); stroke-width: 1; opacity: 0.55; }
+  .hx-crosshair { stroke: var(--baseline); stroke-width: 1; }
+  .hx-crosshair.hovering { stroke: var(--text-secondary); }
+  .slot-0 { --slot-color: var(--series-blue); }
+  .slot-1 { --slot-color: var(--series-orange); }
+  .slot-2 { --slot-color: var(--series-aqua); }
+  .slot-3 { --slot-color: var(--series-yellow); }
+  .slot-4 { --slot-color: var(--series-magenta); }
+  .slot-5 { --slot-color: var(--series-green); }
+  .slot-6 { --slot-color: var(--series-violet); }
+  .slot-7 { --slot-color: var(--series-red); }
+
+  .hx-tooltip {
+    position: absolute;
+    top: 8px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: 158px;
+    max-width: 220px;
+    pointer-events: none;
+    display: none;
+    z-index: 5;
+  }
+  .hx-tooltip.visible { display: block; }
+  .hx-tt-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .hx-tt-row { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+  .hx-tt-key { width: 11px; height: 2px; border-radius: 1px; flex: none; background: var(--slot-color); }
+  .hx-tt-name { color: var(--text-secondary); flex: 1; }
+  .hx-tt-val { font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 12px;
+  }
+  .team-chip {
+    font: inherit;
+    font-size: 12px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--page-plane);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+  }
+  .team-chip:hover { background: var(--tint-cl); }
+  .team-chip:focus-visible { outline: 2px solid var(--series-blue); outline-offset: 1px; }
+  .team-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--slot-color, var(--baseline));
+    flex: none;
+  }
+  .team-chip.active {
+    color: var(--text-primary);
+    font-weight: 600;
+    background: var(--surface-1);
+    box-shadow: var(--shadow);
+  }
+
+  .table-wrap.mini { margin-top: 14px; }
+  .table-wrap.mini table { min-width: 520px; font-size: 12.5px; }
+
   footer {
     max-width: 1180px;
     margin: 0 auto;
@@ -450,6 +596,7 @@
     .controls-row select, .controls-row input[type="text"] { min-width: 0; width: 100%; }
     .results-info { margin-left: 0; }
     .matches-list { grid-template-columns: 1fr; }
+    .table-wrap.mini table { min-width: 420px; }
   }
 </style>
 </head>
@@ -493,6 +640,13 @@
 
 <div class="wrap">
 
+  <nav class="section-nav" aria-label="Sezioni">
+    <a href="#classifica">Classifica</a>
+    <a href="#partite">Partite</a>
+    <a href="#cronologia">Cronologia</a>
+    <a href="#evoluzione">Evoluzione previsione</a>
+  </nav>
+
   <section id="classifica">
     <div class="section-head">
       <h2>Classifica prevista</h2>
@@ -524,26 +678,26 @@
           </tr>
         </thead>
         <tbody>
-<tr class="zone-cl"><td class="col-pos">1</td><td class="col-team">Inter</td><td class="num">82.9</td><td class="num">93.9</td><td class="num">48.6</td><td class="num">+45.3</td><td class="num wdl">25.1-7.6-5.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:60.5%"></div></div><span class="prob-value">60.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:93.5%"></div></div><span class="prob-value">93.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:98.1%"></div></div><span class="prob-value">98.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
-<tr class="zone-cl"><td class="col-pos">2</td><td class="col-team">Napoli</td><td class="num">71.2</td><td class="num">76.8</td><td class="num">51.4</td><td class="num">+25.3</td><td class="num wdl">20.7-9.0-8.2</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:11.5%"></div></div><span class="prob-value">11.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:61.0%"></div></div><span class="prob-value">61.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:81.0%"></div></div><span class="prob-value">81.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
-<tr class="zone-cl"><td class="col-pos">3</td><td class="col-team">Roma</td><td class="num">68.6</td><td class="num">72.8</td><td class="num">53.3</td><td class="num">+19.5</td><td class="num wdl">19.8-9.2-9.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:8.4%"></div></div><span class="prob-value">8.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.8%"></div></div><span class="prob-value">49.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:72.6%"></div></div><span class="prob-value">72.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td></tr>
-<tr class="zone-cl"><td class="col-pos">4</td><td class="col-team">Juventus</td><td class="num">68.2</td><td class="num">71.0</td><td class="num">51.0</td><td class="num">+20.0</td><td class="num wdl">19.6-9.4-9.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.6%"></div></div><span class="prob-value">6.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.5%"></div></div><span class="prob-value">49.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:71.4%"></div></div><span class="prob-value">71.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
-<tr class="zone-europa"><td class="col-pos">5</td><td class="col-team">Milan</td><td class="num">65.9</td><td class="num">75.9</td><td class="num">57.2</td><td class="num">+18.6</td><td class="num wdl">18.8-9.4-9.8</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.3%"></div></div><span class="prob-value">4.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:40.4%"></div></div><span class="prob-value">40.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:64.0%"></div></div><span class="prob-value">64.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td></tr>
-<tr class="zone-europa"><td class="col-pos">6</td><td class="col-team">Atalanta</td><td class="num">65.1</td><td class="num">76.9</td><td class="num">59.1</td><td class="num">+17.9</td><td class="num wdl">18.5-9.6-9.9</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.2%"></div></div><span class="prob-value">4.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:37.0%"></div></div><span class="prob-value">37.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:60.2%"></div></div><span class="prob-value">60.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td></tr>
-<tr><td class="col-pos">7</td><td class="col-team">Como</td><td class="num">62.4</td><td class="num">70.1</td><td class="num">57.7</td><td class="num">+12.4</td><td class="num wdl">17.5-9.7-10.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.4%"></div></div><span class="prob-value">2.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:27.1%"></div></div><span class="prob-value">27.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:49.4%"></div></div><span class="prob-value">49.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td></tr>
-<tr><td class="col-pos">8</td><td class="col-team">Lazio</td><td class="num">57.8</td><td class="num">68.9</td><td class="num">61.0</td><td class="num">+7.9</td><td class="num wdl">16.0-9.9-12.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:15.2%"></div></div><span class="prob-value">15.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:32.7%"></div></div><span class="prob-value">32.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:1.0%"></div></div><span class="prob-value">1.0%</span></td></tr>
-<tr><td class="col-pos">9</td><td class="col-team">Bologna</td><td class="num">56.9</td><td class="num">66.2</td><td class="num">61.2</td><td class="num">+5.1</td><td class="num wdl">15.6-10.0-12.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:12.8%"></div></div><span class="prob-value">12.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:29.2%"></div></div><span class="prob-value">29.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.9%"></div></div><span class="prob-value">0.9%</span></td></tr>
-<tr><td class="col-pos">10</td><td class="col-team">Fiorentina</td><td class="num">52.2</td><td class="num">65.7</td><td class="num">64.5</td><td class="num">+1.2</td><td class="num wdl">14.0-10.1-13.9</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.2%"></div></div><span class="prob-value">6.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:15.4%"></div></div><span class="prob-value">15.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:2.7%"></div></div><span class="prob-value">2.7%</span></td></tr>
-<tr><td class="col-pos">11</td><td class="col-team">Torino</td><td class="num">47.0</td><td class="num">56.0</td><td class="num">62.4</td><td class="num">-6.4</td><td class="num wdl">12.2-10.3-15.5</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.2%"></div></div><span class="prob-value">2.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.8%"></div></div><span class="prob-value">6.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:8.0%"></div></div><span class="prob-value">8.0%</span></td></tr>
-<tr><td class="col-pos">12</td><td class="col-team">Udinese</td><td class="num">46.4</td><td class="num">60.3</td><td class="num">68.3</td><td class="num">-7.9</td><td class="num wdl">12.1-10.2-15.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.0%"></div></div><span class="prob-value">2.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:5.9%"></div></div><span class="prob-value">5.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:7.5%"></div></div><span class="prob-value">7.5%</span></td></tr>
-<tr><td class="col-pos">13</td><td class="col-team">Sassuolo</td><td class="num">45.3</td><td class="num">64.2</td><td class="num">75.3</td><td class="num">-11.1</td><td class="num wdl">11.7-10.2-16.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.3%"></div></div><span class="prob-value">1.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.8%"></div></div><span class="prob-value">4.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:10.3%"></div></div><span class="prob-value">10.3%</span></td></tr>
-<tr><td class="col-pos">14</td><td class="col-team">Genoa</td><td class="num">42.6</td><td class="num">53.7</td><td class="num">66.6</td><td class="num">-12.9</td><td class="num wdl">10.8-10.2-17.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.7%"></div></div><span class="prob-value">2.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:15.4%"></div></div><span class="prob-value">15.4%</span></td></tr>
-<tr><td class="col-pos">15</td><td class="col-team">Parma</td><td class="num">42.5</td><td class="num">54.1</td><td class="num">67.1</td><td class="num">-13.0</td><td class="num wdl">10.8-10.2-17.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.9%"></div></div><span class="prob-value">2.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:15.7%"></div></div><span class="prob-value">15.7%</span></td></tr>
-<tr><td class="col-pos">16</td><td class="col-team">Cagliari</td><td class="num">41.4</td><td class="num">56.6</td><td class="num">73.2</td><td class="num">-16.6</td><td class="num wdl">10.4-10.1-17.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.6%"></div></div><span class="prob-value">0.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.0%"></div></div><span class="prob-value">2.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:18.9%"></div></div><span class="prob-value">18.9%</span></td></tr>
-<tr><td class="col-pos">17</td><td class="col-team">Lecce</td><td class="num">36.9</td><td class="num">47.7</td><td class="num">67.8</td><td class="num">-20.1</td><td class="num wdl">8.9-10.1-19.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.7%"></div></div><span class="prob-value">0.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:32.4%"></div></div><span class="prob-value">32.4%</span></td></tr>
-<tr class="zone-releg"><td class="col-pos">18</td><td class="col-team">Venezia</td><td class="num">33.1</td><td class="num">50.0</td><td class="num">76.5</td><td class="num">-26.5</td><td class="num wdl">7.9-9.5-20.6</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:49.3%"></div></div><span class="prob-value">49.3%</span></td></tr>
-<tr class="zone-releg"><td class="col-pos">19</td><td class="col-team">Monza</td><td class="num">30.4</td><td class="num">49.6</td><td class="num">76.6</td><td class="num">-27.0</td><td class="num wdl">7.1-9.2-21.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:60.9%"></div></div><span class="prob-value">60.9%</span></td></tr>
-<tr class="zone-releg"><td class="col-pos">20</td><td class="col-team">Frosinone</td><td class="num">26.8</td><td class="num">51.7</td><td class="num">83.5</td><td class="num">-31.9</td><td class="num wdl">6.0-8.9-23.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:76.6%"></div></div><span class="prob-value">76.6%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">1</td><td class="col-team">Inter</td><td class="num">81.1</td><td class="num">93.2</td><td class="num">49.7</td><td class="num">+43.6</td><td class="num wdl">24.5-7.8-5.8</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:54.3%"></div></div><span class="prob-value">54.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:91.9%"></div></div><span class="prob-value">91.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:97.8%"></div></div><span class="prob-value">97.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">2</td><td class="col-team">Juventus</td><td class="num">70.6</td><td class="num">72.0</td><td class="num">49.7</td><td class="num">+22.3</td><td class="num wdl">20.5-9.2-8.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:10.9%"></div></div><span class="prob-value">10.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:56.3%"></div></div><span class="prob-value">56.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:78.0%"></div></div><span class="prob-value">78.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">3</td><td class="col-team">Napoli</td><td class="num">70.6</td><td class="num">76.5</td><td class="num">51.5</td><td class="num">+25.0</td><td class="num wdl">20.5-9.1-8.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:9.9%"></div></div><span class="prob-value">9.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:57.5%"></div></div><span class="prob-value">57.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:79.3%"></div></div><span class="prob-value">79.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-cl"><td class="col-pos">4</td><td class="col-team">Roma</td><td class="num">69.9</td><td class="num">73.5</td><td class="num">52.6</td><td class="num">+21.0</td><td class="num wdl">20.3-9.2-8.6</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:8.8%"></div></div><span class="prob-value">8.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:53.0%"></div></div><span class="prob-value">53.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:76.1%"></div></div><span class="prob-value">76.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-europa"><td class="col-pos">5</td><td class="col-team">Milan</td><td class="num">67.8</td><td class="num">76.9</td><td class="num">56.3</td><td class="num">+20.5</td><td class="num wdl">19.5-9.2-9.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:6.5%"></div></div><span class="prob-value">6.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:43.7%"></div></div><span class="prob-value">43.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:68.3%"></div></div><span class="prob-value">68.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr class="zone-europa"><td class="col-pos">6</td><td class="col-team">Atalanta</td><td class="num">66.3</td><td class="num">77.6</td><td class="num">58.4</td><td class="num">+19.2</td><td class="num wdl">19.0-9.5-9.6</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:5.1%"></div></div><span class="prob-value">5.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:36.7%"></div></div><span class="prob-value">36.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:62.9%"></div></div><span class="prob-value">62.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr><td class="col-pos">7</td><td class="col-team">Como</td><td class="num">64.5</td><td class="num">71.1</td><td class="num">56.6</td><td class="num">+14.4</td><td class="num wdl">18.3-9.7-10.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:2.9%"></div></div><span class="prob-value">2.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:30.0%"></div></div><span class="prob-value">30.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:53.5%"></div></div><span class="prob-value">53.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td></tr>
+<tr><td class="col-pos">8</td><td class="col-team">Lazio</td><td class="num">58.2</td><td class="num">69.0</td><td class="num">60.5</td><td class="num">+8.5</td><td class="num wdl">16.1-10.0-11.9</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.8%"></div></div><span class="prob-value">0.8%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:11.7%"></div></div><span class="prob-value">11.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:27.6%"></div></div><span class="prob-value">27.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td></tr>
+<tr><td class="col-pos">9</td><td class="col-team">Bologna</td><td class="num">57.0</td><td class="num">66.4</td><td class="num">61.0</td><td class="num">+5.4</td><td class="num wdl">15.6-10.1-12.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.4%"></div></div><span class="prob-value">0.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:9.2%"></div></div><span class="prob-value">9.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:23.1%"></div></div><span class="prob-value">23.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.3%"></div></div><span class="prob-value">0.3%</span></td></tr>
+<tr><td class="col-pos">10</td><td class="col-team">Fiorentina</td><td class="num">53.8</td><td class="num">66.4</td><td class="num">63.5</td><td class="num">+2.9</td><td class="num wdl">14.5-10.2-13.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.3%"></div></div><span class="prob-value">0.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:5.1%"></div></div><span class="prob-value">5.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:14.4%"></div></div><span class="prob-value">14.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:0.8%"></div></div><span class="prob-value">0.8%</span></td></tr>
+<tr><td class="col-pos">11</td><td class="col-team">Udinese</td><td class="num">48.3</td><td class="num">61.2</td><td class="num">67.3</td><td class="num">-6.0</td><td class="num wdl">12.7-10.2-15.1</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.3%"></div></div><span class="prob-value">1.3%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.7%"></div></div><span class="prob-value">4.7%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:2.7%"></div></div><span class="prob-value">2.7%</span></td></tr>
+<tr><td class="col-pos">12</td><td class="col-team">Sassuolo</td><td class="num">48.1</td><td class="num">65.7</td><td class="num">74.1</td><td class="num">-8.3</td><td class="num wdl">12.7-10.1-15.2</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.5%"></div></div><span class="prob-value">1.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.9%"></div></div><span class="prob-value">4.9%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:3.0%"></div></div><span class="prob-value">3.0%</span></td></tr>
+<tr><td class="col-pos">13</td><td class="col-team">Torino</td><td class="num">47.8</td><td class="num">56.3</td><td class="num">62.1</td><td class="num">-5.7</td><td class="num wdl">12.6-10.1-15.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.1%"></div></div><span class="prob-value">0.1%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.4%"></div></div><span class="prob-value">1.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:4.5%"></div></div><span class="prob-value">4.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:2.8%"></div></div><span class="prob-value">2.8%</span></td></tr>
+<tr><td class="col-pos">14</td><td class="col-team">Genoa</td><td class="num">43.8</td><td class="num">54.2</td><td class="num">66.0</td><td class="num">-11.8</td><td class="num wdl">11.2-10.2-16.6</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.5%"></div></div><span class="prob-value">1.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:6.5%"></div></div><span class="prob-value">6.5%</span></td></tr>
+<tr><td class="col-pos">15</td><td class="col-team">Parma</td><td class="num">43.8</td><td class="num">54.7</td><td class="num">66.7</td><td class="num">-12.0</td><td class="num wdl">11.2-10.0-16.7</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.4%"></div></div><span class="prob-value">0.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.6%"></div></div><span class="prob-value">1.6%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:5.8%"></div></div><span class="prob-value">5.8%</span></td></tr>
+<tr><td class="col-pos">16</td><td class="col-team">Cagliari</td><td class="num">43.0</td><td class="num">57.5</td><td class="num">72.8</td><td class="num">-15.3</td><td class="num wdl">11.0-10.0-17.0</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.2%"></div></div><span class="prob-value">0.2%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:1.5%"></div></div><span class="prob-value">1.5%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:7.7%"></div></div><span class="prob-value">7.7%</span></td></tr>
+<tr><td class="col-pos">17</td><td class="col-team">Lecce</td><td class="num">39.2</td><td class="num">49.0</td><td class="num">66.9</td><td class="num">-17.9</td><td class="num wdl">9.7-10.0-18.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.4%"></div></div><span class="prob-value">0.4%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:15.3%"></div></div><span class="prob-value">15.3%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">18</td><td class="col-team">Venezia</td><td class="num">26.6</td><td class="num">46.3</td><td class="num">80.0</td><td class="num">-33.6</td><td class="num wdl">6.0-8.6-23.4</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:76.2%"></div></div><span class="prob-value">76.2%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">19</td><td class="col-team">Monza</td><td class="num">24.9</td><td class="num">46.7</td><td class="num">79.8</td><td class="num">-33.0</td><td class="num wdl">5.5-8.3-24.2</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:83.4%"></div></div><span class="prob-value">83.4%</span></td></tr>
+<tr class="zone-releg"><td class="col-pos">20</td><td class="col-team">Frosinone</td><td class="num">20.2</td><td class="num">48.7</td><td class="num">87.9</td><td class="num">-39.2</td><td class="num wdl">4.3-7.5-26.3</td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill pos" style="width:0.0%"></div></div><span class="prob-value">0.0%</span></td><td class="prob-cell"><div class="bar-track"><div class="bar-fill neg" style="width:95.4%"></div></div><span class="prob-value">95.4%</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -624,10 +778,110 @@
     <div class="matches-list" id="matches-list"></div>
   </section>
 
+  <section id="cronologia">
+    <div class="section-head">
+      <h2>Cronologia classifica</h2>
+    </div>
+    <p class="section-note">
+      Posizione media prevista di ogni squadra dopo ciascuna delle 38 giornate, calcolata sulle
+      stesse 5.000 simulazioni Monte Carlo della classifica qui sopra (che è semplicemente lo
+      "scatto" alla 38ª giornata). Nelle prime giornate le squadre sono ancora poco separate — più
+      incertezza — mentre verso fine stagione le linee convergono verso la classifica finale.
+      Clicca sui nomi delle squadre per evidenziarle; passa il mouse sul grafico o usa il cursore
+      della giornata per leggere i valori esatti.
+    </p>
+
+    <div class="controls-row">
+      <div class="btn-group" id="metric-toggle" role="group" aria-label="Metrica mostrata">
+        <button type="button" class="metric-btn active" data-metric="pos">Posizione</button>
+        <button type="button" class="metric-btn" data-metric="pts">Punti</button>
+      </div>
+      <label style="flex:1 1 220px; min-width:220px;">
+        Giornata <span id="scrub-value">38</span> / 38
+        <input type="range" id="md-scrub" min="1" max="38" value="38" step="1">
+      </label>
+      <span class="results-info" id="history-info"></span>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-wrap" id="history-chart-wrap">
+        <svg class="history-svg" id="history-svg" viewBox="0 0 960 460" role="img" aria-label="Andamento della posizione media in classifica per giornata">
+          <g id="hx-axes"></g>
+          <g id="hx-lines"></g>
+          <g id="hx-endlabels"></g>
+          <line id="hx-crosshair" class="hx-crosshair" x1="0" y1="16" x2="0" y2="412" style="display:none"></line>
+        </svg>
+        <div class="hx-tooltip" id="hx-tooltip">
+          <div class="hx-tt-title" id="hx-tt-title"></div>
+          <div id="hx-tt-rows"></div>
+        </div>
+      </div>
+      <div class="chip-row" id="team-chips"></div>
+    </div>
+
+    <div class="table-wrap mini">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Squadra</th>
+            <th class="num">Pos. media</th>
+            <th class="num">Pt medi</th>
+            <th class="num">DR</th>
+          </tr>
+        </thead>
+        <tbody id="history-mini-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="evoluzione">
+    <div class="section-head">
+      <h2>Evoluzione previsione</h2>
+    </div>
+    <p class="section-note">
+      Come è cambiata nel tempo la classifica finale prevista dal modello, confrontando le
+      previsioni prodotte a ogni nuova esecuzione durante la stagione (ogni volta che vengono
+      incorporati i risultati reali delle giornate nel frattempo giocate). "Giornata di
+      riferimento 0" indica la previsione pre-stagione, senza ancora partite reali giocate.
+      "Piazzamento" è la posizione vera e propria in classifica (1°, 2°, ...); "Posizione media"
+      è invece la posizione media grezza calcolata sulle 5000 simulazioni Monte Carlo — le due
+      possono differire leggermente (una squadra può avere il piazzamento migliore pur con una
+      posizione media superiore a 1, se finisce spesso 2ª o 3ª in singole simulazioni).
+      Clicca sui nomi delle squadre per evidenziarle; passa il mouse sul grafico per leggere i
+      valori esatti.
+    </p>
+
+    <div class="controls-row">
+      <div class="btn-group" id="evo-metric-toggle" role="group" aria-label="Metrica mostrata">
+        <button type="button" class="metric-btn active" data-metric="rank">Piazzamento</button>
+        <button type="button" class="metric-btn" data-metric="pos">Posizione media</button>
+        <button type="button" class="metric-btn" data-metric="pts">Punti</button>
+      </div>
+      <span class="results-info" id="evo-info"></span>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-wrap" id="evo-chart-wrap">
+        <svg class="history-svg" id="evo-svg" viewBox="0 0 960 460" role="img" aria-label="Evoluzione del piazzamento o dei punti finali previsti, per giornata di riferimento">
+          <g id="evo-axes"></g>
+          <g id="evo-lines"></g>
+          <g id="evo-endlabels"></g>
+          <line id="evo-crosshair" class="hx-crosshair" x1="0" y1="16" x2="0" y2="412" style="display:none"></line>
+        </svg>
+        <div class="hx-tooltip" id="evo-tooltip">
+          <div class="hx-tt-title" id="evo-tt-title"></div>
+          <div id="evo-tt-rows"></div>
+        </div>
+      </div>
+      <div class="chip-row" id="evo-chips"></div>
+    </div>
+  </section>
+
 </div>
 
 <footer>
-  Fonte dati: simulazione interna (classifica_prevista_2026_27.csv, 20 squadre — previsioni_partite_2026_27.csv, 380 partite su 38 giornate). Nessuna chiamata di rete esterna: tutti i dati sono incorporati nel file al momento della generazione.
+  Fonte dati: simulazione interna (classifica_prevista_2026_27.csv, 20 squadre — previsioni_partite_2026_27.csv, 380 partite su 38 giornate — classifica_storia_2026_27.csv, 760 righe su 38 giornate x 20 squadre — previsioni_storia.csv, 20 righe su 1 rilevazioni x 20 squadre). Nessuna chiamata di rete esterna: tutti i dati sono incorporati nel file al momento della generazione.
 </footer>
 
 <script>
@@ -636,9 +890,9 @@
 
   // ---- Embedded data (build-time constants; no network calls) ----
   // TEAMS: [pos, teamName]
-  var TEAMS = [[1,"Inter"],[2,"Napoli"],[3,"Roma"],[4,"Juventus"],[5,"Milan"],[6,"Atalanta"],[7,"Como"],[8,"Lazio"],[9,"Bologna"],[10,"Fiorentina"],[11,"Torino"],[12,"Udinese"],[13,"Sassuolo"],[14,"Genoa"],[15,"Parma"],[16,"Cagliari"],[17,"Lecce"],[18,"Venezia"],[19,"Monza"],[20,"Frosinone"]];
+  var TEAMS = [[1,"Inter"],[2,"Juventus"],[3,"Napoli"],[4,"Roma"],[5,"Milan"],[6,"Atalanta"],[7,"Como"],[8,"Lazio"],[9,"Bologna"],[10,"Fiorentina"],[11,"Udinese"],[12,"Sassuolo"],[13,"Torino"],[14,"Genoa"],[15,"Parma"],[16,"Cagliari"],[17,"Lecce"],[18,"Venezia"],[19,"Monza"],[20,"Frosinone"]];
   // MATCHES: [matchday, date, homeTeam, awayTeam, probHome, probDraw, probAway]
-  var MATCHES = [[1,"2026-08-22","Inter","Monza",83.1,11.4,5.5],[1,"2026-08-22","Udinese","Como",27.4,27.9,44.7],[1,"2026-08-22","Genoa","Napoli",19.2,24.1,56.6],[1,"2026-08-22","Parma","Cagliari",43.5,31.9,24.7],[1,"2026-08-23","Venezia","Lecce",36.6,36.4,26.9],[1,"2026-08-23","Frosinone","Juventus",11.2,23.3,65.5],[1,"2026-08-23","Atalanta","Sassuolo",61.8,24.2,14.0],[1,"2026-08-23","Torino","Milan",26.0,25.9,48.1],[1,"2026-08-24","Bologna","Lazio",42.2,29.0,28.8],[1,"2026-08-24","Roma","Fiorentina",58.5,24.4,17.1],[2,"2026-08-28","Milan","Venezia",70.8,19.5,9.8],[2,"2026-08-29","Fiorentina","Frosinone",67.5,21.9,10.5],[2,"2026-08-29","Monza","Udinese",24.8,28.6,46.5],[2,"2026-08-29","Sassuolo","Torino",41.3,30.9,27.8],[2,"2026-08-29","Juventus","Parma",67.1,21.3,11.6],[2,"2026-08-30","Napoli","Como",52.0,27.9,20.1],[2,"2026-08-30","Cagliari","Inter",11.3,19.4,69.3],[2,"2026-08-30","Lazio","Genoa",55.0,26.8,18.2],[2,"2026-08-31","Lecce","Roma",16.5,24.2,59.4],[2,"2026-08-31","Atalanta","Bologna",51.8,27.2,21.0],[3,"2026-09-04","Genoa","Como",25.0,28.0,47.0],[3,"2026-09-05","Fiorentina","Torino",47.7,28.8,23.5],[3,"2026-09-05","Inter","Napoli",58.2,24.8,17.1],[3,"2026-09-05","Roma","Atalanta",48.4,28.0,23.6],[3,"2026-09-06","Frosinone","Venezia",33.5,31.8,34.7],[3,"2026-09-06","Parma","Monza",53.2,29.4,17.4],[3,"2026-09-06","Bologna","Sassuolo",54.0,26.8,19.2],[3,"2026-09-06","Juventus","Milan",47.0,27.7,25.3],[3,"2026-09-07","Cagliari","Lecce",46.0,30.3,23.7],[3,"2026-09-07","Udinese","Lazio",31.1,28.3,40.6],[4,"2026-09-11","Venezia","Fiorentina",23.7,26.4,49.9],[4,"2026-09-12","Genoa","Frosinone",58.0,27.5,14.5],[4,"2026-09-12","Lazio","Milan",36.0,28.4,35.6],[4,"2026-09-12","Atalanta","Cagliari",63.7,24.0,12.3],[4,"2026-09-13","Torino","Roma",23.4,25.8,50.8],[4,"2026-09-13","Como","Parma",61.6,24.1,14.4],[4,"2026-09-13","Lecce","Monza",49.6,28.7,21.7],[4,"2026-09-13","Napoli","Bologna",57.7,25.6,16.7],[4,"2026-09-13","Sassuolo","Juventus",22.7,24.2,53.2],[4,"2026-09-14","Inter","Udinese",73.8,17.9,8.2],[5,"2026-09-18","Monza","Sassuolo",25.7,27.5,46.8],[5,"2026-09-19","Bologna","Torino",51.9,27.5,20.6],[5,"2026-09-19","Udinese","Cagliari",45.7,29.7,24.6],[5,"2026-09-19","Roma","Inter",27.1,26.2,46.8],[5,"2026-09-19","Venezia","Lazio",20.4,25.7,53.9],[5,"2026-09-20","Fiorentina","Napoli",24.7,27.5,47.8],[5,"2026-09-20","Frosinone","Como",12.6,22.1,65.3],[5,"2026-09-20","Parma","Genoa",43.0,30.5,26.5],[5,"2026-09-20","Juventus","Atalanta",47.2,27.9,24.8],[5,"2026-09-20","Milan","Lecce",67.6,21.6,10.8],[6,"2026-10-11","Atalanta","Venezia",71.6,18.8,9.6],[6,"2026-10-11","Cagliari","Juventus",20.0,24.2,55.8],[6,"2026-10-11","Genoa","Fiorentina",33.2,30.5,36.2],[6,"2026-10-11","Como","Roma",37.6,28.1,34.3],[6,"2026-10-11","Torino","Udinese",42.9,29.8,27.2],[6,"2026-10-11","Inter","Parma",76.4,16.4,7.2],[6,"2026-10-11","Lazio","Monza",69.7,19.9,10.5],[6,"2026-10-11","Sassuolo","Milan",24.3,25.0,50.7],[6,"2026-10-11","Napoli","Frosinone",78.7,14.8,6.5],[6,"2026-10-11","Lecce","Bologna",23.9,27.4,48.7],[7,"2026-10-18","Fiorentina","Como",33.7,28.4,37.9],[7,"2026-10-18","Milan","Atalanta",45.6,28.7,25.7],[7,"2026-10-18","Monza","Cagliari",29.6,30.5,39.9],[7,"2026-10-18","Roma","Genoa",66.3,21.8,11.9],[7,"2026-10-18","Bologna","Inter",18.4,22.6,59.0],[7,"2026-10-18","Venezia","Napoli",13.2,22.1,64.7],[7,"2026-10-18","Frosinone","Sassuolo",22.7,27.4,50.0],[7,"2026-10-18","Juventus","Lazio",53.2,26.7,20.2],[7,"2026-10-18","Parma","Torino",38.2,30.3,31.5],[7,"2026-10-18","Udinese","Lecce",50.2,29.1,20.7],[8,"2026-10-25","Atalanta","Frosinone",75.2,17.2,7.7],[8,"2026-10-25","Cagliari","Bologna",27.7,28.7,43.5],[8,"2026-10-25","Genoa","Venezia",51.4,29.4,19.2],[8,"2026-10-25","Como","Sassuolo",59.4,24.9,15.8],[8,"2026-10-25","Torino","Monza",60.0,24.7,15.4],[8,"2026-10-25","Inter","Fiorentina",71.3,19.2,9.6],[8,"2026-10-25","Lazio","Parma",56.0,27.1,16.9],[8,"2026-10-25","Napoli","Roma",46.6,27.4,26.0],[8,"2026-10-25","Udinese","Milan",25.3,25.9,48.8],[8,"2026-10-25","Lecce","Juventus",17.2,23.7,59.1],[9,"2026-10-28","Fiorentina","Atalanta",30.6,27.9,41.5],[9,"2026-10-28","Milan","Bologna",52.0,26.2,21.8],[9,"2026-10-28","Monza","Napoli",11.5,19.7,68.8],[9,"2026-10-28","Roma","Cagliari",67.3,21.4,11.3],[9,"2026-10-28","Genoa","Juventus",21.1,25.3,53.7],[9,"2026-10-28","Torino","Como",28.0,28.6,43.5],[9,"2026-10-28","Venezia","Inter",9.3,17.5,73.2],[9,"2026-10-28","Frosinone","Lecce",29.2,32.0,38.7],[9,"2026-10-28","Parma","Udinese",38.4,30.7,30.9],[9,"2026-10-28","Sassuolo","Lazio",30.3,29.4,40.3],[10,"2026-11-01","Milan","Inter",24.2,24.0,51.9],[10,"2026-11-01","Atalanta","Parma",64.0,22.5,13.5],[10,"2026-11-01","Como","Venezia",69.7,20.5,9.7],[10,"2026-11-01","Bologna","Monza",68.5,20.7,10.8],[10,"2026-11-01","Frosinone","Torino",21.5,27.4,51.1],[10,"2026-11-01","Juventus","Napoli",41.4,28.3,30.3],[10,"2026-11-01","Lazio","Cagliari",57.7,25.3,17.0],[10,"2026-11-01","Sassuolo","Fiorentina",34.8,29.8,35.4],[10,"2026-11-01","Udinese","Roma",23.3,24.8,52.0],[10,"2026-11-01","Lecce","Genoa",36.6,30.7,32.7],[11,"2026-11-08","Fiorentina","Juventus",28.1,25.7,46.2],[11,"2026-11-08","Monza","Atalanta",14.3,23.2,62.5],[11,"2026-11-08","Roma","Sassuolo",64.7,21.8,13.6],[11,"2026-11-08","Cagliari","Frosinone",58.1,26.2,15.8],[11,"2026-11-08","Genoa","Milan",23.0,25.2,51.8],[11,"2026-11-08","Torino","Lecce",50.6,29.5,19.9],[11,"2026-11-08","Venezia","Udinese",28.6,30.0,41.4],[11,"2026-11-08","Inter","Como",65.9,20.4,13.7],[11,"2026-11-08","Parma","Bologna",28.4,28.2,43.4],[11,"2026-11-08","Napoli","Lazio",57.1,25.3,17.6],[12,"2026-11-22","Milan","Frosinone",75.6,16.9,7.6],[12,"2026-11-22","Monza","Fiorentina",21.4,25.2,53.4],[12,"2026-11-22","Atalanta","Inter",24.6,25.7,49.7],[12,"2026-11-22","Como","Cagliari",62.4,23.4,14.2],[12,"2026-11-22","Bologna","Udinese",52.4,27.4,20.2],[12,"2026-11-22","Juventus","Venezia",73.0,18.2,8.8],[12,"2026-11-22","Lazio","Lecce",61.6,24.6,13.8],[12,"2026-11-22","Parma","Roma",20.7,24.2,55.0],[12,"2026-11-22","Sassuolo","Genoa",44.8,30.9,24.2],[12,"2026-11-22","Napoli","Torino",65.6,21.8,12.7],[13,"2026-11-29","Roma","Monza",75.1,17.0,7.9],[13,"2026-11-29","Cagliari","Milan",22.1,24.6,53.3],[13,"2026-11-29","Como","Juventus",37.0,28.4,34.5],[13,"2026-11-29","Torino","Lazio",31.4,29.0,39.7],[13,"2026-11-29","Venezia","Bologna",20.8,24.8,54.5],[13,"2026-11-29","Frosinone","Parma",24.9,28.4,46.7],[13,"2026-11-29","Inter","Genoa",76.2,16.4,7.5],[13,"2026-11-29","Sassuolo","Napoli",20.8,25.2,54.0],[13,"2026-11-29","Udinese","Fiorentina",36.4,29.6,34.1],[13,"2026-11-29","Lecce","Atalanta",19.4,24.4,56.2],[14,"2026-12-06","Fiorentina","Cagliari",52.1,27.8,20.1],[14,"2026-12-06","Milan","Parma",64.1,22.9,13.0],[14,"2026-12-06","Monza","Como",15.4,24.0,60.6],[14,"2026-12-06","Genoa","Torino",38.4,30.1,31.5],[14,"2026-12-06","Bologna","Roma",32.1,27.5,40.3],[14,"2026-12-06","Venezia","Sassuolo",30.0,31.7,38.3],[14,"2026-12-06","Frosinone","Inter",7.8,15.6,76.5],[14,"2026-12-06","Juventus","Udinese",62.8,22.8,14.4],[14,"2026-12-06","Lazio","Atalanta",36.0,28.6,35.4],[14,"2026-12-06","Napoli","Lecce",71.2,19.6,9.2],[15,"2026-12-13","Atalanta","Genoa",63.8,22.1,14.1],[15,"2026-12-13","Cagliari","Venezia",50.4,29.3,20.3],[15,"2026-12-13","Como","Bologna",48.3,28.3,23.4],[15,"2026-12-13","Inter","Torino",73.6,17.9,8.5],[15,"2026-12-13","Juventus","Monza",74.8,17.2,8.0],[15,"2026-12-13","Lazio","Roma",33.7,28.8,37.6],[15,"2026-12-13","Parma","Fiorentina",32.5,29.3,38.2],[15,"2026-12-13","Napoli","Milan",49.3,26.8,23.9],[15,"2026-12-13","Udinese","Frosinone",62.9,23.5,13.6],[15,"2026-12-13","Lecce","Sassuolo",33.5,29.7,36.8],[16,"2026-12-20","Fiorentina","Bologna",39.4,28.7,31.9],[16,"2026-12-20","Milan","Como",47.4,26.4,26.2],[16,"2026-12-20","Roma","Juventus",44.0,28.5,27.5],[16,"2026-12-20","Atalanta","Napoli",37.2,27.6,35.2],[16,"2026-12-20","Genoa","Udinese",37.5,29.2,33.3],[16,"2026-12-20","Torino","Cagliari",47.1,29.9,23.1],[16,"2026-12-20","Venezia","Monza",44.4,30.4,25.2],[16,"2026-12-20","Frosinone","Lazio",15.5,23.4,61.1],[16,"2026-12-20","Sassuolo","Parma",45.0,30.0,25.0],[16,"2026-12-20","Lecce","Inter",10.6,18.5,70.9],[17,"2027-01-03","Fiorentina","Lazio",37.8,27.4,34.8],[17,"2027-01-03","Monza","Milan",14.1,22.2,63.8],[17,"2027-01-03","Roma","Frosinone",77.2,15.5,7.3],[17,"2027-01-03","Cagliari","Genoa",41.6,30.5,27.8],[17,"2027-01-03","Como","Lecce",66.0,21.4,12.6],[17,"2027-01-03","Bologna","Juventus",33.0,27.5,39.4],[17,"2027-01-03","Torino","Venezia",56.4,26.4,17.3],[17,"2027-01-03","Inter","Sassuolo",74.3,17.5,8.2],[17,"2027-01-03","Parma","Napoli",19.3,23.3,57.4],[17,"2027-01-03","Udinese","Atalanta",25.7,26.6,47.6],[18,"2027-01-06","Milan","Fiorentina",55.9,25.3,18.8],[18,"2027-01-06","Atalanta","Como",46.9,27.5,25.6],[18,"2027-01-06","Genoa","Monza",54.2,28.1,17.8],[18,"2027-01-06","Venezia","Roma",14.4,21.7,64.0],[18,"2027-01-06","Frosinone","Bologna",15.5,22.1,62.4],[18,"2027-01-06","Juventus","Torino",62.4,23.5,14.0],[18,"2027-01-06","Lazio","Inter",20.0,23.4,56.7],[18,"2027-01-06","Sassuolo","Udinese",41.0,29.1,29.9],[18,"2027-01-06","Napoli","Cagliari",69.0,20.3,10.8],[18,"2027-01-06","Lecce","Parma",36.6,30.2,33.3],[19,"2027-01-10","Fiorentina","Lecce",55.7,27.4,17.0],[19,"2027-01-10","Monza","Frosinone",45.8,30.9,23.3],[19,"2027-01-10","Roma","Milan",47.3,27.6,25.1],[19,"2027-01-10","Cagliari","Sassuolo",37.9,29.7,32.4],[19,"2027-01-10","Como","Lazio",48.1,27.6,24.3],[19,"2027-01-10","Bologna","Genoa",55.5,27.4,17.1],[19,"2027-01-10","Torino","Atalanta",26.2,26.5,47.2],[19,"2027-01-10","Inter","Juventus",59.4,24.1,16.5],[19,"2027-01-10","Parma","Venezia",51.0,28.3,20.7],[19,"2027-01-10","Udinese","Napoli",21.7,23.8,54.5],[20,"2027-01-17","Milan","Torino",59.9,24.3,15.8],[20,"2027-01-17","Atalanta","Roma",40.0,27.5,32.5],[20,"2027-01-17","Cagliari","Como",24.8,26.1,49.1],[20,"2027-01-17","Venezia","Frosinone",48.3,30.6,21.1],[20,"2027-01-17","Juventus","Genoa",65.8,21.4,12.7],[20,"2027-01-17","Lazio","Bologna",44.7,27.9,27.3],[20,"2027-01-17","Parma","Inter",12.4,19.8,67.7],[20,"2027-01-17","Sassuolo","Monza",58.1,25.9,16.0],[20,"2027-01-17","Napoli","Fiorentina",61.0,22.8,16.3],[20,"2027-01-17","Lecce","Udinese",32.1,30.3,37.6],[21,"2027-01-24","Fiorentina","Sassuolo",48.7,28.7,22.5],[21,"2027-01-24","Monza","Lazio",18.4,24.1,57.4],[21,"2027-01-24","Roma","Udinese",62.9,22.6,14.5],[21,"2027-01-24","Genoa","Parma",42.5,29.3,28.1],[21,"2027-01-24","Como","Napoli",33.9,27.9,38.2],[21,"2027-01-24","Bologna","Atalanta",35.4,28.3,36.2],[21,"2027-01-24","Frosinone","Milan",12.2,21.2,66.6],[21,"2027-01-24","Inter","Venezia",80.7,13.2,6.1],[21,"2027-01-24","Juventus","Cagliari",66.3,21.9,11.7],[21,"2027-01-24","Lecce","Torino",31.0,29.6,39.4],[22,"2027-01-31","Milan","Juventus",41.0,28.4,30.6],[22,"2027-01-31","Monza","Roma",12.9,21.5,65.6],[22,"2027-01-31","Atalanta","Fiorentina",55.8,25.2,19.0],[22,"2027-01-31","Cagliari","Parma",40.9,29.1,30.0],[22,"2027-01-31","Genoa","Lecce",47.2,30.2,22.6],[22,"2027-01-31","Torino","Frosinone",63.1,23.1,13.8],[22,"2027-01-31","Lazio","Venezia",66.5,20.9,12.6],[22,"2027-01-31","Sassuolo","Como",26.9,27.5,45.6],[22,"2027-01-31","Napoli","Inter",30.4,25.9,43.7],[22,"2027-01-31","Udinese","Bologna",32.4,29.5,38.1],[23,"2027-02-07","Fiorentina","Udinese",47.8,28.3,23.8],[23,"2027-02-07","Roma","Torino",62.7,22.8,14.4],[23,"2027-02-07","Atalanta","Lazio",50.4,27.2,22.5],[23,"2027-02-07","Como","Monza",71.1,19.4,9.5],[23,"2027-02-07","Bologna","Milan",35.3,28.2,36.5],[23,"2027-02-07","Venezia","Genoa",31.6,30.3,38.1],[23,"2027-02-07","Inter","Cagliari",76.3,16.1,7.5],[23,"2027-02-07","Juventus","Sassuolo",63.7,22.7,13.6],[23,"2027-02-07","Parma","Frosinone",57.8,27.1,15.1],[23,"2027-02-07","Lecce","Napoli",16.0,22.6,61.4],[24,"2027-02-14","Monza","Lecce",33.9,31.1,35.0],[24,"2027-02-14","Roma","Parma",65.4,21.7,12.9],[24,"2027-02-14","Cagliari","Lazio",27.5,28.4,44.1],[24,"2027-02-14","Genoa","Atalanta",23.7,25.5,50.8],[24,"2027-02-14","Bologna","Como",37.2,27.9,34.9],[24,"2027-02-14","Torino","Sassuolo",43.2,28.8,28.0],[24,"2027-02-14","Frosinone","Fiorentina",18.9,24.4,56.7],[24,"2027-02-14","Inter","Milan",61.2,24.0,14.9],[24,"2027-02-14","Napoli","Juventus",45.8,27.3,26.9],[24,"2027-02-14","Udinese","Venezia",56.1,25.5,18.4],[25,"2027-02-21","Fiorentina","Inter",16.3,21.6,62.1],[25,"2027-02-21","Milan","Genoa",63.8,22.6,13.6],[25,"2027-02-21","Atalanta","Monza",72.9,17.9,9.2],[25,"2027-02-21","Como","Torino",57.4,24.7,17.9],[25,"2027-02-21","Venezia","Cagliari",33.3,30.0,36.8],[25,"2027-02-21","Juventus","Bologna",54.3,25.2,20.5],[25,"2027-02-21","Lazio","Napoli",30.2,26.4,43.3],[25,"2027-02-21","Sassuolo","Roma",23.3,25.3,51.4],[25,"2027-02-21","Udinese","Parma",45.4,28.8,25.8],[25,"2027-02-21","Lecce","Frosinone",51.9,28.7,19.4],[26,"2027-02-28","Monza","Juventus",13.5,21.9,64.6],[26,"2027-02-28","Roma","Venezia",73.5,17.8,8.7],[26,"2027-02-28","Cagliari","Udinese",37.0,30.6,32.4],[26,"2027-02-28","Genoa","Lazio",28.5,28.8,42.6],[26,"2027-02-28","Como","Milan",39.1,29.2,31.7],[26,"2027-02-28","Bologna","Lecce",59.6,25.4,15.0],[26,"2027-02-28","Torino","Fiorentina",37.1,29.6,33.4],[26,"2027-02-28","Frosinone","Napoli",10.6,19.1,70.3],[26,"2027-02-28","Inter","Atalanta",62.5,22.0,15.6],[26,"2027-02-28","Parma","Sassuolo",39.6,29.9,30.6],[27,"2027-03-07","Fiorentina","Venezia",61.5,23.7,14.8],[27,"2027-03-07","Milan","Cagliari",64.5,22.7,12.8],[27,"2027-03-07","Monza","Genoa",28.6,29.2,42.1],[27,"2027-03-07","Atalanta","Torino",59.7,24.1,16.2],[27,"2027-03-07","Juventus","Roma",44.2,27.4,28.4],[27,"2027-03-07","Lazio","Frosinone",70.9,18.8,10.3],[27,"2027-03-07","Sassuolo","Bologna",31.7,29.2,39.1],[27,"2027-03-07","Napoli","Parma",67.7,21.2,11.0],[27,"2027-03-07","Udinese","Inter",14.1,20.3,65.6],[27,"2027-03-07","Lecce","Como",21.3,25.2,53.5],[28,"2027-03-14","Milan","Sassuolo",61.4,23.4,15.2],[28,"2027-03-14","Cagliari","Fiorentina",31.5,29.3,39.2],[28,"2027-03-14","Genoa","Roma",21.1,23.9,55.0],[28,"2027-03-14","Como","Udinese",57.3,24.8,17.9],[28,"2027-03-14","Bologna","Napoli",29.2,26.4,44.4],[28,"2027-03-14","Torino","Inter",14.4,21.0,64.6],[28,"2027-03-14","Venezia","Atalanta",16.5,23.4,60.1],[28,"2027-03-14","Frosinone","Monza",38.4,30.7,30.9],[28,"2027-03-14","Lazio","Juventus",33.7,26.5,39.8],[28,"2027-03-14","Parma","Lecce",47.4,30.2,22.5],[29,"2027-03-21","Fiorentina","Genoa",50.9,27.8,21.3],[29,"2027-03-21","Monza","Bologna",19.0,24.6,56.4],[29,"2027-03-21","Roma","Lecce",69.4,20.0,10.5],[29,"2027-03-21","Atalanta","Milan",42.4,27.3,30.3],[29,"2027-03-21","Inter","Frosinone",82.4,12.0,5.7],[29,"2027-03-21","Juventus","Como",49.4,27.0,23.6],[29,"2027-03-21","Parma","Lazio",28.3,27.7,44.0],[29,"2027-03-21","Sassuolo","Cagliari",45.6,29.3,25.0],[29,"2027-03-21","Napoli","Venezia",74.5,17.2,8.3],[29,"2027-03-21","Udinese","Torino",42.6,28.6,28.8],[30,"2027-04-04","Milan","Monza",73.3,17.8,8.9],[30,"2027-04-04","Roma","Bologna",54.4,25.2,20.5],[30,"2027-04-04","Cagliari","Napoli",19.3,23.7,57.0],[30,"2027-04-04","Genoa","Inter",13.0,20.1,67.0],[30,"2027-04-04","Como","Fiorentina",52.2,26.7,21.0],[30,"2027-04-04","Torino","Juventus",24.0,25.6,50.4],[30,"2027-04-04","Venezia","Parma",32.0,30.9,37.1],[30,"2027-04-04","Frosinone","Udinese",22.7,27.4,49.9],[30,"2027-04-04","Sassuolo","Atalanta",25.1,25.9,48.9],[30,"2027-04-04","Lecce","Lazio",23.7,26.4,49.9],[31,"2027-04-11","Fiorentina","Milan",30.7,27.2,42.1],[31,"2027-04-11","Cagliari","Atalanta",22.8,24.3,52.9],[31,"2027-04-11","Bologna","Venezia",65.4,21.6,12.9],[31,"2027-04-11","Frosinone","Genoa",25.5,28.3,46.3],[31,"2027-04-11","Inter","Roma",58.5,23.9,17.6],[31,"2027-04-11","Juventus","Lecce",69.2,20.4,10.4],[31,"2027-04-11","Lazio","Torino",53.1,27.1,19.9],[31,"2027-04-11","Parma","Como",25.9,26.5,47.7],[31,"2027-04-11","Napoli","Sassuolo",66.3,20.6,13.1],[31,"2027-04-11","Udinese","Monza",58.9,24.9,16.2],[32,"2027-04-18","Fiorentina","Parma",51.0,28.4,20.6],[32,"2027-04-18","Milan","Napoli",38.5,27.6,33.9],[32,"2027-04-18","Monza","Inter",9.0,16.7,74.3],[32,"2027-04-18","Roma","Lazio",53.4,25.1,21.5],[32,"2027-04-18","Atalanta","Udinese",60.4,23.7,16.0],[32,"2027-04-18","Como","Frosinone",73.0,18.5,8.5],[32,"2027-04-18","Bologna","Cagliari",56.0,25.9,18.1],[32,"2027-04-18","Torino","Genoa",45.7,29.7,24.5],[32,"2027-04-18","Venezia","Juventus",15.3,22.4,62.3],[32,"2027-04-18","Sassuolo","Lecce",49.2,29.4,21.4],[33,"2027-04-25","Cagliari","Monza",52.7,27.7,19.6],[33,"2027-04-25","Genoa","Sassuolo",39.2,28.5,32.4],[33,"2027-04-25","Venezia","Torino",27.9,28.5,43.7],[33,"2027-04-25","Frosinone","Roma",11.7,20.4,67.9],[33,"2027-04-25","Inter","Bologna",67.9,20.5,11.6],[33,"2027-04-25","Juventus","Fiorentina",58.1,25.1,16.8],[33,"2027-04-25","Lazio","Como",39.4,28.3,32.2],[33,"2027-04-25","Parma","Atalanta",23.7,24.5,51.8],[33,"2027-04-25","Napoli","Udinese",65.0,21.8,13.2],[33,"2027-04-25","Lecce","Milan",19.6,24.3,56.1],[34,"2027-05-02","Milan","Lazio",51.3,26.4,22.3],[34,"2027-05-02","Monza","Venezia",39.4,30.9,29.7],[34,"2027-05-02","Roma","Napoli",40.9,27.8,31.3],[34,"2027-05-02","Atalanta","Juventus",40.6,27.6,31.9],[34,"2027-05-02","Como","Inter",23.7,25.4,51.0],[34,"2027-05-02","Bologna","Fiorentina",47.5,27.9,24.7],[34,"2027-05-02","Torino","Parma",46.3,29.1,24.5],[34,"2027-05-02","Sassuolo","Frosinone",60.9,24.0,15.0],[34,"2027-05-02","Udinese","Genoa",46.0,29.2,24.8],[34,"2027-05-02","Lecce","Cagliari",38.0,29.7,32.4],[35,"2027-05-09","Fiorentina","Roma",28.8,26.7,44.5],[35,"2027-05-09","Genoa","Cagliari",43.5,29.2,27.3],[35,"2027-05-09","Torino","Bologna",33.1,29.3,37.7],[35,"2027-05-09","Venezia","Como",18.0,23.9,58.1],[35,"2027-05-09","Frosinone","Atalanta",12.7,20.5,66.8],[35,"2027-05-09","Inter","Lecce",76.9,16.2,6.9],[35,"2027-05-09","Lazio","Sassuolo",54.3,26.1,19.6],[35,"2027-05-09","Parma","Milan",23.0,23.9,53.0],[35,"2027-05-09","Napoli","Monza",76.0,16.4,7.6],[35,"2027-05-09","Udinese","Juventus",24.5,25.6,49.9],[36,"2027-05-16","Milan","Roma",41.9,27.2,30.9],[36,"2027-05-16","Monza","Parma",29.5,30.0,40.5],[36,"2027-05-16","Cagliari","Torino",36.4,28.5,35.2],[36,"2027-05-16","Como","Atalanta",40.3,27.5,32.2],[36,"2027-05-16","Bologna","Frosinone",69.5,20.1,10.4],[36,"2027-05-16","Juventus","Inter",28.0,25.1,47.0],[36,"2027-05-16","Lazio","Udinese",52.7,27.2,20.1],[36,"2027-05-16","Sassuolo","Venezia",54.7,25.5,19.8],[36,"2027-05-16","Napoli","Genoa",67.3,21.0,11.7],[36,"2027-05-16","Lecce","Fiorentina",27.9,27.7,44.4],[37,"2027-05-23","Fiorentina","Monza",63.4,22.7,13.8],[37,"2027-05-23","Roma","Como",50.0,26.4,23.5],[37,"2027-05-23","Atalanta","Lecce",67.2,21.1,11.6],[37,"2027-05-23","Genoa","Bologna",29.3,27.2,43.5],[37,"2027-05-23","Torino","Napoli",22.6,23.8,53.5],[37,"2027-05-23","Venezia","Milan",16.5,23.3,60.2],[37,"2027-05-23","Frosinone","Cagliari",26.7,28.6,44.7],[37,"2027-05-23","Inter","Lazio",67.3,20.1,12.6],[37,"2027-05-23","Parma","Juventus",21.0,24.0,55.0],[37,"2027-05-23","Udinese","Sassuolo",43.8,29.5,26.6],[38,"2027-05-30","Milan","Udinese",60.7,22.9,16.4],[38,"2027-05-30","Monza","Torino",25.7,27.8,46.5],[38,"2027-05-30","Cagliari","Roma",20.9,22.9,56.2],[38,"2027-05-30","Como","Genoa",59.9,24.0,16.1],[38,"2027-05-30","Bologna","Parma",55.4,26.4,18.1],[38,"2027-05-30","Juventus","Frosinone",76.1,16.1,7.8],[38,"2027-05-30","Lazio","Fiorentina",48.8,27.8,23.4],[38,"2027-05-30","Sassuolo","Inter",13.9,19.0,67.1],[38,"2027-05-30","Napoli","Atalanta",49.7,26.1,24.2],[38,"2027-05-30","Lecce","Venezia",46.3,28.6,25.1]];
+  var MATCHES = [[1,"2026-08-22","Inter","Monza",83.7,10.3,5.9],[1,"2026-08-22","Udinese","Como",27.1,27.5,45.4],[1,"2026-08-22","Genoa","Napoli",19.0,23.7,57.3],[1,"2026-08-22","Parma","Cagliari",42.7,32.0,25.2],[1,"2026-08-23","Venezia","Lecce",27.4,37.5,35.1],[1,"2026-08-23","Frosinone","Juventus",7.7,20.1,72.2],[1,"2026-08-23","Atalanta","Sassuolo",60.4,24.6,15.0],[1,"2026-08-23","Torino","Milan",24.9,24.7,50.4],[1,"2026-08-24","Bologna","Lazio",41.5,30.0,28.6],[1,"2026-08-24","Roma","Fiorentina",57.2,25.0,17.8],[2,"2026-08-28","Milan","Venezia",76.9,15.2,8.0],[2,"2026-08-29","Fiorentina","Frosinone",76.2,15.3,8.5],[2,"2026-08-29","Monza","Udinese",17.5,27.6,54.9],[2,"2026-08-29","Sassuolo","Torino",42.5,31.1,26.5],[2,"2026-08-29","Juventus","Parma",68.1,21.0,10.8],[2,"2026-08-30","Napoli","Como",48.6,29.4,22.0],[2,"2026-08-30","Cagliari","Inter",11.8,18.4,69.8],[2,"2026-08-30","Lazio","Genoa",53.5,27.7,18.8],[2,"2026-08-31","Lecce","Roma",15.8,22.7,61.5],[2,"2026-08-31","Atalanta","Bologna",50.9,28.2,20.9],[3,"2026-09-04","Genoa","Como",24.3,27.8,47.8],[3,"2026-09-05","Fiorentina","Torino",47.3,29.9,22.8],[3,"2026-09-05","Inter","Napoli",54.4,26.6,19.0],[3,"2026-09-05","Roma","Atalanta",46.7,29.3,24.0],[3,"2026-09-06","Frosinone","Venezia",27.3,32.8,39.9],[3,"2026-09-06","Parma","Monza",61.0,24.6,14.5],[3,"2026-09-06","Bologna","Sassuolo",51.4,27.8,20.8],[3,"2026-09-06","Juventus","Milan",45.7,29.1,25.2],[3,"2026-09-07","Cagliari","Lecce",45.0,31.0,23.9],[3,"2026-09-07","Udinese","Lazio",32.4,29.2,38.4],[4,"2026-09-11","Venezia","Fiorentina",15.8,25.8,58.4],[4,"2026-09-12","Genoa","Frosinone",68.6,20.3,11.1],[4,"2026-09-12","Lazio","Milan",33.9,28.6,37.6],[4,"2026-09-12","Atalanta","Cagliari",63.1,24.6,12.3],[4,"2026-09-13","Torino","Roma",23.2,25.2,51.6],[4,"2026-09-13","Como","Parma",62.2,24.2,13.7],[4,"2026-09-13","Lecce","Monza",59.2,24.5,16.3],[4,"2026-09-13","Napoli","Bologna",56.5,26.4,17.1],[4,"2026-09-13","Sassuolo","Juventus",22.9,23.4,53.7],[4,"2026-09-14","Inter","Udinese",71.3,19.2,9.5],[5,"2026-09-18","Monza","Sassuolo",17.2,26.3,56.5],[5,"2026-09-19","Bologna","Torino",50.0,29.0,21.0],[5,"2026-09-19","Udinese","Cagliari",45.2,30.4,24.4],[5,"2026-09-19","Roma","Inter",29.7,26.0,44.2],[5,"2026-09-19","Venezia","Lazio",14.1,24.5,61.4],[5,"2026-09-20","Fiorentina","Napoli",26.0,27.5,46.4],[5,"2026-09-20","Frosinone","Como",8.3,18.9,72.9],[5,"2026-09-20","Parma","Genoa",42.6,31.1,26.3],[5,"2026-09-20","Juventus","Atalanta",46.2,29.2,24.6],[5,"2026-09-20","Milan","Lecce",67.2,22.0,10.8],[6,"2026-10-11","Atalanta","Venezia",76.8,15.3,7.9],[6,"2026-10-11","Cagliari","Juventus",18.2,22.4,59.4],[6,"2026-10-11","Genoa","Fiorentina",32.0,30.8,37.2],[6,"2026-10-11","Como","Roma",37.0,29.2,33.8],[6,"2026-10-11","Torino","Udinese",41.4,31.0,27.5],[6,"2026-10-11","Inter","Parma",74.5,17.5,8.0],[6,"2026-10-11","Lazio","Monza",75.4,15.9,8.7],[6,"2026-10-11","Sassuolo","Milan",24.9,24.7,50.4],[6,"2026-10-11","Napoli","Frosinone",82.7,11.2,6.1],[6,"2026-10-11","Lecce","Bologna",25.8,27.8,46.3],[7,"2026-10-18","Fiorentina","Como",32.3,28.6,39.1],[7,"2026-10-18","Milan","Atalanta",44.2,29.5,26.3],[7,"2026-10-18","Monza","Cagliari",19.9,30.0,50.1],[7,"2026-10-18","Roma","Genoa",66.6,21.7,11.7],[7,"2026-10-18","Bologna","Inter",20.2,22.0,57.8],[7,"2026-10-18","Venezia","Napoli",9.6,19.7,70.8],[7,"2026-10-18","Frosinone","Sassuolo",13.8,25.5,60.6],[7,"2026-10-18","Juventus","Lazio",53.6,27.5,18.9],[7,"2026-10-18","Parma","Torino",38.4,31.0,30.6],[7,"2026-10-18","Udinese","Lecce",49.1,30.1,20.8],[8,"2026-10-25","Atalanta","Frosinone",81.1,12.2,6.7],[8,"2026-10-25","Cagliari","Bologna",28.6,29.0,42.4],[8,"2026-10-25","Genoa","Venezia",60.6,24.8,14.6],[8,"2026-10-25","Como","Sassuolo",58.1,25.3,16.6],[8,"2026-10-25","Torino","Monza",67.7,20.2,12.2],[8,"2026-10-25","Inter","Fiorentina",67.4,21.2,11.4],[8,"2026-10-25","Lazio","Parma",54.4,28.0,17.6],[8,"2026-10-25","Napoli","Roma",43.8,29.1,27.1],[8,"2026-10-25","Udinese","Milan",25.2,25.3,49.5],[8,"2026-10-25","Lecce","Juventus",16.1,22.0,61.9],[9,"2026-10-28","Fiorentina","Atalanta",30.3,28.0,41.7],[9,"2026-10-28","Milan","Bologna",52.3,26.9,20.8],[9,"2026-10-28","Monza","Napoli",8.5,17.9,73.6],[9,"2026-10-28","Roma","Cagliari",66.8,21.7,11.5],[9,"2026-10-28","Genoa","Juventus",19.3,23.2,57.5],[9,"2026-10-28","Torino","Como",27.1,28.1,44.8],[9,"2026-10-28","Venezia","Inter",7.6,15.8,76.6],[9,"2026-10-28","Frosinone","Lecce",17.2,30.9,51.9],[9,"2026-10-28","Parma","Udinese",37.9,31.3,30.7],[9,"2026-10-28","Sassuolo","Lazio",32.1,29.7,38.2],[10,"2026-11-01","Milan","Inter",27.2,24.2,48.6],[10,"2026-11-01","Atalanta","Parma",64.3,22.8,13.0],[10,"2026-11-01","Como","Venezia",76.1,15.8,8.1],[10,"2026-11-01","Bologna","Monza",74.3,16.7,9.1],[10,"2026-11-01","Frosinone","Torino",13.5,25.8,60.7],[10,"2026-11-01","Juventus","Napoli",42.6,29.3,28.1],[10,"2026-11-01","Lazio","Cagliari",55.6,26.6,17.8],[10,"2026-11-01","Sassuolo","Fiorentina",35.5,30.0,34.4],[10,"2026-11-01","Udinese","Roma",23.7,24.3,52.0],[10,"2026-11-01","Lecce","Genoa",36.9,31.5,31.6],[11,"2026-11-08","Fiorentina","Juventus",27.4,25.0,47.6],[11,"2026-11-08","Monza","Atalanta",9.8,20.7,69.4],[11,"2026-11-08","Roma","Sassuolo",62.9,22.8,14.4],[11,"2026-11-08","Cagliari","Frosinone",69.9,18.4,11.6],[11,"2026-11-08","Genoa","Milan",21.0,24.2,54.8],[11,"2026-11-08","Torino","Lecce",48.7,30.4,21.0],[11,"2026-11-08","Venezia","Udinese",18.8,29.4,51.8],[11,"2026-11-08","Inter","Como",61.1,22.4,16.5],[11,"2026-11-08","Parma","Bologna",28.8,28.8,42.4],[11,"2026-11-08","Napoli","Lazio",55.4,26.3,18.4],[12,"2026-11-22","Milan","Frosinone",81.8,11.8,6.4],[12,"2026-11-22","Monza","Fiorentina",13.9,24.4,61.7],[12,"2026-11-22","Atalanta","Inter",27.4,25.8,46.8],[12,"2026-11-22","Como","Cagliari",62.5,23.6,13.9],[12,"2026-11-22","Bologna","Udinese",49.5,28.8,21.6],[12,"2026-11-22","Juventus","Venezia",78.8,14.0,7.2],[12,"2026-11-22","Lazio","Lecce",59.6,25.5,14.9],[12,"2026-11-22","Parma","Roma",19.4,23.3,57.3],[12,"2026-11-22","Sassuolo","Genoa",45.2,31.3,23.5],[12,"2026-11-22","Napoli","Torino",64.6,22.3,13.1],[13,"2026-11-29","Roma","Monza",79.7,13.4,7.0],[13,"2026-11-29","Cagliari","Milan",20.5,23.6,55.9],[13,"2026-11-29","Como","Juventus",36.7,28.7,34.6],[13,"2026-11-29","Torino","Lazio",31.6,29.5,38.8],[13,"2026-11-29","Venezia","Bologna",13.8,24.1,62.1],[13,"2026-11-29","Frosinone","Parma",14.8,26.4,58.8],[13,"2026-11-29","Inter","Genoa",74.3,17.4,8.2],[13,"2026-11-29","Sassuolo","Napoli",22.5,25.5,52.0],[13,"2026-11-29","Udinese","Fiorentina",36.4,30.1,33.5],[13,"2026-11-29","Lecce","Atalanta",18.6,23.7,57.7],[14,"2026-12-06","Fiorentina","Cagliari",51.4,28.7,19.9],[14,"2026-12-06","Milan","Parma",64.9,22.7,12.5],[14,"2026-12-06","Monza","Como",10.2,21.3,68.6],[14,"2026-12-06","Genoa","Torino",38.3,31.1,30.7],[14,"2026-12-06","Bologna","Roma",30.9,27.4,41.6],[14,"2026-12-06","Venezia","Sassuolo",19.3,30.4,50.3],[14,"2026-12-06","Frosinone","Inter",6.6,14.2,79.1],[14,"2026-12-06","Juventus","Udinese",62.8,23.2,14.0],[14,"2026-12-06","Lazio","Atalanta",34.3,28.8,36.9],[14,"2026-12-06","Napoli","Lecce",69.7,20.3,9.9],[15,"2026-12-13","Atalanta","Genoa",64.2,22.5,13.4],[15,"2026-12-13","Cagliari","Venezia",60.5,24.4,15.1],[15,"2026-12-13","Como","Bologna",48.4,29.2,22.4],[15,"2026-12-13","Inter","Torino",71.8,18.7,9.5],[15,"2026-12-13","Juventus","Monza",79.8,13.4,6.8],[15,"2026-12-13","Lazio","Roma",31.8,28.9,39.3],[15,"2026-12-13","Parma","Fiorentina",31.5,29.8,38.8],[15,"2026-12-13","Napoli","Milan",45.8,28.6,25.6],[15,"2026-12-13","Udinese","Frosinone",74.1,16.2,9.7],[15,"2026-12-13","Lecce","Sassuolo",33.1,30.4,36.5],[16,"2026-12-20","Fiorentina","Bologna",39.4,29.6,31.0],[16,"2026-12-20","Milan","Como",45.6,27.9,26.5],[16,"2026-12-20","Roma","Juventus",42.2,29.6,28.2],[16,"2026-12-20","Atalanta","Napoli",37.9,28.5,33.6],[16,"2026-12-20","Genoa","Udinese",36.8,30.1,33.1],[16,"2026-12-20","Torino","Cagliari",45.6,30.9,23.5],[16,"2026-12-20","Venezia","Monza",43.2,31.1,25.6],[16,"2026-12-20","Frosinone","Lazio",9.6,20.9,69.5],[16,"2026-12-20","Sassuolo","Parma",45.4,30.4,24.1],[16,"2026-12-20","Lecce","Inter",11.3,18.1,70.6],[17,"2027-01-03","Fiorentina","Lazio",37.3,28.7,34.1],[17,"2027-01-03","Monza","Milan",9.4,19.5,71.1],[17,"2027-01-03","Roma","Frosinone",82.6,11.1,6.3],[17,"2027-01-03","Cagliari","Genoa",41.4,31.2,27.3],[17,"2027-01-03","Como","Lecce",65.8,21.8,12.4],[17,"2027-01-03","Bologna","Juventus",30.7,26.6,42.7],[17,"2027-01-03","Torino","Venezia",65.5,21.5,13.0],[17,"2027-01-03","Inter","Sassuolo",70.8,19.5,9.8],[17,"2027-01-03","Parma","Napoli",18.6,22.8,58.5],[17,"2027-01-03","Udinese","Atalanta",26.0,26.5,47.5],[18,"2027-01-06","Milan","Fiorentina",55.2,26.1,18.7],[18,"2027-01-06","Atalanta","Como",44.5,28.9,26.6],[18,"2027-01-06","Genoa","Monza",63.4,22.9,13.8],[18,"2027-01-06","Venezia","Roma",9.6,19.1,71.3],[18,"2027-01-06","Frosinone","Bologna",9.8,20.2,70.0],[18,"2027-01-06","Juventus","Torino",63.2,23.6,13.2],[18,"2027-01-06","Lazio","Inter",21.8,22.7,55.5],[18,"2027-01-06","Sassuolo","Udinese",41.3,29.5,29.2],[18,"2027-01-06","Napoli","Cagliari",67.6,21.1,11.2],[18,"2027-01-06","Lecce","Parma",36.9,31.2,31.9],[19,"2027-01-10","Fiorentina","Lecce",54.4,28.2,17.4],[19,"2027-01-10","Monza","Frosinone",50.4,29.2,20.4],[19,"2027-01-10","Roma","Milan",44.8,29.1,26.2],[19,"2027-01-10","Cagliari","Sassuolo",36.8,30.1,33.0],[19,"2027-01-10","Como","Lazio",47.8,28.8,23.4],[19,"2027-01-10","Bologna","Genoa",53.2,28.9,17.9],[19,"2027-01-10","Torino","Atalanta",25.5,26.6,47.9],[19,"2027-01-10","Inter","Juventus",53.5,26.8,19.8],[19,"2027-01-10","Parma","Venezia",60.9,24.1,15.0],[19,"2027-01-10","Udinese","Napoli",23.1,24.0,52.9],[20,"2027-01-17","Milan","Torino",60.9,24.3,14.7],[20,"2027-01-17","Atalanta","Roma",38.9,28.4,32.7],[20,"2027-01-17","Cagliari","Como",24.1,26.2,49.7],[20,"2027-01-17","Venezia","Frosinone",53.1,28.3,18.6],[20,"2027-01-17","Juventus","Genoa",67.1,21.3,11.5],[20,"2027-01-17","Lazio","Bologna",43.4,29.2,27.4],[20,"2027-01-17","Parma","Inter",12.8,18.9,68.3],[20,"2027-01-17","Sassuolo","Monza",68.3,19.7,12.0],[20,"2027-01-17","Napoli","Fiorentina",58.0,24.3,17.8],[20,"2027-01-17","Lecce","Udinese",32.6,31.0,36.4],[21,"2027-01-24","Fiorentina","Sassuolo",47.3,29.5,23.2],[21,"2027-01-24","Monza","Lazio",12.3,22.7,65.0],[21,"2027-01-24","Roma","Udinese",62.0,23.4,14.6],[21,"2027-01-24","Genoa","Parma",41.6,30.3,28.0],[21,"2027-01-24","Como","Napoli",36.1,28.8,35.1],[21,"2027-01-24","Bologna","Atalanta",33.5,28.7,37.8],[21,"2027-01-24","Frosinone","Milan",7.8,17.7,74.5],[21,"2027-01-24","Inter","Venezia",82.4,11.5,6.1],[21,"2027-01-24","Juventus","Cagliari",67.2,21.7,11.1],[21,"2027-01-24","Lecce","Torino",32.4,30.3,37.2],[22,"2027-01-31","Milan","Juventus",40.1,29.3,30.6],[22,"2027-01-31","Monza","Roma",8.8,18.8,72.4],[22,"2027-01-31","Atalanta","Fiorentina",54.3,26.2,19.5],[22,"2027-01-31","Cagliari","Parma",40.6,30.1,29.3],[22,"2027-01-31","Genoa","Lecce",45.9,30.9,23.3],[22,"2027-01-31","Torino","Frosinone",73.8,16.3,9.9],[22,"2027-01-31","Lazio","Venezia",74.0,16.5,9.5],[22,"2027-01-31","Sassuolo","Como",26.9,27.1,46.0],[22,"2027-01-31","Napoli","Inter",31.7,26.1,42.1],[22,"2027-01-31","Udinese","Bologna",34.0,30.1,35.9],[23,"2027-02-07","Fiorentina","Udinese",46.7,29.3,24.0],[23,"2027-02-07","Roma","Torino",62.6,23.3,14.1],[23,"2027-02-07","Atalanta","Lazio",49.5,28.1,22.4],[23,"2027-02-07","Como","Monza",77.0,15.2,7.8],[23,"2027-02-07","Bologna","Milan",33.1,28.4,38.5],[23,"2027-02-07","Venezia","Genoa",21.0,29.8,49.2],[23,"2027-02-07","Inter","Cagliari",74.5,17.1,8.4],[23,"2027-02-07","Juventus","Sassuolo",63.1,23.3,13.6],[23,"2027-02-07","Parma","Frosinone",70.0,19.1,10.9],[23,"2027-02-07","Lecce","Napoli",15.9,21.8,62.3],[24,"2027-02-14","Monza","Lecce",22.7,30.7,46.5],[24,"2027-02-14","Roma","Parma",65.7,21.8,12.5],[24,"2027-02-14","Cagliari","Lazio",28.2,28.6,43.2],[24,"2027-02-14","Genoa","Atalanta",23.0,25.0,51.9],[24,"2027-02-14","Bologna","Como",34.8,28.5,36.7],[24,"2027-02-14","Torino","Sassuolo",40.2,30.1,29.7],[24,"2027-02-14","Frosinone","Fiorentina",10.8,22.5,66.7],[24,"2027-02-14","Inter","Milan",55.9,26.1,18.0],[24,"2027-02-14","Napoli","Juventus",42.0,28.4,29.7],[24,"2027-02-14","Udinese","Venezia",66.8,20.5,12.7],[25,"2027-02-21","Fiorentina","Inter",18.7,21.6,59.6],[25,"2027-02-21","Milan","Genoa",64.9,22.4,12.7],[25,"2027-02-21","Atalanta","Monza",78.0,14.4,7.6],[25,"2027-02-21","Como","Torino",57.9,25.0,17.1],[25,"2027-02-21","Venezia","Cagliari",21.6,29.9,48.5],[25,"2027-02-21","Juventus","Bologna",55.6,25.8,18.5],[25,"2027-02-21","Lazio","Napoli",30.4,27.0,42.6],[25,"2027-02-21","Sassuolo","Roma",24.2,24.7,51.1],[25,"2027-02-21","Udinese","Parma",45.1,29.7,25.2],[25,"2027-02-21","Lecce","Frosinone",66.1,21.1,12.8],[26,"2027-02-28","Monza","Juventus",8.8,18.7,72.5],[26,"2027-02-28","Roma","Venezia",79.2,13.6,7.2],[26,"2027-02-28","Cagliari","Udinese",36.8,31.0,32.2],[26,"2027-02-28","Genoa","Lazio",28.6,29.2,42.2],[26,"2027-02-28","Como","Milan",39.1,29.8,31.1],[26,"2027-02-28","Bologna","Lecce",56.6,27.1,16.3],[26,"2027-02-28","Torino","Fiorentina",36.3,30.4,33.3],[26,"2027-02-28","Frosinone","Napoli",7.3,16.5,76.2],[26,"2027-02-28","Inter","Atalanta",57.7,24.2,18.1],[26,"2027-02-28","Parma","Sassuolo",37.5,30.5,32.1],[27,"2027-03-07","Fiorentina","Venezia",71.4,18.2,10.4],[27,"2027-03-07","Milan","Cagliari",65.0,22.6,12.3],[27,"2027-03-07","Monza","Genoa",18.4,28.2,53.4],[27,"2027-03-07","Atalanta","Torino",59.7,24.4,15.9],[27,"2027-03-07","Juventus","Roma",43.6,29.0,27.5],[27,"2027-03-07","Lazio","Frosinone",78.9,13.2,7.8],[27,"2027-03-07","Sassuolo","Bologna",33.8,29.8,36.4],[27,"2027-03-07","Napoli","Parma",66.7,21.9,11.4],[27,"2027-03-07","Udinese","Inter",15.1,20.1,64.8],[27,"2027-03-07","Lecce","Como",19.7,24.6,55.7],[28,"2027-03-14","Milan","Sassuolo",60.4,24.0,15.6],[28,"2027-03-14","Cagliari","Fiorentina",30.8,29.7,39.4],[28,"2027-03-14","Genoa","Roma",19.5,23.0,57.5],[28,"2027-03-14","Como","Udinese",57.2,25.0,17.7],[28,"2027-03-14","Bologna","Napoli",28.8,26.7,44.4],[28,"2027-03-14","Torino","Inter",14.7,19.9,65.4],[28,"2027-03-14","Venezia","Atalanta",10.4,20.5,69.1],[28,"2027-03-14","Frosinone","Monza",32.1,32.5,35.4],[28,"2027-03-14","Lazio","Juventus",31.1,26.0,42.9],[28,"2027-03-14","Parma","Lecce",45.7,31.0,23.3],[29,"2027-03-21","Fiorentina","Genoa",50.2,28.9,20.9],[29,"2027-03-21","Monza","Bologna",12.4,23.5,64.1],[29,"2027-03-21","Roma","Lecce",68.7,20.7,10.6],[29,"2027-03-21","Atalanta","Milan",40.6,28.0,31.3],[29,"2027-03-21","Inter","Frosinone",84.6,9.6,5.8],[29,"2027-03-21","Juventus","Como",47.9,28.6,23.6],[29,"2027-03-21","Parma","Lazio",28.3,28.2,43.4],[29,"2027-03-21","Sassuolo","Cagliari",45.5,29.8,24.7],[29,"2027-03-21","Napoli","Venezia",79.5,13.5,7.0],[29,"2027-03-21","Udinese","Torino",42.4,29.7,27.9],[30,"2027-04-04","Milan","Monza",79.2,13.6,7.2],[30,"2027-04-04","Roma","Bologna",54.3,26.2,19.5],[30,"2027-04-04","Cagliari","Napoli",20.0,23.4,56.6],[30,"2027-04-04","Genoa","Inter",13.1,19.1,67.8],[30,"2027-04-04","Como","Fiorentina",50.9,28.0,21.0],[30,"2027-04-04","Torino","Juventus",21.3,24.4,54.3],[30,"2027-04-04","Venezia","Parma",20.8,30.2,48.9],[30,"2027-04-04","Frosinone","Udinese",12.8,24.8,62.4],[30,"2027-04-04","Sassuolo","Atalanta",25.8,26.0,48.3],[30,"2027-04-04","Lecce","Lazio",24.9,26.7,48.4],[31,"2027-04-11","Fiorentina","Milan",29.9,27.1,43.0],[31,"2027-04-11","Cagliari","Atalanta",22.3,24.0,53.7],[31,"2027-04-11","Bologna","Venezia",73.7,16.7,9.5],[31,"2027-04-11","Frosinone","Genoa",14.2,26.1,59.6],[31,"2027-04-11","Inter","Roma",53.4,26.2,20.4],[31,"2027-04-11","Juventus","Lecce",69.6,20.4,10.0],[31,"2027-04-11","Lazio","Torino",51.3,28.5,20.2],[31,"2027-04-11","Parma","Como",24.3,26.6,49.1],[31,"2027-04-11","Napoli","Sassuolo",63.3,22.1,14.6],[31,"2027-04-11","Udinese","Monza",69.1,19.2,11.6],[32,"2027-04-18","Fiorentina","Parma",50.5,29.4,20.2],[32,"2027-04-18","Milan","Napoli",40.1,28.6,31.3],[32,"2027-04-18","Monza","Inter",7.3,15.0,77.7],[32,"2027-04-18","Roma","Lazio",52.9,26.4,20.8],[32,"2027-04-18","Atalanta","Udinese",60.0,23.8,16.1],[32,"2027-04-18","Como","Frosinone",80.1,13.2,6.7],[32,"2027-04-18","Bologna","Cagliari",53.1,27.7,19.2],[32,"2027-04-18","Torino","Genoa",44.7,30.6,24.7],[32,"2027-04-18","Venezia","Juventus",9.4,18.8,71.8],[32,"2027-04-18","Sassuolo","Lecce",48.6,30.4,21.1],[33,"2027-04-25","Cagliari","Monza",62.8,23.2,13.9],[33,"2027-04-25","Genoa","Sassuolo",36.9,29.5,33.7],[33,"2027-04-25","Venezia","Torino",17.5,27.4,55.1],[33,"2027-04-25","Frosinone","Roma",7.4,17.0,75.6],[33,"2027-04-25","Inter","Bologna",65.2,22.0,12.8],[33,"2027-04-25","Juventus","Fiorentina",57.9,25.6,16.4],[33,"2027-04-25","Lazio","Como",36.5,29.1,34.4],[33,"2027-04-25","Parma","Atalanta",22.8,24.2,53.0],[33,"2027-04-25","Napoli","Udinese",63.0,22.7,14.3],[33,"2027-04-25","Lecce","Milan",18.0,22.9,59.1],[34,"2027-05-02","Milan","Lazio",51.6,27.1,21.3],[34,"2027-05-02","Monza","Venezia",38.9,32.0,29.1],[34,"2027-05-02","Roma","Napoli",42.1,28.9,29.0],[34,"2027-05-02","Atalanta","Juventus",38.3,28.5,33.2],[34,"2027-05-02","Como","Inter",26.9,25.8,47.4],[34,"2027-05-02","Bologna","Fiorentina",44.4,29.2,26.4],[34,"2027-05-02","Torino","Parma",45.1,30.4,24.5],[34,"2027-05-02","Sassuolo","Frosinone",73.5,16.4,10.1],[34,"2027-05-02","Udinese","Genoa",46.0,29.9,24.2],[34,"2027-05-02","Lecce","Cagliari",37.5,30.8,31.8],[35,"2027-05-09","Fiorentina","Roma",28.4,26.7,44.9],[35,"2027-05-09","Genoa","Cagliari",42.2,30.4,27.4],[35,"2027-05-09","Torino","Bologna",33.4,30.3,36.3],[35,"2027-05-09","Venezia","Como",10.7,20.6,68.7],[35,"2027-05-09","Frosinone","Atalanta",7.8,17.2,74.9],[35,"2027-05-09","Inter","Lecce",75.5,16.6,7.9],[35,"2027-05-09","Lazio","Sassuolo",51.0,27.7,21.3],[35,"2027-05-09","Parma","Milan",20.6,23.0,56.5],[35,"2027-05-09","Napoli","Monza",80.1,13.3,6.6],[35,"2027-05-09","Udinese","Juventus",23.9,24.7,51.5],[36,"2027-05-16","Milan","Roma",40.6,28.5,31.0],[36,"2027-05-16","Monza","Parma",18.8,28.4,52.8],[36,"2027-05-16","Cagliari","Torino",37.1,29.1,33.8],[36,"2027-05-16","Como","Atalanta",40.4,28.3,31.3],[36,"2027-05-16","Bologna","Frosinone",77.5,14.4,8.1],[36,"2027-05-16","Juventus","Inter",32.2,26.2,41.6],[36,"2027-05-16","Lazio","Udinese",50.1,28.3,21.6],[36,"2027-05-16","Sassuolo","Venezia",66.8,20.2,13.0],[36,"2027-05-16","Napoli","Genoa",66.6,21.4,12.0],[36,"2027-05-16","Lecce","Fiorentina",28.2,27.9,43.9],[37,"2027-05-23","Fiorentina","Monza",72.3,17.8,9.9],[37,"2027-05-23","Roma","Como",47.6,27.9,24.5],[37,"2027-05-23","Atalanta","Lecce",67.0,21.2,11.8],[37,"2027-05-23","Genoa","Bologna",29.9,27.8,42.3],[37,"2027-05-23","Torino","Napoli",22.9,23.3,53.8],[37,"2027-05-23","Venezia","Milan",10.0,19.5,70.4],[37,"2027-05-23","Frosinone","Cagliari",14.6,26.2,59.2],[37,"2027-05-23","Inter","Lazio",64.4,21.2,14.5],[37,"2027-05-23","Parma","Juventus",18.6,21.8,59.7],[37,"2027-05-23","Udinese","Sassuolo",42.1,29.9,28.0],[38,"2027-05-30","Milan","Udinese",61.0,23.2,15.7],[38,"2027-05-30","Monza","Torino",16.6,26.1,57.3],[38,"2027-05-30","Cagliari","Roma",19.4,22.1,58.5],[38,"2027-05-30","Como","Genoa",61.2,23.9,14.8],[38,"2027-05-30","Bologna","Parma",53.1,28.1,18.9],[38,"2027-05-30","Juventus","Frosinone",82.4,11.4,6.2],[38,"2027-05-30","Lazio","Fiorentina",46.1,29.0,24.8],[38,"2027-05-30","Sassuolo","Inter",15.4,19.2,65.4],[38,"2027-05-30","Napoli","Atalanta",46.3,27.8,25.8],[38,"2027-05-30","Lecce","Venezia",58.1,25.4,16.5]];
   var MAX_MD = 38;
 
   var BIG_TEAMS = new Set(TEAMS.filter(function (t) { return t[0] <= 6; }).map(function (t) { return t[1]; }));
@@ -828,6 +1082,793 @@
 
   mdSelect.value = "1";
   render();
+})();
+
+(function () {
+  "use strict";
+
+  // ---- Embedded data (build-time constant; no network calls) ----
+  // HISTORY: [matchday, team, punti_medi, posizione_media, GF_medi, GS_medi, DR_medio, tipo]
+  // tipo: "reale" (giornata gia' giocata, dato deterministico) o "simulata" (proiezione Monte Carlo)
+  var HISTORY = [[1,"Atalanta",2.1,6.3,2.6,1.5,1.1,"simulata"],[1,"Bologna",1.6,9.1,1.8,1.6,0.2,"simulata"],[1,"Cagliari",1.1,11.0,1.4,1.7,-0.3,"simulata"],[1,"Como",1.7,8.9,1.8,1.5,0.3,"simulata"],[1,"Fiorentina",0.8,12.6,1.3,2.0,-0.7,"simulata"],[1,"Frosinone",0.4,14.0,1.1,2.1,-1.0,"simulata"],[1,"Genoa",0.8,12.6,1.2,1.8,-0.6,"simulata"],[1,"Inter",2.6,3.9,3.2,0.9,2.3,"simulata"],[1,"Juventus",2.4,6.7,2.1,1.1,1.0,"simulata"],[1,"Lazio",1.2,11.2,1.6,1.8,-0.2,"simulata"],[1,"Lecce",1.4,10.1,1.5,1.4,0.1,"simulata"],[1,"Milan",1.7,9.2,1.8,1.4,0.3,"simulata"],[1,"Monza",0.3,17.1,0.9,3.2,-2.3,"simulata"],[1,"Napoli",2.0,8.5,1.8,1.2,0.6,"simulata"],[1,"Parma",1.6,9.8,1.7,1.4,0.3,"simulata"],[1,"Roma",2.0,8.4,2.0,1.3,0.7,"simulata"],[1,"Sassuolo",0.7,14.2,1.5,2.6,-1.1,"simulata"],[1,"Torino",1.0,12.3,1.4,1.8,-0.3,"simulata"],[1,"Udinese",1.1,12.0,1.5,1.8,-0.3,"simulata"],[1,"Venezia",1.2,11.8,1.4,1.5,-0.1,"simulata"],[2,"Atalanta",3.9,6.8,4.7,3.0,1.7,"simulata"],[2,"Bologna",2.5,11.2,3.3,3.7,-0.4,"simulata"],[2,"Cagliari",1.6,13.9,2.6,4.2,-1.6,"simulata"],[2,"Como",2.6,10.7,3.2,3.5,-0.2,"simulata"],[2,"Fiorentina",3.2,8.7,3.9,3.1,0.7,"simulata"],[2,"Frosinone",0.8,16.2,2.3,4.7,-2.4,"simulata"],[2,"Genoa",1.6,13.7,2.5,3.8,-1.3,"simulata"],[2,"Inter",4.9,3.9,5.7,2.1,3.6,"simulata"],[2,"Juventus",4.6,5.3,4.3,2.1,2.2,"simulata"],[2,"Lazio",3.0,9.4,3.6,3.1,0.6,"simulata"],[2,"Lecce",2.1,12.2,2.6,3.1,-0.6,"simulata"],[2,"Milan",4.2,6.1,4.5,2.4,2.1,"simulata"],[2,"Monza",1.1,16.0,2.3,5.1,-2.8,"simulata"],[2,"Napoli",3.7,7.8,3.8,2.7,1.1,"simulata"],[2,"Parma",2.2,12.4,2.7,3.6,-0.9,"simulata"],[2,"Roma",4.1,7.0,3.8,2.4,1.3,"simulata"],[2,"Sassuolo",2.3,12.1,3.2,4.2,-0.9,"simulata"],[2,"Torino",2.1,12.1,3.0,3.5,-0.5,"simulata"],[2,"Udinese",3.0,9.9,3.5,3.2,0.3,"simulata"],[2,"Venezia",1.6,14.5,2.3,4.2,-1.8,"simulata"],[3,"Atalanta",4.9,8.2,6.3,4.8,1.4,"simulata"],[3,"Bologna",4.3,10.0,5.4,5.2,0.2,"simulata"],[3,"Cagliari",3.3,12.6,4.3,5.6,-1.3,"simulata"],[3,"Como",4.3,10.0,5.0,4.9,0.1,"simulata"],[3,"Fiorentina",4.9,8.3,5.7,4.5,1.1,"simulata"],[3,"Frosinone",2.0,15.6,4.0,6.5,-2.5,"simulata"],[3,"Genoa",2.7,13.9,3.9,5.6,-1.7,"simulata"],[3,"Inter",6.8,4.1,7.8,3.6,4.2,"simulata"],[3,"Juventus",6.3,5.5,6.0,3.6,2.4,"simulata"],[3,"Lazio",4.5,9.4,5.4,4.7,0.7,"simulata"],[3,"Lecce",3.1,12.8,3.9,4.8,-0.9,"simulata"],[3,"Milan",5.2,7.4,5.9,4.2,1.8,"simulata"],[3,"Monza",1.8,16.3,3.5,6.9,-3.4,"simulata"],[3,"Napoli",4.5,9.4,5.2,4.8,0.4,"simulata"],[3,"Parma",4.2,10.5,4.5,4.8,-0.3,"simulata"],[3,"Roma",5.7,6.8,5.6,4.0,1.6,"simulata"],[3,"Sassuolo",3.2,12.9,4.8,6.3,-1.5,"simulata"],[3,"Torino",3.1,12.8,4.4,5.3,-0.9,"simulata"],[3,"Udinese",4.2,10.2,5.1,5.0,0.2,"simulata"],[3,"Venezia",3.1,13.3,4.2,5.9,-1.7,"simulata"],[4,"Atalanta",7.0,7.0,8.9,6.1,2.8,"simulata"],[4,"Bologna",5.0,11.3,6.8,7.4,-0.6,"simulata"],[4,"Cagliari",3.9,13.9,5.6,8.1,-2.6,"simulata"],[4,"Como",6.4,8.6,7.1,6.0,1.1,"simulata"],[4,"Fiorentina",7.0,7.4,7.6,5.9,1.7,"simulata"],[4,"Frosinone",2.5,16.3,5.1,8.5,-3.3,"simulata"],[4,"Genoa",4.9,11.6,5.9,6.8,-0.8,"simulata"],[4,"Inter",9.1,3.6,10.6,4.7,5.9,"simulata"],[4,"Juventus",8.1,5.6,7.9,5.1,2.8,"simulata"],[4,"Lazio",5.8,9.7,7.1,6.5,0.6,"simulata"],[4,"Lecce",5.1,11.2,5.7,6.0,-0.3,"simulata"],[4,"Milan",6.7,7.9,7.8,5.9,1.9,"simulata"],[4,"Monza",2.5,16.4,4.7,8.7,-4.0,"simulata"],[4,"Napoli",6.5,8.3,7.4,6.1,1.3,"simulata"],[4,"Parma",4.9,11.9,5.7,6.9,-1.3,"simulata"],[4,"Roma",7.5,6.7,7.3,5.3,2.0,"simulata"],[4,"Sassuolo",4.2,13.2,6.3,8.2,-1.9,"simulata"],[4,"Torino",4.1,13.2,5.7,7.0,-1.3,"simulata"],[4,"Udinese",4.7,12.2,6.3,7.8,-1.5,"simulata"],[4,"Venezia",3.8,14.0,5.5,7.8,-2.3,"simulata"],[5,"Atalanta",8.0,8.0,10.3,7.9,2.4,"simulata"],[5,"Bologna",6.8,10.6,8.5,8.7,-0.2,"simulata"],[5,"Cagliari",4.9,14.0,7.1,10.1,-3.0,"simulata"],[5,"Como",8.8,7.1,9.2,7.3,2.0,"simulata"],[5,"Fiorentina",8.0,8.4,9.2,7.7,1.4,"simulata"],[5,"Frosinone",2.9,17.0,6.4,10.7,-4.2,"simulata"],[5,"Genoa",6.0,12.0,7.3,8.3,-1.1,"simulata"],[5,"Inter",10.7,4.1,12.4,6.4,6.1,"simulata"],[5,"Juventus",9.8,5.7,9.7,6.6,3.1,"simulata"],[5,"Lazio",7.9,8.6,9.1,7.8,1.3,"simulata"],[5,"Lecce",5.7,12.7,6.7,8.3,-1.6,"simulata"],[5,"Milan",8.9,6.8,10.1,6.9,3.2,"simulata"],[5,"Monza",3.3,16.6,6.3,10.8,-4.6,"simulata"],[5,"Napoli",8.2,8.1,9.2,7.6,1.6,"simulata"],[5,"Parma",6.4,11.4,7.2,8.3,-1.0,"simulata"],[5,"Roma",8.7,7.4,9.0,7.1,1.8,"simulata"],[5,"Sassuolo",6.1,11.9,8.5,9.8,-1.4,"simulata"],[5,"Torino",5.0,13.6,7.0,8.7,-1.8,"simulata"],[5,"Udinese",6.4,11.5,8.2,9.3,-1.1,"simulata"],[5,"Venezia",4.5,14.7,6.8,9.8,-3.0,"simulata"],[6,"Atalanta",10.5,6.8,13.1,8.9,4.2,"simulata"],[6,"Bologna",8.5,10.1,10.1,10.0,0.1,"simulata"],[6,"Cagliari",5.7,14.5,8.3,12.0,-3.7,"simulata"],[6,"Como",10.2,7.5,10.9,8.9,2.0,"simulata"],[6,"Fiorentina",9.4,8.6,10.8,9.3,1.5,"simulata"],[6,"Frosinone",3.2,17.6,7.4,13.5,-6.1,"simulata"],[6,"Genoa",7.3,11.9,8.8,10.0,-1.1,"simulata"],[6,"Inter",13.1,3.6,15.3,7.4,7.9,"simulata"],[6,"Juventus",11.8,5.5,11.6,7.8,3.8,"simulata"],[6,"Lazio",10.3,7.3,11.5,8.8,2.7,"simulata"],[6,"Lecce",6.7,12.9,8.0,10.0,-2.0,"simulata"],[6,"Milan",10.7,6.8,12.2,8.6,3.6,"simulata"],[6,"Monza",3.7,17.0,7.3,13.3,-6.0,"simulata"],[6,"Napoli",10.7,6.6,12.1,8.6,3.5,"simulata"],[6,"Parma",6.9,12.9,8.3,11.1,-2.9,"simulata"],[6,"Roma",10.0,7.9,10.6,8.8,1.8,"simulata"],[6,"Sassuolo",7.1,12.2,10.2,11.9,-1.7,"simulata"],[6,"Torino",6.6,12.9,8.6,10.2,-1.6,"simulata"],[6,"Udinese",7.5,11.7,9.7,10.9,-1.3,"simulata"],[6,"Venezia",4.9,15.6,7.8,12.6,-4.7,"simulata"],[7,"Atalanta",11.6,7.5,14.8,10.9,3.9,"simulata"],[7,"Bologna",9.3,10.8,11.6,12.0,-0.4,"simulata"],[7,"Cagliari",7.5,13.6,10.2,13.5,-3.3,"simulata"],[7,"Como",11.7,7.7,12.7,10.6,2.1,"simulata"],[7,"Fiorentina",10.7,8.9,12.5,11.1,1.4,"simulata"],[7,"Frosinone",3.9,17.8,9.1,15.9,-6.8,"simulata"],[7,"Genoa",7.9,12.9,9.9,12.2,-2.3,"simulata"],[7,"Inter",15.0,3.6,17.3,8.9,8.4,"simulata"],[7,"Juventus",13.7,5.3,13.5,9.1,4.4,"simulata"],[7,"Lazio",11.1,8.3,12.8,10.7,2.1,"simulata"],[7,"Lecce",7.6,13.3,9.3,11.7,-2.4,"simulata"],[7,"Milan",12.3,6.7,14.2,10.3,3.8,"simulata"],[7,"Monza",4.6,17.0,8.8,15.2,-6.4,"simulata"],[7,"Napoli",13.1,5.8,14.2,9.7,4.6,"simulata"],[7,"Parma",8.3,12.6,9.8,12.5,-2.8,"simulata"],[7,"Roma",12.2,7.0,12.8,9.9,2.9,"simulata"],[7,"Sassuolo",9.2,11.1,12.5,13.6,-1.1,"simulata"],[7,"Torino",7.8,12.9,10.0,11.7,-1.6,"simulata"],[7,"Udinese",9.3,11.0,11.4,12.2,-0.8,"simulata"],[7,"Venezia",5.4,16.3,8.9,14.7,-5.8,"simulata"],[8,"Atalanta",14.1,6.3,17.7,12.0,5.7,"simulata"],[8,"Bologna",10.9,10.5,13.4,13.6,-0.2,"simulata"],[8,"Cagliari",8.6,13.6,11.8,15.2,-3.5,"simulata"],[8,"Como",13.7,7.2,15.0,12.0,3.0,"simulata"],[8,"Fiorentina",11.2,10.2,13.7,13.7,0.1,"simulata"],[8,"Frosinone",4.2,18.2,10.2,18.8,-8.6,"simulata"],[8,"Genoa",10.0,11.9,11.7,13.3,-1.5,"simulata"],[8,"Inter",17.2,3.4,19.9,10.2,9.8,"simulata"],[8,"Juventus",15.7,5.0,15.3,10.2,5.1,"simulata"],[8,"Lazio",13.0,7.8,14.8,12.0,2.9,"simulata"],[8,"Lecce",8.4,13.9,10.3,13.5,-3.1,"simulata"],[8,"Milan",14.0,6.7,16.1,11.9,4.2,"simulata"],[8,"Monza",5.2,17.2,9.8,17.1,-7.3,"simulata"],[8,"Napoli",14.7,6.0,15.9,11.1,4.8,"simulata"],[8,"Parma",9.1,13.1,11.0,14.6,-3.5,"simulata"],[8,"Roma",13.3,7.6,14.2,11.6,2.6,"simulata"],[8,"Sassuolo",10.0,11.8,14.0,15.9,-2.0,"simulata"],[8,"Torino",10.1,11.6,12.0,12.7,-0.8,"simulata"],[8,"Udinese",10.3,11.4,13.0,14.1,-1.1,"simulata"],[8,"Venezia",6.0,16.5,10.0,16.6,-6.6,"simulata"],[9,"Atalanta",15.6,6.6,19.6,13.7,5.9,"simulata"],[9,"Bologna",11.8,11.1,14.8,15.7,-0.8,"simulata"],[9,"Cagliari",9.1,14.2,12.9,17.6,-4.8,"simulata"],[9,"Como",15.3,7.2,16.7,13.4,3.2,"simulata"],[9,"Fiorentina",12.4,10.4,15.5,15.5,-0.1,"simulata"],[9,"Frosinone",5.0,18.0,11.6,20.7,-9.1,"simulata"],[9,"Genoa",10.8,12.4,12.9,15.0,-2.1,"simulata"],[9,"Inter",19.7,3.1,22.5,11.2,11.3,"simulata"],[9,"Juventus",17.7,4.9,17.0,11.4,5.6,"simulata"],[9,"Lazio",14.5,7.9,16.7,13.7,3.0,"simulata"],[9,"Lecce",10.2,13.1,12.3,14.9,-2.7,"simulata"],[9,"Milan",15.9,6.5,18.2,13.4,4.8,"simulata"],[9,"Monza",5.6,17.5,10.9,19.2,-8.3,"simulata"],[9,"Napoli",17.1,5.3,18.1,12.2,5.9,"simulata"],[9,"Parma",10.6,12.7,12.7,16.1,-3.4,"simulata"],[9,"Roma",15.5,6.9,16.6,12.7,3.9,"simulata"],[9,"Sassuolo",11.2,11.8,15.7,17.8,-2.1,"simulata"],[9,"Torino",11.1,11.8,13.4,14.4,-1.0,"simulata"],[9,"Udinese",11.5,11.5,14.5,15.7,-1.2,"simulata"],[9,"Venezia",6.4,17.0,11.1,19.1,-8.1,"simulata"],[10,"Atalanta",17.8,6.1,22.0,14.9,7.1,"simulata"],[10,"Bologna",14.2,10.0,17.1,16.7,0.4,"simulata"],[10,"Cagliari",10.0,14.6,14.2,20.0,-5.7,"simulata"],[10,"Como",17.7,6.4,19.2,14.4,4.8,"simulata"],[10,"Fiorentina",13.8,10.5,17.3,17.4,-0.1,"simulata"],[10,"Frosinone",5.7,18.0,13.0,22.7,-9.7,"simulata"],[10,"Genoa",12.0,12.4,14.3,16.4,-2.2,"simulata"],[10,"Inter",21.4,3.2,24.5,12.9,11.6,"simulata"],[10,"Juventus",19.3,5.2,18.7,12.8,5.8,"simulata"],[10,"Lazio",16.5,7.6,19.0,15.1,4.0,"simulata"],[10,"Lecce",11.6,12.9,13.7,16.3,-2.6,"simulata"],[10,"Milan",16.9,7.1,19.9,15.4,4.5,"simulata"],[10,"Monza",6.1,17.8,12.0,21.5,-9.6,"simulata"],[10,"Napoli",18.2,5.8,19.5,13.8,5.7,"simulata"],[10,"Parma",11.2,13.4,13.9,18.5,-4.6,"simulata"],[10,"Roma",17.3,6.8,18.5,14.2,4.4,"simulata"],[10,"Sassuolo",12.6,11.8,17.6,19.6,-2.1,"simulata"],[10,"Torino",13.2,11.1,15.4,15.7,-0.4,"simulata"],[10,"Udinese",12.5,11.9,16.0,17.6,-1.7,"simulata"],[10,"Venezia",6.8,17.4,12.1,21.7,-9.6,"simulata"],[11,"Atalanta",20.1,5.5,24.1,16.2,8.0,"simulata"],[11,"Bologna",15.8,9.9,18.8,18.2,0.6,"simulata"],[11,"Cagliari",12.2,13.6,16.4,21.3,-5.0,"simulata"],[11,"Como",18.5,7.2,20.6,16.8,3.8,"simulata"],[11,"Fiorentina",14.8,10.8,18.8,19.2,-0.4,"simulata"],[11,"Frosinone",6.3,18.2,14.3,24.8,-10.5,"simulata"],[11,"Genoa",12.8,12.8,15.6,18.2,-2.7,"simulata"],[11,"Inter",23.5,3.1,26.9,14.3,12.6,"simulata"],[11,"Juventus",20.9,5.2,20.4,14.3,6.1,"simulata"],[11,"Lazio",17.3,8.3,20.4,17.1,3.3,"simulata"],[11,"Lecce",12.6,13.1,14.8,17.9,-3.1,"simulata"],[11,"Milan",18.8,6.8,21.7,16.8,5.0,"simulata"],[11,"Monza",6.5,18.0,13.2,23.7,-10.5,"simulata"],[11,"Napoli",20.1,5.6,21.5,15.2,6.4,"simulata"],[11,"Parma",12.4,13.4,15.3,20.1,-4.8,"simulata"],[11,"Roma",19.5,6.3,21.0,15.5,5.5,"simulata"],[11,"Sassuolo",13.2,12.4,18.9,22.1,-3.2,"simulata"],[11,"Torino",15.0,10.7,17.0,16.9,0.1,"simulata"],[11,"Udinese",14.3,11.4,17.8,19.0,-1.2,"simulata"],[11,"Venezia",7.7,17.4,13.4,23.5,-10.1,"simulata"],[12,"Atalanta",21.2,6.2,25.9,18.2,7.7,"simulata"],[12,"Bologna",17.5,9.7,20.7,19.7,1.0,"simulata"],[12,"Cagliari",12.9,14.0,17.6,23.6,-6.0,"simulata"],[12,"Como",20.6,6.9,22.9,18.1,4.8,"simulata"],[12,"Fiorentina",16.9,10.2,20.7,20.5,0.3,"simulata"],[12,"Frosinone",6.6,18.4,15.4,27.7,-12.4,"simulata"],[12,"Genoa",13.9,13.0,17.1,20.0,-3.0,"simulata"],[12,"Inter",25.2,3.3,29.0,16.1,12.9,"simulata"],[12,"Juventus",23.5,4.7,23.0,15.2,7.8,"simulata"],[12,"Lazio",19.4,7.9,22.5,18.2,4.3,"simulata"],[12,"Lecce",13.3,13.6,15.9,20.0,-4.1,"simulata"],[12,"Milan",21.4,6.1,24.7,17.8,6.8,"simulata"],[12,"Monza",7.2,18.0,14.5,25.6,-11.1,"simulata"],[12,"Napoli",22.3,5.4,23.7,16.2,7.5,"simulata"],[12,"Parma",13.2,13.7,16.6,22.0,-5.3,"simulata"],[12,"Roma",21.4,6.2,22.8,16.8,6.0,"simulata"],[12,"Sassuolo",14.9,12.1,20.7,23.6,-2.9,"simulata"],[12,"Torino",15.6,11.5,18.1,19.1,-1.0,"simulata"],[12,"Udinese",15.2,11.8,19.2,20.9,-1.7,"simulata"],[12,"Venezia",8.0,17.6,14.3,26.1,-11.8,"simulata"],[13,"Atalanta",23.1,6.0,27.8,19.4,8.3,"simulata"],[13,"Bologna",19.6,9.1,22.7,20.9,1.8,"simulata"],[13,"Cagliari",13.7,14.2,19.0,25.7,-6.7,"simulata"],[13,"Como",22.0,7.1,24.5,19.6,4.9,"simulata"],[13,"Fiorentina",18.2,10.3,22.5,22.2,0.2,"simulata"],[13,"Frosinone",7.3,18.3,16.8,29.8,-13.0,"simulata"],[13,"Genoa",14.3,13.7,18.1,22.9,-4.8,"simulata"],[13,"Inter",27.6,3.1,31.8,17.1,14.8,"simulata"],[13,"Juventus",24.8,5.1,24.5,16.8,7.7,"simulata"],[13,"Lazio",20.8,8.0,24.1,19.7,4.4,"simulata"],[13,"Lecce",14.1,13.9,17.2,21.9,-4.7,"simulata"],[13,"Milan",23.4,5.9,26.7,19.3,7.5,"simulata"],[13,"Monza",7.5,18.2,15.5,28.1,-12.6,"simulata"],[13,"Napoli",24.1,5.4,25.7,17.8,8.0,"simulata"],[13,"Parma",15.2,13.0,18.7,23.4,-4.7,"simulata"],[13,"Roma",23.9,5.6,25.3,17.7,7.6,"simulata"],[13,"Sassuolo",15.8,12.4,22.3,25.6,-3.4,"simulata"],[13,"Torino",16.8,11.5,19.6,20.7,-1.1,"simulata"],[13,"Udinese",16.6,11.7,21.0,22.6,-1.6,"simulata"],[13,"Venezia",8.7,17.7,15.5,28.0,-12.5,"simulata"],[14,"Atalanta",24.6,6.3,29.6,21.2,8.4,"simulata"],[14,"Bologna",20.9,9.3,24.2,22.7,1.6,"simulata"],[14,"Cagliari",14.5,14.4,20.5,27.9,-7.5,"simulata"],[14,"Como",24.3,6.7,26.6,20.9,5.7,"simulata"],[14,"Fiorentina",20.1,9.9,24.7,23.6,1.0,"simulata"],[14,"Frosinone",7.7,18.5,18.0,32.5,-14.5,"simulata"],[14,"Genoa",15.7,13.4,19.6,24.3,-4.7,"simulata"],[14,"Inter",30.1,2.9,34.5,18.3,16.3,"simulata"],[14,"Juventus",26.9,4.9,26.7,17.9,8.7,"simulata"],[14,"Lazio",22.1,8.2,25.9,21.5,4.4,"simulata"],[14,"Lecce",14.6,14.3,18.1,24.2,-6.1,"simulata"],[14,"Milan",25.5,5.7,29.1,20.4,8.7,"simulata"],[14,"Monza",8.0,18.3,16.7,30.2,-13.5,"simulata"],[14,"Napoli",26.4,5.1,28.0,18.7,9.4,"simulata"],[14,"Parma",15.8,13.4,19.8,25.7,-5.9,"simulata"],[14,"Roma",25.5,5.8,27.0,19.3,7.7,"simulata"],[14,"Sassuolo",17.6,11.9,24.3,27.2,-2.9,"simulata"],[14,"Torino",18.0,11.6,21.0,22.2,-1.2,"simulata"],[14,"Udinese",17.3,12.1,22.1,24.7,-2.6,"simulata"],[14,"Venezia",9.5,17.5,17.1,30.1,-12.9,"simulata"],[15,"Atalanta",26.7,5.9,31.9,22.4,9.5,"simulata"],[15,"Bologna",21.8,9.7,25.7,24.5,1.2,"simulata"],[15,"Cagliari",16.6,13.7,22.4,29.2,-6.8,"simulata"],[15,"Como",26.0,6.6,28.5,22.3,6.2,"simulata"],[15,"Fiorentina",21.5,9.9,26.3,25.2,1.1,"simulata"],[15,"Frosinone",8.1,18.5,19.2,34.8,-15.5,"simulata"],[15,"Genoa",16.4,13.8,20.8,26.6,-5.9,"simulata"],[15,"Inter",32.4,2.7,37.2,19.3,17.9,"simulata"],[15,"Juventus",29.4,4.4,29.1,18.8,10.3,"simulata"],[15,"Lazio",23.4,8.4,27.5,23.2,4.3,"simulata"],[15,"Lecce",15.9,14.2,19.7,25.9,-6.2,"simulata"],[15,"Milan",26.6,6.1,30.6,22.3,8.3,"simulata"],[15,"Monza",8.4,18.4,17.6,32.7,-15.1,"simulata"],[15,"Napoli",28.1,5.1,29.9,20.2,9.7,"simulata"],[15,"Parma",17.1,13.4,21.4,27.3,-6.0,"simulata"],[15,"Roma",26.9,5.9,28.8,20.9,7.8,"simulata"],[15,"Sassuolo",19.1,11.8,25.9,28.8,-2.9,"simulata"],[15,"Torino",18.5,12.3,22.0,24.8,-2.8,"simulata"],[15,"Udinese",19.7,11.4,24.4,26.0,-1.6,"simulata"],[15,"Venezia",10.3,17.6,18.4,32.0,-13.6,"simulata"],[16,"Atalanta",28.1,6.1,33.7,24.1,9.6,"simulata"],[16,"Bologna",23.1,9.8,27.3,26.3,1.1,"simulata"],[16,"Cagliari",17.6,13.8,23.7,31.0,-7.2,"simulata"],[16,"Como",27.1,6.9,30.0,24.2,5.8,"simulata"],[16,"Fiorentina",23.0,9.8,28.0,26.8,1.2,"simulata"],[16,"Frosinone",8.6,18.7,20.6,36.9,-16.4,"simulata"],[16,"Genoa",17.8,13.7,22.3,28.1,-5.8,"simulata"],[16,"Inter",34.7,2.5,39.4,20.3,19.1,"simulata"],[16,"Juventus",30.5,4.7,30.6,20.5,10.1,"simulata"],[16,"Lazio",25.7,7.8,29.7,24.6,5.1,"simulata"],[16,"Lecce",16.4,14.6,20.8,28.2,-7.4,"simulata"],[16,"Milan",28.2,6.1,32.5,23.8,8.6,"simulata"],[16,"Monza",9.5,18.4,19.0,34.3,-15.3,"simulata"],[16,"Napoli",29.3,5.3,31.6,21.9,9.7,"simulata"],[16,"Parma",18.1,13.5,22.9,29.1,-6.2,"simulata"],[16,"Roma",28.5,6.0,30.4,22.4,8.0,"simulata"],[16,"Sassuolo",20.7,11.6,27.8,30.4,-2.6,"simulata"],[16,"Torino",20.2,12.0,23.8,26.2,-2.4,"simulata"],[16,"Udinese",21.0,11.4,25.9,27.5,-1.6,"simulata"],[16,"Venezia",11.9,17.3,20.1,33.4,-13.3,"simulata"],[17,"Atalanta",29.8,6.1,35.6,25.8,9.9,"simulata"],[17,"Bologna",24.3,10.0,28.8,27.9,0.9,"simulata"],[17,"Cagliari",19.2,13.6,25.4,32.4,-7.0,"simulata"],[17,"Como",29.3,6.6,32.2,25.2,7.0,"simulata"],[17,"Fiorentina",24.4,9.9,29.8,28.5,1.2,"simulata"],[17,"Frosinone",8.9,18.8,21.6,39.7,-18.1,"simulata"],[17,"Genoa",18.9,13.7,23.8,29.8,-6.0,"simulata"],[17,"Inter",37.0,2.4,42.7,21.6,21.0,"simulata"],[17,"Juventus",32.1,4.9,32.3,22.0,10.3,"simulata"],[17,"Lazio",27.0,8.1,31.4,26.3,5.1,"simulata"],[17,"Lecce",17.0,14.9,21.8,30.3,-8.5,"simulata"],[17,"Milan",30.6,5.7,34.6,25.0,9.5,"simulata"],[17,"Monza",9.9,18.4,20.2,36.4,-16.3,"simulata"],[17,"Napoli",31.3,5.3,33.4,23.2,10.3,"simulata"],[17,"Parma",18.9,13.7,24.1,31.0,-6.8,"simulata"],[17,"Roma",31.1,5.4,33.2,23.4,9.7,"simulata"],[17,"Sassuolo",21.2,12.2,29.1,33.6,-4.5,"simulata"],[17,"Torino",22.3,11.4,25.7,27.2,-1.5,"simulata"],[17,"Udinese",22.0,11.5,27.6,29.5,-1.9,"simulata"],[17,"Venezia",12.5,17.4,21.1,35.4,-14.2,"simulata"],[18,"Atalanta",31.4,6.2,37.6,27.4,10.2,"simulata"],[18,"Bologna",26.6,9.4,31.1,29.3,1.7,"simulata"],[18,"Cagliari",19.7,14.0,26.5,35.0,-8.5,"simulata"],[18,"Como",30.4,6.9,33.8,27.1,6.7,"simulata"],[18,"Fiorentina",25.2,10.3,31.3,30.7,0.6,"simulata"],[18,"Frosinone",9.4,18.9,22.9,41.9,-19.0,"simulata"],[18,"Genoa",21.0,13.1,25.6,31.0,-5.3,"simulata"],[18,"Inter",38.9,2.5,44.7,23.2,21.5,"simulata"],[18,"Juventus",34.2,4.8,34.3,23.0,11.2,"simulata"],[18,"Lazio",27.9,8.5,32.9,28.4,4.6,"simulata"],[18,"Lecce",18.4,14.7,23.2,31.7,-8.5,"simulata"],[18,"Milan",32.5,5.6,36.7,26.5,10.2,"simulata"],[18,"Monza",10.6,18.4,21.4,38.3,-16.9,"simulata"],[18,"Napoli",33.6,5.0,36.1,24.3,11.8,"simulata"],[18,"Parma",20.2,13.6,25.5,32.4,-6.9,"simulata"],[18,"Roma",33.4,5.1,35.2,24.5,10.7,"simulata"],[18,"Sassuolo",22.7,12.0,30.9,35.3,-4.4,"simulata"],[18,"Torino",23.0,11.8,26.8,29.2,-2.4,"simulata"],[18,"Udinese",23.2,11.6,29.3,31.4,-2.1,"simulata"],[18,"Venezia",12.9,17.5,22.2,37.4,-15.2,"simulata"],[19,"Atalanta",33.1,6.1,39.4,28.9,10.5,"simulata"],[19,"Bologna",28.5,9.1,32.9,30.5,2.4,"simulata"],[19,"Cagliari",21.1,13.9,28.4,36.8,-8.5,"simulata"],[19,"Como",32.1,6.7,35.6,28.6,7.0,"simulata"],[19,"Fiorentina",27.1,9.9,33.3,31.9,1.4,"simulata"],[19,"Frosinone",10.3,18.9,24.4,43.8,-19.4,"simulata"],[19,"Genoa",21.8,13.4,26.9,32.9,-6.0,"simulata"],[19,"Inter",40.8,2.5,46.8,24.6,22.2,"simulata"],[19,"Juventus",35.0,5.1,35.7,25.1,10.6,"simulata"],[19,"Lazio",28.9,8.8,34.4,30.2,4.2,"simulata"],[19,"Lecce",19.2,14.9,24.4,33.7,-9.3,"simulata"],[19,"Milan",33.5,5.9,38.2,28.3,10.0,"simulata"],[19,"Monza",12.4,18.2,23.3,39.8,-16.5,"simulata"],[19,"Napoli",35.4,4.9,37.9,25.8,12.2,"simulata"],[19,"Parma",22.3,13.2,27.3,33.5,-6.2,"simulata"],[19,"Roma",35.1,5.1,37.0,26.1,11.0,"simulata"],[19,"Sassuolo",24.0,12.1,32.7,37.2,-4.4,"simulata"],[19,"Torino",24.0,12.0,28.3,31.0,-2.8,"simulata"],[19,"Udinese",24.2,11.9,30.7,33.2,-2.5,"simulata"],[19,"Venezia",13.6,17.7,23.4,39.3,-15.9,"simulata"],[20,"Atalanta",34.6,6.2,41.2,30.6,10.6,"simulata"],[20,"Bologna",29.6,9.2,34.5,32.4,2.1,"simulata"],[20,"Cagliari",22.1,13.9,29.8,38.7,-8.8,"simulata"],[20,"Como",33.9,6.7,37.5,30.1,7.4,"simulata"],[20,"Fiorentina",27.9,10.3,34.6,34.0,0.6,"simulata"],[20,"Frosinone",11.1,18.9,25.9,45.8,-19.9,"simulata"],[20,"Genoa",22.3,13.8,27.9,35.0,-7.2,"simulata"],[20,"Inter",43.1,2.4,49.1,25.8,23.3,"simulata"],[20,"Juventus",37.3,4.9,37.8,26.1,11.8,"simulata"],[20,"Lazio",30.4,8.7,36.3,31.7,4.5,"simulata"],[20,"Lecce",20.5,14.8,25.9,35.2,-9.3,"simulata"],[20,"Milan",35.6,5.7,40.3,29.5,10.9,"simulata"],[20,"Monza",13.0,18.3,24.6,42.0,-17.4,"simulata"],[20,"Napoli",37.4,4.7,40.1,27.1,13.0,"simulata"],[20,"Parma",22.8,13.5,28.5,35.9,-7.3,"simulata"],[20,"Roma",36.3,5.3,38.7,27.9,10.9,"simulata"],[20,"Sassuolo",26.2,11.4,34.9,38.5,-3.6,"simulata"],[20,"Torino",24.7,12.3,29.5,33.1,-3.7,"simulata"],[20,"Udinese",25.5,11.8,32.3,34.7,-2.4,"simulata"],[20,"Venezia",15.5,17.3,25.3,40.7,-15.4,"simulata"],[21,"Atalanta",36.0,6.4,43.0,32.3,10.6,"simulata"],[21,"Bologna",30.9,9.3,36.3,34.2,2.1,"simulata"],[21,"Cagliari",22.6,14.2,30.9,41.0,-10.2,"simulata"],[21,"Como",35.2,6.9,39.1,31.7,7.4,"simulata"],[21,"Fiorentina",29.6,10.1,36.8,35.7,1.1,"simulata"],[21,"Frosinone",11.6,18.9,27.2,48.1,-20.9,"simulata"],[21,"Genoa",23.9,13.5,29.4,36.4,-7.0,"simulata"],[21,"Inter",45.7,2.2,52.4,26.7,25.7,"simulata"],[21,"Juventus",39.5,4.7,40.2,27.1,13.1,"simulata"],[21,"Lazio",32.6,8.3,38.2,33.0,5.3,"simulata"],[21,"Lecce",21.8,14.7,27.2,36.6,-9.4,"simulata"],[21,"Milan",38.0,5.4,42.7,30.8,11.9,"simulata"],[21,"Monza",13.6,18.3,25.8,43.9,-18.1,"simulata"],[21,"Napoli",38.7,5.0,41.7,28.7,13.0,"simulata"],[21,"Parma",23.9,13.5,29.9,37.4,-7.5,"simulata"],[21,"Roma",38.4,5.2,40.9,29.1,11.8,"simulata"],[21,"Sassuolo",27.2,11.6,36.5,40.7,-4.1,"simulata"],[21,"Torino",26.1,12.2,30.9,34.5,-3.6,"simulata"],[21,"Udinese",26.2,12.1,33.5,36.8,-3.4,"simulata"],[21,"Venezia",15.8,17.5,26.3,44.0,-17.8,"simulata"],[22,"Atalanta",37.9,6.3,45.1,33.8,11.3,"simulata"],[22,"Bologna",32.3,9.4,37.9,35.8,2.1,"simulata"],[22,"Cagliari",24.2,14.1,32.5,42.5,-10.0,"simulata"],[22,"Como",36.9,6.9,41.1,33.5,7.6,"simulata"],[22,"Fiorentina",30.4,10.5,38.2,37.8,0.5,"simulata"],[22,"Frosinone",12.0,19.0,28.3,50.3,-22.0,"simulata"],[22,"Genoa",25.6,13.3,30.9,37.6,-6.7,"simulata"],[22,"Inter",47.2,2.3,54.2,28.4,25.8,"simulata"],[22,"Juventus",40.7,4.9,41.8,28.8,13.0,"simulata"],[22,"Lazio",35.0,7.8,40.7,34.0,6.7,"simulata"],[22,"Lecce",22.8,14.7,28.4,38.1,-9.7,"simulata"],[22,"Milan",39.5,5.5,44.4,32.3,12.1,"simulata"],[22,"Monza",14.0,18.4,27.0,46.0,-19.0,"simulata"],[22,"Napoli",39.9,5.2,43.4,30.6,12.8,"simulata"],[22,"Parma",25.1,13.6,31.4,39.1,-7.7,"simulata"],[22,"Roma",40.8,4.9,42.9,30.2,12.7,"simulata"],[22,"Sassuolo",28.3,11.8,38.3,42.7,-4.4,"simulata"],[22,"Torino",28.5,11.7,33.0,35.6,-2.6,"simulata"],[22,"Udinese",27.5,12.1,35.1,38.5,-3.4,"simulata"],[22,"Venezia",16.3,17.7,27.3,46.5,-19.2,"simulata"],[23,"Atalanta",39.6,6.2,47.2,35.4,11.8,"simulata"],[23,"Bologna",33.5,9.5,39.6,37.6,2.0,"simulata"],[23,"Cagliari",24.6,14.5,33.6,45.7,-12.1,"simulata"],[23,"Como",39.4,6.5,43.5,34.5,9.1,"simulata"],[23,"Fiorentina",32.1,10.3,40.2,39.3,0.9,"simulata"],[23,"Frosinone",12.5,19.0,29.5,52.4,-22.8,"simulata"],[23,"Genoa",27.4,13.0,32.7,38.9,-6.3,"simulata"],[23,"Inter",49.6,2.2,57.4,29.5,28.0,"simulata"],[23,"Juventus",42.9,4.8,44.2,30.0,14.2,"simulata"],[23,"Lazio",36.0,8.2,42.3,36.1,6.2,"simulata"],[23,"Lecce",23.5,14.9,29.5,40.0,-10.5,"simulata"],[23,"Milan",41.0,5.6,46.1,34.0,12.1,"simulata"],[23,"Monza",14.4,18.5,28.0,48.4,-20.4,"simulata"],[23,"Napoli",42.1,5.1,45.3,31.7,13.7,"simulata"],[23,"Parma",27.4,13.0,33.5,40.3,-6.9,"simulata"],[23,"Roma",42.9,4.8,44.9,31.3,13.6,"simulata"],[23,"Sassuolo",28.9,12.1,39.5,45.1,-5.6,"simulata"],[23,"Torino",29.1,12.0,34.1,37.6,-3.5,"simulata"],[23,"Udinese",28.6,12.3,36.6,40.5,-3.8,"simulata"],[23,"Venezia",17.2,17.6,28.6,48.3,-19.6,"simulata"],[24,"Atalanta",41.4,6.1,49.0,36.9,12.2,"simulata"],[24,"Bologna",34.9,9.6,41.3,39.3,2.0,"simulata"],[24,"Cagliari",25.7,14.5,35.2,47.6,-12.3,"simulata"],[24,"Como",40.7,6.5,45.2,36.1,9.1,"simulata"],[24,"Fiorentina",34.3,9.9,42.3,40.7,1.6,"simulata"],[24,"Frosinone",13.1,19.0,30.9,54.5,-23.6,"simulata"],[24,"Genoa",28.3,13.1,34.1,40.8,-6.7,"simulata"],[24,"Inter",51.6,2.2,59.7,31.0,28.8,"simulata"],[24,"Juventus",44.1,5.0,45.7,31.7,14.0,"simulata"],[24,"Lazio",37.6,8.1,44.2,37.7,6.4,"simulata"],[24,"Lecce",25.1,14.7,31.2,41.4,-10.2,"simulata"],[24,"Milan",41.7,6.0,47.6,36.3,11.3,"simulata"],[24,"Monza",15.4,18.4,29.3,50.1,-20.7,"simulata"],[24,"Napoli",43.6,5.2,46.9,33.1,13.8,"simulata"],[24,"Parma",28.0,13.3,34.5,42.5,-7.9,"simulata"],[24,"Roma",45.1,4.5,47.1,32.4,14.7,"simulata"],[24,"Sassuolo",30.2,12.2,41.1,46.8,-5.7,"simulata"],[24,"Torino",30.6,12.0,35.9,39.2,-3.3,"simulata"],[24,"Udinese",30.8,11.8,38.8,41.6,-2.9,"simulata"],[24,"Venezia",17.8,17.8,29.8,50.4,-20.6,"simulata"],[25,"Atalanta",43.9,5.8,51.8,37.9,13.8,"simulata"],[25,"Bologna",35.7,9.9,42.6,41.2,1.4,"simulata"],[25,"Cagliari",27.4,14.2,37.1,49.0,-12.0,"simulata"],[25,"Como",42.7,6.4,47.2,37.4,9.8,"simulata"],[25,"Fiorentina",35.1,10.2,43.8,42.8,1.1,"simulata"],[25,"Frosinone",13.7,19.0,32.2,56.5,-24.3,"simulata"],[25,"Genoa",28.9,13.4,35.2,43.1,-7.9,"simulata"],[25,"Inter",53.6,2.2,61.8,32.4,29.4,"simulata"],[25,"Juventus",46.0,4.9,47.6,32.9,14.6,"simulata"],[25,"Lazio",38.7,8.3,45.7,39.5,6.3,"simulata"],[25,"Lecce",27.3,14.2,33.1,42.6,-9.5,"simulata"],[25,"Milan",43.9,5.8,49.9,37.4,12.5,"simulata"],[25,"Monza",15.7,18.6,30.4,52.8,-22.4,"simulata"],[25,"Napoli",45.1,5.2,48.7,34.7,14.0,"simulata"],[25,"Parma",29.1,13.4,36.0,44.2,-8.2,"simulata"],[25,"Roma",46.9,4.6,49.1,34.0,15.1,"simulata"],[25,"Sassuolo",31.1,12.3,42.7,48.9,-6.1,"simulata"],[25,"Torino",31.4,12.2,37.1,41.2,-4.0,"simulata"],[25,"Udinese",32.4,11.6,40.5,43.1,-2.6,"simulata"],[25,"Venezia",18.7,17.7,31.3,52.2,-20.9,"simulata"],[26,"Atalanta",44.7,6.2,53.3,40.3,13.0,"simulata"],[26,"Bologna",37.7,9.7,44.5,42.3,2.2,"simulata"],[26,"Cagliari",28.8,14.1,38.7,50.7,-11.9,"simulata"],[26,"Como",44.2,6.5,49.0,39.0,10.0,"simulata"],[26,"Fiorentina",36.4,10.3,45.4,44.4,1.0,"simulata"],[26,"Frosinone",14.1,19.1,33.3,58.8,-25.5,"simulata"],[26,"Genoa",30.1,13.5,36.7,44.8,-8.1,"simulata"],[26,"Inter",55.6,2.3,64.2,34.0,30.2,"simulata"],[26,"Juventus",48.3,4.7,49.6,34.0,15.6,"simulata"],[26,"Lazio",40.3,8.3,47.4,40.9,6.5,"simulata"],[26,"Lecce",28.1,14.4,34.2,44.5,-10.3,"simulata"],[26,"Milan",45.1,6.0,51.5,39.2,12.3,"simulata"],[26,"Monza",16.2,18.6,31.4,54.8,-23.4,"simulata"],[26,"Napoli",47.6,5.0,51.0,35.9,15.2,"simulata"],[26,"Parma",30.5,13.3,37.7,45.9,-8.2,"simulata"],[26,"Roma",49.4,4.3,51.7,35.0,16.7,"simulata"],[26,"Sassuolo",32.4,12.3,44.4,50.6,-6.2,"simulata"],[26,"Torino",32.7,12.2,38.7,42.7,-4.0,"simulata"],[26,"Udinese",33.7,11.7,42.1,44.8,-2.6,"simulata"],[26,"Venezia",19.1,17.8,32.2,54.8,-22.6,"simulata"],[27,"Atalanta",46.8,6.1,55.4,41.5,13.9,"simulata"],[27,"Bologna",39.0,9.7,46.3,44.1,2.2,"simulata"],[27,"Cagliari",29.4,14.3,40.0,53.3,-13.3,"simulata"],[27,"Como",46.2,6.4,50.7,40.2,10.5,"simulata"],[27,"Fiorentina",38.8,9.8,47.8,45.5,2.4,"simulata"],[27,"Frosinone",14.5,19.1,34.4,61.4,-27.0,"simulata"],[27,"Genoa",31.9,13.2,38.5,46.1,-7.6,"simulata"],[27,"Inter",57.7,2.2,66.5,35.4,31.1,"simulata"],[27,"Juventus",49.9,4.8,51.2,35.4,15.8,"simulata"],[27,"Lazio",42.8,7.9,50.1,42.0,8.0,"simulata"],[27,"Lecce",28.9,14.5,35.4,46.2,-10.8,"simulata"],[27,"Milan",47.3,5.9,54.1,40.5,13.6,"simulata"],[27,"Monza",17.0,18.5,32.8,56.6,-23.8,"simulata"],[27,"Napoli",49.8,4.8,53.3,36.9,16.4,"simulata"],[27,"Parma",31.0,13.6,38.8,48.3,-9.5,"simulata"],[27,"Roma",50.5,4.6,53.1,36.6,16.5,"simulata"],[27,"Sassuolo",33.8,12.3,46.3,52.4,-6.2,"simulata"],[27,"Torino",33.5,12.4,40.0,44.9,-4.9,"simulata"],[27,"Udinese",34.3,12.0,43.5,47.1,-3.6,"simulata"],[27,"Venezia",19.6,17.9,33.3,57.2,-23.9,"simulata"],[28,"Atalanta",49.0,5.8,57.6,42.8,14.9,"simulata"],[28,"Bologna",40.2,9.8,47.9,45.9,2.0,"simulata"],[28,"Cagliari",30.6,14.3,41.6,55.1,-13.4,"simulata"],[28,"Como",48.2,6.2,52.8,41.5,11.3,"simulata"],[28,"Fiorentina",40.3,9.8,49.6,47.1,2.5,"simulata"],[28,"Frosinone",15.7,19.0,36.1,63.2,-27.1,"simulata"],[28,"Genoa",32.7,13.3,39.8,47.9,-8.1,"simulata"],[28,"Inter",59.9,2.2,68.6,36.6,32.0,"simulata"],[28,"Juventus",51.5,4.9,52.9,36.9,15.9,"simulata"],[28,"Lazio",44.0,8.0,51.6,43.7,7.9,"simulata"],[28,"Lecce",29.9,14.5,36.7,47.8,-11.1,"simulata"],[28,"Milan",49.3,5.7,56.7,41.9,14.8,"simulata"],[28,"Monza",18.4,18.4,34.5,58.3,-23.8,"simulata"],[28,"Napoli",51.4,4.9,55.1,38.5,16.7,"simulata"],[28,"Parma",32.7,13.3,40.3,49.5,-9.1,"simulata"],[28,"Roma",52.5,4.5,54.9,37.8,17.1,"simulata"],[28,"Sassuolo",34.4,12.5,47.7,55.1,-7.4,"simulata"],[28,"Torino",34.1,12.7,41.2,46.9,-5.8,"simulata"],[28,"Udinese",35.1,12.2,44.9,49.2,-4.3,"simulata"],[28,"Venezia",20.1,18.0,34.6,59.4,-24.9,"simulata"],[29,"Atalanta",50.5,5.9,59.5,44.5,15.0,"simulata"],[29,"Bologna",42.4,9.5,49.9,47.2,2.7,"simulata"],[29,"Cagliari",31.6,14.3,43.3,57.1,-13.8,"simulata"],[29,"Como",49.2,6.5,54.2,43.3,10.9,"simulata"],[29,"Fiorentina",42.1,9.6,51.6,48.5,3.1,"simulata"],[29,"Frosinone",16.0,19.1,37.1,66.7,-29.6,"simulata"],[29,"Genoa",33.6,13.4,41.1,49.9,-8.7,"simulata"],[29,"Inter",62.5,2.1,72.1,37.6,34.5,"simulata"],[29,"Juventus",53.2,4.9,54.6,38.3,16.3,"simulata"],[29,"Lazio",45.6,8.0,53.3,45.2,8.2,"simulata"],[29,"Lecce",30.4,14.7,37.6,50.0,-12.4,"simulata"],[29,"Milan",50.5,5.9,58.5,43.8,14.7,"simulata"],[29,"Monza",19.0,18.4,35.8,60.3,-24.5,"simulata"],[29,"Napoli",53.9,4.6,57.9,39.4,18.5,"simulata"],[29,"Parma",33.8,13.3,41.8,51.2,-9.4,"simulata"],[29,"Roma",54.8,4.4,57.1,38.8,18.4,"simulata"],[29,"Sassuolo",36.1,12.3,49.7,56.7,-7.0,"simulata"],[29,"Torino",35.2,12.7,42.6,48.6,-6.0,"simulata"],[29,"Udinese",36.7,12.1,46.5,50.7,-4.1,"simulata"],[29,"Venezia",20.5,18.1,35.5,62.2,-26.7,"simulata"],[30,"Atalanta",52.2,5.9,61.6,46.3,15.3,"simulata"],[30,"Bologna",43.2,9.7,51.2,49.1,2.1,"simulata"],[30,"Cagliari",32.5,14.4,44.6,59.1,-14.5,"simulata"],[30,"Como",51.0,6.5,56.1,44.7,11.4,"simulata"],[30,"Fiorentina",43.0,9.9,53.0,50.4,2.6,"simulata"],[30,"Frosinone",16.6,19.1,38.6,68.8,-30.2,"simulata"],[30,"Genoa",34.2,13.6,42.3,52.1,-9.8,"simulata"],[30,"Inter",64.7,2.1,74.3,38.8,35.5,"simulata"],[30,"Juventus",55.0,4.9,56.3,39.5,16.8,"simulata"],[30,"Lazio",47.3,7.9,55.0,46.5,8.5,"simulata"],[30,"Lecce",31.4,14.8,38.9,51.6,-12.7,"simulata"],[30,"Milan",53.1,5.6,61.2,44.8,16.4,"simulata"],[30,"Monza",19.4,18.5,36.8,63.0,-26.2,"simulata"],[30,"Napoli",55.9,4.6,59.8,40.7,19.2,"simulata"],[30,"Parma",35.6,13.1,43.5,52.5,-9.0,"simulata"],[30,"Roma",56.7,4.4,59.1,40.1,19.0,"simulata"],[30,"Sassuolo",37.2,12.4,51.5,58.8,-7.3,"simulata"],[30,"Torino",36.1,12.8,43.9,50.3,-6.4,"simulata"],[30,"Udinese",38.8,11.7,48.7,52.1,-3.4,"simulata"],[30,"Venezia",21.4,18.0,36.8,64.0,-27.1,"simulata"],[31,"Atalanta",54.1,5.9,63.7,47.8,15.9,"simulata"],[31,"Bologna",45.6,9.4,53.6,50.1,3.4,"simulata"],[31,"Cagliari",33.4,14.5,46.1,61.1,-15.0,"simulata"],[31,"Como",52.7,6.5,57.8,46.1,11.7,"simulata"],[31,"Fiorentina",44.1,10.0,54.7,52.2,2.4,"simulata"],[31,"Frosinone",17.3,19.1,40.0,70.9,-30.9,"simulata"],[31,"Genoa",36.3,13.3,44.4,53.5,-9.1,"simulata"],[31,"Inter",66.5,2.1,76.4,40.2,36.2,"simulata"],[31,"Juventus",57.3,4.8,58.5,40.4,18.1,"simulata"],[31,"Lazio",49.1,7.9,56.8,47.8,9.0,"simulata"],[31,"Lecce",31.9,15.0,39.8,53.8,-14.0,"simulata"],[31,"Milan",54.6,5.7,63.1,46.5,16.6,"simulata"],[31,"Monza",19.9,18.5,38.0,65.1,-27.1,"simulata"],[31,"Napoli",58.0,4.5,62.5,42.0,20.5,"simulata"],[31,"Parma",36.6,13.2,44.9,54.3,-9.3,"simulata"],[31,"Roma",57.6,4.7,60.5,42.3,18.3,"simulata"],[31,"Sassuolo",37.8,12.7,52.8,61.4,-8.6,"simulata"],[31,"Torino",37.0,13.0,45.2,52.1,-7.0,"simulata"],[31,"Udinese",41.1,11.3,50.8,53.3,-2.5,"simulata"],[31,"Venezia",21.8,18.1,37.9,66.3,-28.5,"simulata"],[32,"Atalanta",56.1,5.8,66.0,49.2,16.8,"simulata"],[32,"Bologna",47.5,9.2,55.7,51.5,4.2,"simulata"],[32,"Cagliari",34.2,14.5,47.5,63.2,-15.8,"simulata"],[32,"Como",55.2,6.2,60.4,47.2,13.2,"simulata"],[32,"Fiorentina",45.9,9.9,56.6,53.5,3.1,"simulata"],[32,"Frosinone",17.6,19.1,41.1,73.5,-32.4,"simulata"],[32,"Genoa",37.3,13.4,45.7,55.1,-9.4,"simulata"],[32,"Inter",69.0,2.0,79.0,41.3,37.7,"simulata"],[32,"Juventus",59.7,4.6,60.5,41.4,19.1,"simulata"],[32,"Lazio",50.0,8.2,58.2,49.7,8.5,"simulata"],[32,"Lecce",32.9,15.0,41.2,55.7,-14.5,"simulata"],[32,"Milan",56.1,5.8,64.8,48.1,16.7,"simulata"],[32,"Monza",20.3,18.6,39.1,67.6,-28.6,"simulata"],[32,"Napoli",59.2,4.7,64.1,43.7,20.4,"simulata"],[32,"Parma",37.5,13.3,46.3,56.3,-10.0,"simulata"],[32,"Roma",59.4,4.7,62.4,43.7,18.8,"simulata"],[32,"Sassuolo",39.6,12.5,54.6,62.8,-8.1,"simulata"],[32,"Torino",38.7,12.8,46.8,53.4,-6.7,"simulata"],[32,"Udinese",41.8,11.6,52.2,55.7,-3.5,"simulata"],[32,"Venezia",22.3,18.1,38.9,68.3,-29.5,"simulata"],[33,"Atalanta",58.0,5.8,67.9,50.7,17.2,"simulata"],[33,"Bologna",48.1,9.6,57.0,54.1,2.9,"simulata"],[33,"Cagliari",36.3,14.2,49.4,64.5,-15.1,"simulata"],[33,"Como",56.5,6.3,62.1,48.9,13.2,"simulata"],[33,"Fiorentina",46.7,10.1,57.8,55.5,2.4,"simulata"],[33,"Frosinone",18.0,19.1,42.3,75.7,-33.4,"simulata"],[33,"Genoa",38.7,13.3,47.4,56.8,-9.4,"simulata"],[33,"Inter",71.2,2.0,81.6,42.6,39.0,"simulata"],[33,"Juventus",61.7,4.5,62.5,42.7,19.8,"simulata"],[33,"Lazio",51.4,8.2,59.9,51.4,8.6,"simulata"],[33,"Lecce",33.6,15.1,42.4,57.5,-15.1,"simulata"],[33,"Milan",58.1,5.7,66.7,49.3,17.4,"simulata"],[33,"Monza",20.9,18.6,40.4,69.6,-29.2,"simulata"],[33,"Napoli",61.3,4.6,66.4,44.9,21.5,"simulata"],[33,"Parma",38.4,13.4,47.7,58.1,-10.4,"simulata"],[33,"Roma",61.9,4.5,64.6,44.9,19.7,"simulata"],[33,"Sassuolo",40.8,12.5,56.3,64.5,-8.2,"simulata"],[33,"Torino",40.6,12.5,48.5,54.7,-6.1,"simulata"],[33,"Udinese",42.5,11.8,53.4,58.0,-4.6,"simulata"],[33,"Venezia",23.1,18.1,40.1,70.1,-30.0,"simulata"],[34,"Atalanta",59.4,5.8,69.6,52.3,17.3,"simulata"],[34,"Bologna",49.7,9.5,58.7,55.6,3.1,"simulata"],[34,"Cagliari",37.6,14.2,50.9,66.0,-15.2,"simulata"],[34,"Como",57.6,6.5,63.8,50.9,12.9,"simulata"],[34,"Fiorentina",47.7,10.2,59.4,57.3,2.1,"simulata"],[34,"Frosinone",18.5,19.2,43.7,78.1,-34.4,"simulata"],[34,"Genoa",39.8,13.4,48.8,58.5,-9.7,"simulata"],[34,"Inter",72.9,2.0,83.5,44.2,39.3,"simulata"],[34,"Juventus",62.9,4.6,64.1,44.3,19.8,"simulata"],[34,"Lazio",52.3,8.4,61.4,53.4,8.1,"simulata"],[34,"Lecce",35.0,15.0,43.9,59.0,-15.1,"simulata"],[34,"Milan",59.9,5.6,68.7,50.8,17.9,"simulata"],[34,"Monza",22.4,18.5,42.0,71.1,-29.1,"simulata"],[34,"Napoli",62.5,4.7,67.9,46.6,21.3,"simulata"],[34,"Parma",39.4,13.5,49.0,59.8,-10.7,"simulata"],[34,"Roma",63.4,4.5,66.3,46.4,19.9,"simulata"],[34,"Sassuolo",43.2,12.1,58.7,65.9,-7.2,"simulata"],[34,"Torino",42.3,12.4,50.2,56.0,-5.8,"simulata"],[34,"Udinese",44.1,11.7,55.1,59.4,-4.3,"simulata"],[34,"Venezia",24.3,18.1,41.6,71.8,-30.2,"simulata"],[35,"Atalanta",61.8,5.6,72.0,53.6,18.3,"simulata"],[35,"Bologna",51.1,9.5,60.3,57.1,3.2,"simulata"],[35,"Cagliari",38.7,14.2,52.3,67.7,-15.4,"simulata"],[35,"Como",59.9,6.3,65.8,52.0,13.8,"simulata"],[35,"Fiorentina",48.8,10.4,60.9,59.1,1.8,"simulata"],[35,"Frosinone",18.9,19.2,45.0,80.5,-35.4,"simulata"],[35,"Genoa",41.3,13.2,50.5,59.9,-9.5,"simulata"],[35,"Inter",75.3,2.0,86.3,45.1,41.2,"simulata"],[35,"Juventus",64.7,4.7,65.9,45.8,20.2,"simulata"],[35,"Lazio",54.2,8.3,63.8,54.9,8.8,"simulata"],[35,"Lecce",35.5,15.2,44.8,61.8,-17.0,"simulata"],[35,"Milan",61.8,5.6,70.5,52.2,18.3,"simulata"],[35,"Monza",22.8,18.5,43.0,73.8,-30.8,"simulata"],[35,"Napoli",65.0,4.5,70.6,47.5,23.1,"simulata"],[35,"Parma",40.3,13.6,50.4,61.6,-11.2,"simulata"],[35,"Roma",65.0,4.6,68.1,48.0,20.1,"simulata"],[35,"Sassuolo",44.1,12.2,60.3,68.2,-7.9,"simulata"],[35,"Torino",43.6,12.4,51.7,57.5,-5.8,"simulata"],[35,"Udinese",45.1,11.8,56.5,61.2,-4.7,"simulata"],[35,"Venezia",24.8,18.1,42.7,73.8,-31.0,"simulata"],[36,"Atalanta",63.0,5.7,73.7,55.4,18.2,"simulata"],[36,"Bologna",53.6,9.2,62.8,58.2,4.6,"simulata"],[36,"Cagliari",40.1,14.2,53.9,69.2,-15.3,"simulata"],[36,"Como",61.4,6.4,67.6,53.7,13.9,"simulata"],[36,"Fiorentina",50.4,10.3,62.5,60.5,2.0,"simulata"],[36,"Frosinone",19.3,19.3,46.1,83.0,-36.8,"simulata"],[36,"Genoa",41.9,13.5,51.5,62.2,-10.7,"simulata"],[36,"Inter",76.8,2.0,88.1,46.8,41.3,"simulata"],[36,"Juventus",66.0,4.8,67.6,47.5,20.0,"simulata"],[36,"Lazio",55.9,8.2,65.8,56.4,9.4,"simulata"],[36,"Lecce",36.6,15.2,46.2,63.4,-17.2,"simulata"],[36,"Milan",63.3,5.6,72.3,53.9,18.4,"simulata"],[36,"Monza",23.6,18.5,44.3,75.6,-31.3,"simulata"],[36,"Napoli",67.2,4.4,72.9,48.6,24.3,"simulata"],[36,"Parma",42.2,13.4,52.2,63.0,-10.7,"simulata"],[36,"Roma",66.2,4.7,69.8,49.8,20.0,"simulata"],[36,"Sassuolo",46.3,11.9,62.6,69.5,-7.0,"simulata"],[36,"Torino",44.9,12.4,53.2,59.1,-5.9,"simulata"],[36,"Udinese",46.0,12.0,58.0,63.2,-5.2,"simulata"],[36,"Venezia",25.4,18.2,44.1,76.1,-32.0,"simulata"],[37,"Atalanta",65.3,5.6,76.0,56.5,19.5,"simulata"],[37,"Bologna",55.1,9.2,64.5,59.7,4.7,"simulata"],[37,"Cagliari",42.2,13.9,56.2,70.9,-14.7,"simulata"],[37,"Como",62.4,6.6,69.0,55.5,13.5,"simulata"],[37,"Fiorentina",52.7,10.0,64.9,61.6,3.2,"simulata"],[37,"Frosinone",19.9,19.2,47.8,85.3,-37.5,"simulata"],[37,"Genoa",43.1,13.5,53.0,63.9,-10.9,"simulata"],[37,"Inter",79.0,2.0,90.6,48.2,42.5,"simulata"],[37,"Juventus",68.0,4.7,69.4,48.8,20.6,"simulata"],[37,"Lazio",56.6,8.6,67.1,58.9,8.2,"simulata"],[37,"Lecce",37.2,15.4,47.3,65.8,-18.5,"simulata"],[37,"Milan",65.7,5.4,74.5,55.0,19.5,"simulata"],[37,"Monza",24.1,18.5,45.5,78.0,-32.5,"simulata"],[37,"Napoli",69.0,4.4,74.6,49.9,24.7,"simulata"],[37,"Parma",42.9,13.6,53.4,64.7,-11.3,"simulata"],[37,"Roma",67.9,4.8,71.6,51.2,20.3,"simulata"],[37,"Sassuolo",47.4,12.0,64.2,71.5,-7.2,"simulata"],[37,"Torino",45.9,12.5,54.5,60.8,-6.3,"simulata"],[37,"Udinese",47.6,11.9,59.9,64.9,-5.0,"simulata"],[37,"Venezia",25.8,18.2,45.2,78.2,-33.1,"simulata"],[38,"Atalanta",66.3,5.8,77.6,58.4,19.2,"simulata"],[38,"Bologna",57.0,9.0,66.4,61.0,5.4,"simulata"],[38,"Cagliari",43.0,14.0,57.5,72.8,-15.3,"simulata"],[38,"Como",64.5,6.5,71.1,56.6,14.4,"simulata"],[38,"Fiorentina",53.8,10.1,66.4,63.5,2.9,"simulata"],[38,"Frosinone",20.2,19.3,48.7,87.9,-39.2,"simulata"],[38,"Genoa",43.8,13.7,54.2,66.0,-11.8,"simulata"],[38,"Inter",81.1,2.0,93.2,49.7,43.6,"simulata"],[38,"Juventus",70.6,4.5,72.0,49.7,22.3,"simulata"],[38,"Lazio",58.2,8.5,69.0,60.5,8.5,"simulata"],[38,"Lecce",39.2,15.1,49.0,66.9,-17.9,"simulata"],[38,"Milan",67.8,5.3,76.9,56.3,20.5,"simulata"],[38,"Monza",24.9,18.5,46.7,79.8,-33.0,"simulata"],[38,"Napoli",70.6,4.5,76.5,51.5,25.0,"simulata"],[38,"Parma",43.8,13.7,54.7,66.7,-12.0,"simulata"],[38,"Roma",69.9,4.7,73.5,52.6,21.0,"simulata"],[38,"Sassuolo",48.1,12.2,65.7,74.1,-8.3,"simulata"],[38,"Torino",47.8,12.2,56.3,62.1,-5.7,"simulata"],[38,"Udinese",48.3,12.1,61.2,67.3,-6.0,"simulata"],[38,"Venezia",26.6,18.2,46.3,80.0,-33.6,"simulata"]];
+  var MAX_MD = 38;
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  var svg = document.getElementById("history-svg");
+  if (!svg) return;
+  var axesG = document.getElementById("hx-axes");
+  var linesG = document.getElementById("hx-lines");
+  var labelsG = document.getElementById("hx-endlabels");
+  var crosshair = document.getElementById("hx-crosshair");
+  var chartWrap = document.getElementById("history-chart-wrap");
+  var tooltip = document.getElementById("hx-tooltip");
+  var ttTitle = document.getElementById("hx-tt-title");
+  var ttRows = document.getElementById("hx-tt-rows");
+  var chipRow = document.getElementById("team-chips");
+  var scrub = document.getElementById("md-scrub");
+  var scrubValue = document.getElementById("scrub-value");
+  var historyInfo = document.getElementById("history-info");
+  var miniTbody = document.getElementById("history-mini-tbody");
+  var metricToggle = document.getElementById("metric-toggle");
+
+  var PLOT_X0 = 46, PLOT_X1 = 860, PLOT_Y0 = 16, PLOT_Y1 = 412, VB_W = 960;
+
+  // ---- group HISTORY rows by team (build-time data is already sorted by matchday,team) ----
+  var byTeam = {};
+  var teamOrderSeen = [];
+  HISTORY.forEach(function (r) {
+    var team = r[1];
+    if (!byTeam[team]) { byTeam[team] = []; teamOrderSeen.push(team); }
+    byTeam[team].push({ md: r[0], pts: r[2], pos: r[3], gf: r[4], gs: r[5], dr: r[6], tipo: r[7] });
+  });
+  var TEAM_NAMES = teamOrderSeen.slice().sort();
+
+  var PTS_MAX = 0;
+  HISTORY.forEach(function (r) { if (r[2] > PTS_MAX) PTS_MAX = r[2]; });
+  PTS_MAX = Math.ceil(PTS_MAX / 10) * 10;
+
+  // boundary matchday between "reale" (already played) and "simulata" (projected) rows,
+  // i.e. the last played giornata league-wide; null when no real rows exist yet (pre-season)
+  var REAL_BOUNDARY_MD = null;
+  HISTORY.forEach(function (r) {
+    if (r[7] === "reale" && (REAL_BOUNDARY_MD === null || r[0] > REAL_BOUNDARY_MD)) REAL_BOUNDARY_MD = r[0];
+  });
+
+  // final-matchday standings (used for default highlight + zone shading)
+  var finalRows = HISTORY.filter(function (r) { return r[0] === MAX_MD; })
+    .slice()
+    .sort(function (a, b) { return a[3] - b[3]; });
+
+  // ---- plain-JS UI state (no localStorage/sessionStorage) ----
+  var state = { metric: "pos", md: MAX_MD, hoverMd: null };
+
+  var SLOT_COUNT = 8;
+  var teamSlot = {};
+  var usedSlots = [false, false, false, false, false, false, false, false];
+  var highlighted = new Set();
+
+  function hashSlot(team) {
+    var h = 0;
+    for (var i = 0; i < team.length; i++) h = (h * 31 + team.charCodeAt(i)) >>> 0;
+    return h % SLOT_COUNT;
+  }
+  function acquireSlot(team) {
+    for (var i = 0; i < SLOT_COUNT; i++) {
+      if (!usedSlots[i]) { usedSlots[i] = true; teamSlot[team] = i; return; }
+    }
+    teamSlot[team] = hashSlot(team);
+  }
+  function releaseSlot(team) {
+    var s = teamSlot[team];
+    if (s !== undefined && usedSlots[s] !== undefined) usedSlots[s] = false;
+    delete teamSlot[team];
+  }
+  function highlightTeam(team) {
+    if (highlighted.has(team)) return;
+    highlighted.add(team);
+    acquireSlot(team);
+  }
+  function unhighlightTeam(team) {
+    if (!highlighted.has(team)) return;
+    highlighted.delete(team);
+    releaseSlot(team);
+  }
+  function toggleTeam(team) {
+    if (highlighted.has(team)) unhighlightTeam(team);
+    else highlightTeam(team);
+    renderChart();
+    renderChips();
+  }
+
+  // default: predicted top 4 (Champions zone) + bottom 3 (relegation zone) — the two
+  // storylines a reader most wants to trace across the season, kept under the 8-slot cap
+  var defaultTop = finalRows.slice(0, 4).map(function (r) { return r[1]; });
+  var defaultBottom = finalRows.slice(-3).map(function (r) { return r[1]; });
+  defaultTop.concat(defaultBottom).forEach(highlightTeam);
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS(SVGNS, tag);
+    if (attrs) {
+      for (var k in attrs) { if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]); }
+    }
+    return el;
+  }
+
+  function xForMd(md) {
+    return PLOT_X0 + (md - 1) / (MAX_MD - 1) * (PLOT_X1 - PLOT_X0);
+  }
+  function yForValue(v, metric) {
+    if (metric === "pos") {
+      var vv = Math.min(20, Math.max(1, v));
+      return PLOT_Y0 + (vv - 1) / (20 - 1) * (PLOT_Y1 - PLOT_Y0);
+    }
+    var t = Math.min(1, Math.max(0, v / PTS_MAX));
+    return PLOT_Y1 - t * (PLOT_Y1 - PLOT_Y0);
+  }
+  function mdForX(px) {
+    var t = (px - PLOT_X0) / (PLOT_X1 - PLOT_X0);
+    var md = Math.round(1 + t * (MAX_MD - 1));
+    return Math.min(MAX_MD, Math.max(1, md));
+  }
+  function fmtVal(v, metric) {
+    var s = (Math.round(v * 10) / 10).toFixed(1);
+    return metric === "pos" ? s + "°" : s;
+  }
+
+  function renderAxes() {
+    axesG.textContent = "";
+    var metric = state.metric;
+    var ticks;
+    if (metric === "pos") {
+      ticks = [1, 5, 10, 15, 20];
+    } else {
+      var step = PTS_MAX <= 60 ? 10 : 20;
+      ticks = [];
+      for (var v = 0; v <= PTS_MAX; v += step) ticks.push(v);
+    }
+    ticks.forEach(function (t) {
+      var y = yForValue(t, metric);
+      axesG.appendChild(svgEl("line", { x1: PLOT_X0, x2: PLOT_X1, y1: y, y2: y, "class": "hx-gridline" }));
+      var lbl = svgEl("text", { x: PLOT_X0 - 8, y: y + 3.5, "class": "hx-axis-text", "text-anchor": "end" });
+      lbl.textContent = String(t);
+      axesG.appendChild(lbl);
+    });
+    var mdTicks = [1, 5, 10, 15, 20, 25, 30, 35, MAX_MD];
+    mdTicks.forEach(function (md) {
+      var x = xForMd(md);
+      var lbl = svgEl("text", { x: x, y: PLOT_Y1 + 20, "class": "hx-axis-text", "text-anchor": "middle" });
+      lbl.textContent = String(md);
+      axesG.appendChild(lbl);
+    });
+    var xTitle = svgEl("text", { x: PLOT_X0, y: PLOT_Y1 + 36, "class": "hx-axis-text" });
+    xTitle.textContent = "Giornata";
+    axesG.appendChild(xTitle);
+    var yTitle = svgEl("text", { x: PLOT_X0, y: 10, "class": "hx-axis-text" });
+    yTitle.textContent = metric === "pos" ? "Posizione (1° in alto)" : "Punti medi";
+    axesG.appendChild(yTitle);
+
+    // "oggi" / ultima giornata giocata marker — only once real ("reale") rows exist
+    if (REAL_BOUNDARY_MD !== null) {
+      var todayX = xForMd(REAL_BOUNDARY_MD);
+      axesG.appendChild(svgEl("line", {
+        x1: todayX, x2: todayX, y1: PLOT_Y0, y2: PLOT_Y1, "class": "hx-today-line"
+      }));
+      var todayLbl = svgEl("text", {
+        x: todayX + 4, y: PLOT_Y0 + 10, "class": "hx-today-label"
+      });
+      todayLbl.textContent = "Oggi (g." + REAL_BOUNDARY_MD + ")";
+      axesG.appendChild(todayLbl);
+    }
+  }
+
+  // Returns an object with solid/projected path strings: "solid" is the already-played ("reale") portion of the
+  // line up to and including REAL_BOUNDARY_MD, "projected" is the rest (simulated/future),
+  // sharing the boundary point so the two segments join without a visual gap. When there is
+  // no real data yet (REAL_BOUNDARY_MD === null, today's actual state), "projected" is empty
+  // and "solid" is the full line, i.e. rendering is unchanged from before.
+  function pathFor(team, metric) {
+    var rows = byTeam[team];
+    var solid = "", projected = "";
+    for (var i = 0; i < rows.length; i++) {
+      var x = xForMd(rows[i].md);
+      var y = yForValue(metric === "pos" ? rows[i].pos : rows[i].pts, metric);
+      var pt = x.toFixed(1) + "," + y.toFixed(1) + " ";
+      var isReal = REAL_BOUNDARY_MD !== null && rows[i].md <= REAL_BOUNDARY_MD;
+      if (isReal) {
+        solid += (solid === "" ? "M" : "L") + pt;
+      } else {
+        if (projected === "" && solid !== "") {
+          // start the projected segment from the last real point so the lines join
+          var prev = rows[i - 1];
+          var px = xForMd(prev.md).toFixed(1) + "," + yForValue(metric === "pos" ? prev.pos : prev.pts, metric).toFixed(1);
+          projected += "M" + px + " ";
+        }
+        projected += (projected === "" ? "M" : "L") + pt;
+      }
+    }
+    return { solid: solid, projected: projected };
+  }
+
+  function renderLines() {
+    linesG.textContent = "";
+    labelsG.textContent = "";
+    var metric = state.metric;
+
+    // muted lines first (background layer, all 20 teams)
+    TEAM_NAMES.forEach(function (team) {
+      if (highlighted.has(team)) return;
+      var d = pathFor(team, metric);
+      linesG.appendChild(svgEl("path", { d: d.solid, "class": "hx-line" }));
+      if (d.projected) linesG.appendChild(svgEl("path", { d: d.projected, "class": "hx-line hx-line-projected" }));
+    });
+
+    // highlighted lines on top, full color, thicker stroke, end marker
+    var endPoints = [];
+    TEAM_NAMES.forEach(function (team) {
+      if (!highlighted.has(team)) return;
+      var slot = teamSlot[team];
+      var d = pathFor(team, metric);
+      linesG.appendChild(svgEl("path", { d: d.solid, "class": "hx-line active slot-" + slot }));
+      if (d.projected) linesG.appendChild(svgEl("path", { d: d.projected, "class": "hx-line active hx-line-projected slot-" + slot }));
+      var rows = byTeam[team];
+      var last = rows[rows.length - 1];
+      var val = metric === "pos" ? last.pos : last.pts;
+      var y = yForValue(val, metric);
+      linesG.appendChild(svgEl("circle", { cx: xForMd(last.md), cy: y, r: 4, "class": "hx-dot active slot-" + slot }));
+      endPoints.push({ team: team, slot: slot, trueY: y, y: y });
+    });
+
+    // direct end-of-line labels; nudge apart + leader line when they'd collide
+    endPoints.sort(function (a, b) { return a.trueY - b.trueY; });
+    var minGap = 14;
+    for (var i = 1; i < endPoints.length; i++) {
+      if (endPoints[i].y - endPoints[i - 1].y < minGap) endPoints[i].y = endPoints[i - 1].y + minGap;
+    }
+    var lastX = xForMd(MAX_MD);
+    endPoints.forEach(function (ep) {
+      if (Math.abs(ep.y - ep.trueY) > 1) {
+        labelsG.appendChild(svgEl("line", { x1: lastX + 5, y1: ep.trueY, x2: lastX + 14, y2: ep.y, "class": "hx-leader" }));
+      }
+      var t = svgEl("text", { x: lastX + 16, y: ep.y + 4, "class": "hx-endlabel" });
+      t.textContent = ep.team;
+      labelsG.appendChild(t);
+    });
+  }
+
+  function renderChart() {
+    renderAxes();
+    renderLines();
+    updateCrosshair(state.hoverMd !== null ? state.hoverMd : state.md, state.hoverMd !== null);
+  }
+
+  function renderChips() {
+    chipRow.textContent = "";
+    TEAM_NAMES.forEach(function (team) {
+      var active = highlighted.has(team);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "team-chip" + (active ? " active" : "");
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+      var dot = document.createElement("span");
+      dot.className = "dot" + (active ? " slot-" + teamSlot[team] : "");
+      var label = document.createElement("span");
+      label.textContent = team;
+      chip.appendChild(dot);
+      chip.appendChild(label);
+      chip.addEventListener("click", (function (teamName) {
+        return function () { toggleTeam(teamName); };
+      })(team));
+      chipRow.appendChild(chip);
+    });
+  }
+
+  function updateCrosshair(md, isHover) {
+    var x = xForMd(md);
+    crosshair.setAttribute("x1", x);
+    crosshair.setAttribute("x2", x);
+    crosshair.style.display = "block";
+    crosshair.setAttribute("class", "hx-crosshair" + (isHover ? " hovering" : ""));
+
+    var rows = [];
+    TEAM_NAMES.forEach(function (team) {
+      if (!highlighted.has(team)) return;
+      var r = byTeam[team][md - 1];
+      if (!r) return;
+      rows.push({ team: team, slot: teamSlot[team], pos: r.pos, pts: r.pts });
+    });
+    rows.sort(function (a, b) { return a.pos - b.pos; });
+
+    ttTitle.textContent = "Giornata " + md;
+    ttRows.textContent = "";
+    rows.forEach(function (r) {
+      var row = document.createElement("div");
+      row.className = "hx-tt-row";
+      var key = document.createElement("span");
+      key.className = "hx-tt-key slot-" + r.slot;
+      var name = document.createElement("span");
+      name.className = "hx-tt-name";
+      name.textContent = r.team;
+      var val = document.createElement("span");
+      val.className = "hx-tt-val";
+      val.textContent = state.metric === "pos" ? fmtVal(r.pos, "pos") : fmtVal(r.pts, "pts") + " pt";
+      row.appendChild(key);
+      row.appendChild(name);
+      row.appendChild(val);
+      ttRows.appendChild(row);
+    });
+
+    tooltip.classList.toggle("visible", isHover && rows.length > 0);
+    if (isHover) {
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var relX = x / VB_W * wrapRect.width;
+      var left = Math.min(Math.max(relX + 10, 4), Math.max(4, wrapRect.width - 172));
+      tooltip.style.left = left + "px";
+    }
+  }
+
+  function zoneClassFor(rank) {
+    if (rank <= 4) return "zone-cl";
+    if (rank <= 6) return "zone-europa";
+    if (rank >= 18) return "zone-releg";
+    return "";
+  }
+
+  function renderMiniTable(md) {
+    var rows = HISTORY.filter(function (r) { return r[0] === md; })
+      .slice()
+      .sort(function (a, b) { return a[3] - b[3]; });
+    miniTbody.textContent = "";
+    rows.forEach(function (r, idx) {
+      var rank = idx + 1;
+      var tr = document.createElement("tr");
+      var zc = zoneClassFor(rank);
+      if (zc) tr.className = zc;
+      var tdRank = document.createElement("td");
+      tdRank.className = "col-pos";
+      tdRank.textContent = String(rank);
+      var tdTeam = document.createElement("td");
+      tdTeam.className = "col-team";
+      tdTeam.textContent = r[1];
+      var tdPos = document.createElement("td");
+      tdPos.className = "num";
+      tdPos.textContent = r[3].toFixed(1);
+      var tdPts = document.createElement("td");
+      tdPts.className = "num";
+      tdPts.textContent = r[2].toFixed(1);
+      var tdDr = document.createElement("td");
+      tdDr.className = "num";
+      tdDr.textContent = (r[6] > 0 ? "+" : "") + r[6].toFixed(1);
+      tr.appendChild(tdRank);
+      tr.appendChild(tdTeam);
+      tr.appendChild(tdPos);
+      tr.appendChild(tdPts);
+      tr.appendChild(tdDr);
+      miniTbody.appendChild(tr);
+    });
+    historyInfo.textContent = rows.length + " squadre — classifica media prevista dopo la giornata " + md;
+  }
+
+  metricToggle.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".metric-btn") : null;
+    if (!btn) return;
+    var metric = btn.getAttribute("data-metric");
+    if (metric === state.metric) return;
+    state.metric = metric;
+    Array.prototype.forEach.call(metricToggle.querySelectorAll(".metric-btn"), function (b) {
+      b.classList.toggle("active", b === btn);
+    });
+    renderChart();
+    if (state.hoverMd === null) updateCrosshair(state.md, false);
+  });
+
+  scrub.addEventListener("input", function () {
+    state.md = parseInt(scrub.value, 10);
+    scrubValue.textContent = String(state.md);
+    renderMiniTable(state.md);
+    if (state.hoverMd === null) updateCrosshair(state.md, false);
+  });
+
+  svg.addEventListener("pointermove", function (evt) {
+    var rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    var scaleX = VB_W / rect.width;
+    var svgX = (evt.clientX - rect.left) * scaleX;
+    state.hoverMd = mdForX(svgX);
+    updateCrosshair(state.hoverMd, true);
+  });
+  svg.addEventListener("pointerleave", function () {
+    state.hoverMd = null;
+    updateCrosshair(state.md, false);
+  });
+
+  renderChips();
+  renderChart();
+  renderMiniTable(state.md);
+})();
+
+(function () {
+  "use strict";
+
+  // ---- Embedded data (build-time constant; no network calls) ----
+  // PREV_STORIA: [giornata_riferimento, data_previsione, team, punti_medi, posizione_media,
+  //               DR_medio, prob_titolo_%, prob_champions_top4_%, prob_europa_top6_%,
+  //               prob_retrocessione_%, pos (piazzamento vero e proprio, 1-20)]
+  // "posizione_media" (indice 4) e' la media grezza sulle simulazioni Monte Carlo; "pos"
+  // (indice 10) e' il piazzamento vero e proprio nella classifica prevista (colonna "pos" di
+  // classifica_prevista_2026_27.csv) - possono differire (una squadra puo' avere il miglior
+  // piazzamento pur con posizione media > 1, se finisce spesso 2a/3a nelle singole simulazioni).
+  // One full 20-team snapshot per predict_season.py run (re-running for an already-covered
+  // giornata_riferimento replaces that snapshot, it does not duplicate it). Unlike HISTORY
+  // above (progression within a single run), this tracks how the model's *final* predicted
+  // table itself has shifted from run to run over the course of the season.
+  var PREV_STORIA = [[0,"2026-08-19","Atalanta",66.3,5.8,19.2,5.1,36.7,62.9,0.0,6],[0,"2026-08-19","Bologna",57.0,9.0,5.4,0.4,9.2,23.1,0.3,9],[0,"2026-08-19","Cagliari",43.0,14.0,-15.3,0.0,0.2,1.5,7.7,16],[0,"2026-08-19","Como",64.5,6.5,14.4,2.9,30.0,53.5,0.0,7],[0,"2026-08-19","Fiorentina",53.8,10.1,2.9,0.3,5.1,14.4,0.8,10],[0,"2026-08-19","Frosinone",20.2,19.3,-39.2,0.0,0.0,0.0,95.4,20],[0,"2026-08-19","Genoa",43.8,13.7,-11.8,0.0,0.2,1.5,6.5,14],[0,"2026-08-19","Inter",81.1,2.0,43.6,54.3,91.9,97.8,0.0,1],[0,"2026-08-19","Juventus",70.6,4.5,22.3,10.9,56.3,78.0,0.0,2],[0,"2026-08-19","Lazio",58.2,8.5,8.5,0.8,11.7,27.6,0.2,8],[0,"2026-08-19","Lecce",39.2,15.1,-17.9,0.0,0.0,0.4,15.3,17],[0,"2026-08-19","Milan",67.8,5.3,20.5,6.5,43.7,68.3,0.0,5],[0,"2026-08-19","Monza",24.9,18.5,-33.0,0.0,0.0,0.0,83.4,19],[0,"2026-08-19","Napoli",70.6,4.5,25.0,9.9,57.5,79.3,0.0,3],[0,"2026-08-19","Parma",43.8,13.7,-12.0,0.0,0.4,1.6,5.8,15],[0,"2026-08-19","Roma",69.9,4.7,21.0,8.8,53.0,76.1,0.0,4],[0,"2026-08-19","Sassuolo",48.1,12.2,-8.3,0.0,1.5,4.9,3.0,12],[0,"2026-08-19","Torino",47.8,12.2,-5.7,0.1,1.4,4.5,2.8,13],[0,"2026-08-19","Udinese",48.3,12.1,-6.0,0.0,1.3,4.7,2.7,11],[0,"2026-08-19","Venezia",26.6,18.2,-33.6,0.0,0.0,0.0,76.2,18]];
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  var svg = document.getElementById("evo-svg");
+  if (!svg) return;
+  var axesG = document.getElementById("evo-axes");
+  var linesG = document.getElementById("evo-lines");
+  var labelsG = document.getElementById("evo-endlabels");
+  var crosshair = document.getElementById("evo-crosshair");
+  var chartWrap = document.getElementById("evo-chart-wrap");
+  var tooltip = document.getElementById("evo-tooltip");
+  var ttTitle = document.getElementById("evo-tt-title");
+  var ttRows = document.getElementById("evo-tt-rows");
+  var chipRow = document.getElementById("evo-chips");
+  var evoInfo = document.getElementById("evo-info");
+  var metricToggle = document.getElementById("evo-metric-toggle");
+
+  var PLOT_X0 = 46, PLOT_X1 = 860, PLOT_Y0 = 16, PLOT_Y1 = 412, VB_W = 960;
+
+  // ---- group PREV_STORIA rows by team (build-time data is already sorted by giornata,team) ----
+  var byTeam = {};
+  var teamOrderSeen = [];
+  PREV_STORIA.forEach(function (r) {
+    var team = r[2];
+    if (!byTeam[team]) { byTeam[team] = []; teamOrderSeen.push(team); }
+    byTeam[team].push({
+      gref: r[0], date: r[1], pts: r[3], pos: r[4], dr: r[5],
+      pTitle: r[6], pTop4: r[7], pTop6: r[8], pReleg: r[9], rank: r[10]
+    });
+  });
+  var TEAM_NAMES = teamOrderSeen.slice().sort();
+  TEAM_NAMES.forEach(function (team) {
+    byTeam[team].sort(function (a, b) { return a.gref - b.gref; });
+  });
+
+  // distinct giornata_riferimento values present, ascending. Generic by construction: works the
+  // same whether there is 1 snapshot (today, pre-season) or 38 of them (end of season).
+  var GREFS = [];
+  var seenGref = {};
+  PREV_STORIA.forEach(function (r) {
+    if (!seenGref.hasOwnProperty(r[0])) { seenGref[r[0]] = true; GREFS.push(r[0]); }
+  });
+  GREFS.sort(function (a, b) { return a - b; });
+  var GREF_MIN = GREFS[0], GREF_MAX = GREFS[GREFS.length - 1];
+  var SINGLE_X = GREF_MAX === GREF_MIN;
+
+  var dateForGref = {};
+  PREV_STORIA.forEach(function (r) { dateForGref[r[0]] = r[1]; });
+
+  var PTS_MAX = 0;
+  PREV_STORIA.forEach(function (r) { if (r[3] > PTS_MAX) PTS_MAX = r[3]; });
+  PTS_MAX = Math.ceil(PTS_MAX / 10) * 10;
+  if (PTS_MAX <= 0) PTS_MAX = 10;
+
+  // most recent snapshot's standings drive the default highlight (predicted top4 + bottom3)
+  var latestRows = PREV_STORIA.filter(function (r) { return r[0] === GREF_MAX; })
+    .slice()
+    .sort(function (a, b) { return a[10] - b[10]; });
+
+  var state = { metric: "rank", hoverGref: null };
+
+  var SLOT_COUNT = 8;
+  var teamSlot = {};
+  var usedSlots = [false, false, false, false, false, false, false, false];
+  var highlighted = new Set();
+
+  function hashSlot(team) {
+    var h = 0;
+    for (var i = 0; i < team.length; i++) h = (h * 31 + team.charCodeAt(i)) >>> 0;
+    return h % SLOT_COUNT;
+  }
+  function acquireSlot(team) {
+    for (var i = 0; i < SLOT_COUNT; i++) {
+      if (!usedSlots[i]) { usedSlots[i] = true; teamSlot[team] = i; return; }
+    }
+    teamSlot[team] = hashSlot(team);
+  }
+  function releaseSlot(team) {
+    var s = teamSlot[team];
+    if (s !== undefined && usedSlots[s] !== undefined) usedSlots[s] = false;
+    delete teamSlot[team];
+  }
+  function highlightTeam(team) {
+    if (highlighted.has(team)) return;
+    highlighted.add(team);
+    acquireSlot(team);
+  }
+  function unhighlightTeam(team) {
+    if (!highlighted.has(team)) return;
+    highlighted.delete(team);
+    releaseSlot(team);
+  }
+  function toggleTeam(team) {
+    if (highlighted.has(team)) unhighlightTeam(team);
+    else highlightTeam(team);
+    renderChart();
+    renderChips();
+  }
+
+  // default: predicted top 4 (Champions zone) + bottom 3 (relegation zone), same convention
+  // used by the Cronologia chart above
+  var defaultTop = latestRows.slice(0, 4).map(function (r) { return r[2]; });
+  var defaultBottom = latestRows.slice(-3).map(function (r) { return r[2]; });
+  defaultTop.concat(defaultBottom).forEach(highlightTeam);
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS(SVGNS, tag);
+    if (attrs) {
+      for (var k in attrs) { if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]); }
+    }
+    return el;
+  }
+
+  function xForGref(g) {
+    if (SINGLE_X) return (PLOT_X0 + PLOT_X1) / 2;
+    return PLOT_X0 + (g - GREF_MIN) / (GREF_MAX - GREF_MIN) * (PLOT_X1 - PLOT_X0);
+  }
+  function yForValue(v, metric) {
+    if (metric === "pos" || metric === "rank") {
+      var vv = Math.min(20, Math.max(1, v));
+      return PLOT_Y0 + (vv - 1) / (20 - 1) * (PLOT_Y1 - PLOT_Y0);
+    }
+    var t = Math.min(1, Math.max(0, v / PTS_MAX));
+    return PLOT_Y1 - t * (PLOT_Y1 - PLOT_Y0);
+  }
+  function grefForX(px) {
+    if (SINGLE_X) return GREF_MIN;
+    var t = (px - PLOT_X0) / (PLOT_X1 - PLOT_X0);
+    var raw = GREF_MIN + t * (GREF_MAX - GREF_MIN);
+    var best = GREFS[0], bestD = Infinity;
+    GREFS.forEach(function (g) {
+      var d = Math.abs(g - raw);
+      if (d < bestD) { bestD = d; best = g; }
+    });
+    return best;
+  }
+  function fmtVal(v, metric) {
+    if (metric === "rank") return String(Math.round(v)) + "°";
+    var s = (Math.round(v * 10) / 10).toFixed(1);
+    return metric === "pos" ? s + "°" : s;
+  }
+  function fmtDate(iso) {
+    if (!iso) return "";
+    var parts = String(iso).split("-");
+    if (parts.length !== 3) return iso;
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+  }
+
+  function renderAxes() {
+    axesG.textContent = "";
+    var metric = state.metric;
+    var ticks;
+    if (metric === "pos" || metric === "rank") {
+      ticks = [1, 5, 10, 15, 20];
+    } else {
+      var step = PTS_MAX <= 60 ? 10 : 20;
+      ticks = [];
+      for (var v = 0; v <= PTS_MAX; v += step) ticks.push(v);
+    }
+    ticks.forEach(function (t) {
+      var y = yForValue(t, metric);
+      axesG.appendChild(svgEl("line", { x1: PLOT_X0, x2: PLOT_X1, y1: y, y2: y, "class": "hx-gridline" }));
+      var lbl = svgEl("text", { x: PLOT_X0 - 8, y: y + 3.5, "class": "hx-axis-text", "text-anchor": "end" });
+      lbl.textContent = String(t);
+      axesG.appendChild(lbl);
+    });
+
+    // x ticks: the distinct giornata_riferimento values actually present, thinned if many
+    var xTicks = GREFS;
+    if (GREFS.length > 12) {
+      xTicks = [];
+      var n = GREFS.length;
+      var everyK = Math.ceil(n / 10);
+      for (var i = 0; i < n; i += everyK) xTicks.push(GREFS[i]);
+      if (xTicks[xTicks.length - 1] !== GREFS[n - 1]) xTicks.push(GREFS[n - 1]);
+    }
+    xTicks.forEach(function (g) {
+      var x = xForGref(g);
+      var lbl = svgEl("text", { x: x, y: PLOT_Y1 + 20, "class": "hx-axis-text", "text-anchor": "middle" });
+      lbl.textContent = String(g);
+      axesG.appendChild(lbl);
+    });
+    var xTitle = svgEl("text", { x: PLOT_X0, y: PLOT_Y1 + 36, "class": "hx-axis-text" });
+    xTitle.textContent = "Giornata di riferimento (0 = pre-stagione)";
+    axesG.appendChild(xTitle);
+    var yTitle = svgEl("text", { x: PLOT_X0, y: 10, "class": "hx-axis-text" });
+    yTitle.textContent = metric === "rank" ? "Piazzamento finale previsto (1° in alto)" :
+      (metric === "pos" ? "Posizione media finale prevista (1° in alto)" : "Punti finali medi previsti");
+    axesG.appendChild(yTitle);
+  }
+
+  function valueFor(row, metric) {
+    return metric === "rank" ? row.rank : (metric === "pos" ? row.pos : row.pts);
+  }
+
+  function pathFor(team, metric) {
+    var rows = byTeam[team];
+    var d = "";
+    for (var i = 0; i < rows.length; i++) {
+      var x = xForGref(rows[i].gref);
+      var y = yForValue(valueFor(rows[i], metric), metric);
+      d += (d === "" ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+    }
+    return d;
+  }
+
+  function renderLines() {
+    linesG.textContent = "";
+    labelsG.textContent = "";
+    var metric = state.metric;
+
+    // muted teams first (background layer, all 20 teams). With a single giornata_riferimento
+    // in the data a 1-point path is invisible (a lone "M", no segment) so we draw a dot instead;
+    // as soon as a 2nd snapshot appears the same code naturally starts drawing a full line.
+    TEAM_NAMES.forEach(function (team) {
+      if (highlighted.has(team)) return;
+      var rows = byTeam[team];
+      if (rows.length < 2) {
+        var last = rows[rows.length - 1];
+        if (!last) return;
+        var y = yForValue(valueFor(last, metric), metric);
+        linesG.appendChild(svgEl("circle", { cx: xForGref(last.gref), cy: y, r: 3, "class": "hx-dot" }));
+      } else {
+        linesG.appendChild(svgEl("path", { d: pathFor(team, metric), "class": "hx-line" }));
+      }
+    });
+
+    // highlighted teams on top, full color, thicker stroke, end marker + direct label
+    var endPoints = [];
+    TEAM_NAMES.forEach(function (team) {
+      if (!highlighted.has(team)) return;
+      var slot = teamSlot[team];
+      var rows = byTeam[team];
+      var last = rows[rows.length - 1];
+      if (!last) return;
+      if (rows.length >= 2) {
+        linesG.appendChild(svgEl("path", { d: pathFor(team, metric), "class": "hx-line active slot-" + slot }));
+      }
+      var val = valueFor(last, metric);
+      var y = yForValue(val, metric);
+      linesG.appendChild(svgEl("circle", { cx: xForGref(last.gref), cy: y, r: 4, "class": "hx-dot active slot-" + slot }));
+      endPoints.push({ team: team, slot: slot, trueY: y, y: y });
+    });
+
+    // direct end-of-line labels; nudge apart + leader line when they'd collide
+    endPoints.sort(function (a, b) { return a.trueY - b.trueY; });
+    var minGap = 14;
+    for (var i = 1; i < endPoints.length; i++) {
+      if (endPoints[i].y - endPoints[i - 1].y < minGap) endPoints[i].y = endPoints[i - 1].y + minGap;
+    }
+    var lastX = xForGref(GREF_MAX);
+    endPoints.forEach(function (ep) {
+      if (Math.abs(ep.y - ep.trueY) > 1) {
+        labelsG.appendChild(svgEl("line", { x1: lastX + 5, y1: ep.trueY, x2: lastX + 14, y2: ep.y, "class": "hx-leader" }));
+      }
+      var t = svgEl("text", { x: lastX + 16, y: ep.y + 4, "class": "hx-endlabel" });
+      t.textContent = ep.team;
+      labelsG.appendChild(t);
+    });
+  }
+
+  function renderChart() {
+    renderAxes();
+    renderLines();
+    updateCrosshair(state.hoverGref !== null ? state.hoverGref : GREF_MAX, state.hoverGref !== null);
+  }
+
+  function renderChips() {
+    chipRow.textContent = "";
+    TEAM_NAMES.forEach(function (team) {
+      var active = highlighted.has(team);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "team-chip" + (active ? " active" : "");
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+      var dot = document.createElement("span");
+      dot.className = "dot" + (active ? " slot-" + teamSlot[team] : "");
+      var label = document.createElement("span");
+      label.textContent = team;
+      chip.appendChild(dot);
+      chip.appendChild(label);
+      chip.addEventListener("click", (function (teamName) {
+        return function () { toggleTeam(teamName); };
+      })(team));
+      chipRow.appendChild(chip);
+    });
+  }
+
+  function updateCrosshair(gref, isHover) {
+    var x = xForGref(gref);
+    crosshair.setAttribute("x1", x);
+    crosshair.setAttribute("x2", x);
+    crosshair.style.display = "block";
+    crosshair.setAttribute("class", "hx-crosshair" + (isHover ? " hovering" : ""));
+
+    var rows = [];
+    TEAM_NAMES.forEach(function (team) {
+      if (!highlighted.has(team)) return;
+      var teamRows = byTeam[team];
+      var r = null;
+      for (var i = 0; i < teamRows.length; i++) {
+        if (teamRows[i].gref === gref) { r = teamRows[i]; break; }
+      }
+      if (!r) return;
+      rows.push({ team: team, slot: teamSlot[team], pos: r.pos, pts: r.pts, rank: r.rank });
+    });
+    rows.sort(function (a, b) { return a.rank - b.rank; });
+
+    ttTitle.textContent = "Giornata di riferimento " + gref + " · " + fmtDate(dateForGref[gref]);
+    ttRows.textContent = "";
+    rows.forEach(function (r) {
+      var row = document.createElement("div");
+      row.className = "hx-tt-row";
+      var key = document.createElement("span");
+      key.className = "hx-tt-key slot-" + r.slot;
+      var name = document.createElement("span");
+      name.className = "hx-tt-name";
+      name.textContent = r.team;
+      var val = document.createElement("span");
+      val.className = "hx-tt-val";
+      val.textContent = state.metric === "rank" ? fmtVal(r.rank, "rank") :
+        (state.metric === "pos" ? fmtVal(r.pos, "pos") : fmtVal(r.pts, "pts") + " pt");
+      row.appendChild(key);
+      row.appendChild(name);
+      row.appendChild(val);
+      ttRows.appendChild(row);
+    });
+
+    tooltip.classList.toggle("visible", isHover && rows.length > 0);
+    if (isHover) {
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var relX = x / VB_W * wrapRect.width;
+      var left = Math.min(Math.max(relX + 10, 4), Math.max(4, wrapRect.width - 172));
+      tooltip.style.left = left + "px";
+    }
+  }
+
+  metricToggle.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".metric-btn") : null;
+    if (!btn) return;
+    var metric = btn.getAttribute("data-metric");
+    if (metric === state.metric) return;
+    state.metric = metric;
+    Array.prototype.forEach.call(metricToggle.querySelectorAll(".metric-btn"), function (b) {
+      b.classList.toggle("active", b === btn);
+    });
+    renderChart();
+    if (state.hoverGref === null) updateCrosshair(GREF_MAX, false);
+  });
+
+  svg.addEventListener("pointermove", function (evt) {
+    var rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    var scaleX = VB_W / rect.width;
+    var svgX = (evt.clientX - rect.left) * scaleX;
+    state.hoverGref = grefForX(svgX);
+    updateCrosshair(state.hoverGref, true);
+  });
+  svg.addEventListener("pointerleave", function () {
+    state.hoverGref = null;
+    updateCrosshair(GREF_MAX, false);
+  });
+
+  evoInfo.textContent = GREFS.length + (GREFS.length === 1 ? " rilevazione disponibile" : " rilevazioni disponibili") +
+    " — ultima: giornata di riferimento " + GREF_MAX + " (" + fmtDate(dateForGref[GREF_MAX]) + ")";
+
+  renderChips();
+  renderChart();
 })();
 </script>
 

@@ -30,9 +30,28 @@ FEATURE_COLS = [
     "home_advantage_recent",
     "rest_days_diff", "season_progress",
     "h2h_home_ppg", "h2h_n_precedenti",
+    "squad_value_diff", "squad_value_log_ratio",
 ]
 CLASSES = ["A", "D", "H"]  # ordine alfabetico usato da sklearn per LabelEncoder-like mapping
 FIRST_TEST_SEASON_INDEX = 5  # le prime 5 stagioni sono usate solo per training iniziale
+# Fase 4e: le stagioni piu' vecchie contano meno nel training - richiesto dall'utente.
+# half_life=6 -> il peso si dimezza ogni 6 stagioni indietro rispetto all'ultima disponibile
+# nel training di quel fold (walk-forward, mai la stagione di test). Scelto confrontando
+# [None, 10, 6, 3] su train_ensemble.py (stagioni di SELEZIONE): vedi FASE4e_RECENCY.md.
+SEASON_HALF_LIFE = 10
+
+
+def season_sample_weights(df: pd.DataFrame, half_life=SEASON_HALF_LIFE) -> np.ndarray:
+    """Peso esponenziale decrescente per stagione: la stagione piu' recente PRESENTE
+    NEL TRAINING (non quella di test) ha peso 1.0, ogni `half_life` stagioni indietro
+    il peso si dimezza. half_life=None -> pesi tutti uguali (comportamento originale)."""
+    if half_life is None:
+        return np.ones(len(df))
+    train_seasons_sorted = sorted(df["season"].unique())
+    most_recent_idx = len(train_seasons_sorted) - 1
+    season_to_idx = {s: i for i, s in enumerate(train_seasons_sorted)}
+    seasons_ago = most_recent_idx - df["season"].map(season_to_idx)
+    return 0.5 ** (seasons_ago / half_life)
 
 
 def prepare_xy(df: pd.DataFrame):
@@ -83,13 +102,14 @@ def main():
 
         X_train, y_train = prepare_xy(train_df)
         X_test, y_test = prepare_xy(test_df)
+        w_train = season_sample_weights(train_df)
 
         # --- Modello baseline: Logistic Regression multinomiale ---
         pipe = Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(max_iter=2000)),
         ])
-        pipe.fit(X_train, y_train)
+        pipe.fit(X_train, y_train, clf__sample_weight=w_train)
         proba = pipe.predict_proba(X_test)
         proba_df = pd.DataFrame(proba, columns=pipe.classes_, index=test_df.index)
         evaluate_predictions("LogisticRegression", y_test, proba_df, results, test_season)
@@ -131,7 +151,7 @@ def main():
         ("scaler", StandardScaler()),
         ("clf", LogisticRegression(max_iter=2000)),
     ])
-    final_pipe.fit(X_all, y_all)
+    final_pipe.fit(X_all, y_all, clf__sample_weight=season_sample_weights(df))
 
     print("\n=== Coefficienti modello finale (Logistic Regression, feature standardizzate) ===")
     coef_df = pd.DataFrame(final_pipe.named_steps["clf"].coef_, columns=FEATURE_COLS, index=final_pipe.classes_)

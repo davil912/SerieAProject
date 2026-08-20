@@ -6,10 +6,25 @@ weekend di campionato): scarica di nuovo la fonte dati, individua le partite
 NON ancora presenti nello storico locale, le aggiunge, e ricalcola la
 classifica della stagione piu' recente disponibile ("classifica live").
 
-Se vengono aggiunte nuove partite, ricorda di rilanciare a mano:
+LIMITE NOTO (Fase 6) sul download automatico per la stagione 2026/2027 in
+corso: il mirror GitHub usato qui sotto (MIRROR_URL) si e' fermato al 2025 e
+NON contiene la stagione 2026/2027; football-data.co.uk, l'altra fonte
+possibile, blocca le richieste dirette da questo ambiente cloud (403). Il
+download automatico qui sotto resta quindi un "best effort" che oggi non
+trova nulla di nuovo per la stagione corrente. La via affidabile e' manuale:
+scaricare dal sito il CSV "stagione 2026/2027 ad oggi", metterlo in
+data/incoming/serieA_2026_27.csv (vedi data/incoming/README.md) e lanciare
+    python src/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
+che e' IDEMPOTENTE: si puo' rilanciare ogni settimana con il file scaricato
+di nuovo senza creare duplicati.
+
+Se vengono aggiunte nuove partite (automaticamente o via integrate_new_season.py),
+ricorda di rilanciare a mano:
     python src/prepare_data.py
     python src/feature_builder.py
     python src/build_poisson_features.py
+    python src/predict_season.py        # si accorge da solo delle partite 2026/2027 gia' giocate (Fase 6)
+    python dashboard/build_dashboard.py
 per aggiornare anche il dataset di feature usato dai modelli (non lo si fa
 automaticamente qui per tenere il refresh dati separato dal retraining,
 come indicato nel piano d'azione originale: il retraining va fatto ogni

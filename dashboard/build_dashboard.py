@@ -6,11 +6,17 @@ inside a self-contained HTML file. No external network calls, no localStorage.
 import csv
 import json
 import html as htmlmod
+from pathlib import Path
 
-BASE = "/root/serieA_predictor/data/processed"
-CLASSIFICA_CSV = f"{BASE}/classifica_prevista_2026_27.csv"
-MATCHES_CSV = f"{BASE}/previsioni_partite_2026_27.csv"
-OUT_PATH = "/root/serieA_predictor/dashboard/previsioni_2026_27.html"
+# Percorsi relativi alla cartella del progetto (portabile: funziona a prescindere
+# da dove il progetto viene clonato/copiato, non solo su questa macchina).
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+BASE = PROJECT_ROOT / "data" / "processed"
+CLASSIFICA_CSV = BASE / "classifica_prevista_2026_27.csv"
+MATCHES_CSV = BASE / "previsioni_partite_2026_27.csv"
+STORIA_CSV = BASE / "classifica_storia_2026_27.csv"
+PREV_STORIA_CSV = BASE / "previsioni_storia.csv"
+OUT_PATH = Path(__file__).resolve().parent / "previsioni_2026_27.html"
 
 
 def read_classifica():
@@ -51,6 +57,48 @@ def read_matches():
                 round(float(r["prob_away"]), 1),
             ])
     rows.sort(key=lambda m: (m[0], m[1]))
+    return rows
+
+
+def read_classifica_storia():
+    rows = []
+    with open(STORIA_CSV, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            rows.append([
+                int(r["matchday"]),
+                r["team"],
+                round(float(r["punti_medi"]), 1),
+                round(float(r["posizione_media"]), 1),
+                round(float(r["GF_medi"]), 1),
+                round(float(r["GS_medi"]), 1),
+                round(float(r["DR_medio"]), 1),
+                r["tipo"],
+            ])
+    rows.sort(key=lambda x: (x[0], x[1]))
+    return rows
+
+
+def read_previsioni_storia():
+    # tracks how the FINAL predicted table itself changes across successive runs of
+    # predict_season.py over the season (one full 20-team snapshot per run), as opposed to
+    # STORIA_CSV which tracks the giornata-by-giornata progression within a single run.
+    rows = []
+    with open(PREV_STORIA_CSV, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            rows.append([
+                int(r["giornata_riferimento"]),
+                r["data_previsione"],
+                r["team"],
+                round(float(r["punti_medi"]), 1),
+                round(float(r["posizione_media"]), 1),
+                round(float(r["DR_medio"]), 1),
+                round(float(r["prob_titolo_%"]), 1),
+                round(float(r["prob_champions_top4_%"]), 1),
+                round(float(r["prob_europa_top6_%"]), 1),
+                round(float(r["prob_retrocessione_%"]), 1),
+                int(r["pos"]),  # piazzamento vero e proprio (rank 1-20), non la media grezza delle simulazioni
+            ])
+    rows.sort(key=lambda x: (x[0], x[2]))
     return rows
 
 
@@ -118,14 +166,24 @@ def build_matchday_options(max_md):
 def main():
     teams = read_classifica()
     matches = read_matches()
+    history = read_classifica_storia()
+    prev_storia = read_previsioni_storia()
     max_md = max(m[0] for m in matches)
     assert len(teams) == 20, f"expected 20 teams, got {len(teams)}"
     assert len(matches) == 380, f"expected 380 matches, got {len(matches)}"
+    assert len(history) == 760, f"expected 760 history rows, got {len(history)}"
+    assert len(prev_storia) % 20 == 0, (
+        f"expected previsioni_storia rows to be a multiple of 20 (one row per team per "
+        f"snapshot), got {len(prev_storia)}"
+    )
 
     teams_json = json.dumps(
         [[t["pos"], t["team"]] for t in teams], ensure_ascii=False, separators=(",", ":")
     )
     matches_json = json.dumps(matches, ensure_ascii=False, separators=(",", ":"))
+    history_json = json.dumps(history, ensure_ascii=False, separators=(",", ":"))
+    prev_storia_json = json.dumps(prev_storia, ensure_ascii=False, separators=(",", ":"))
+    n_prev_snapshots = len(set(r[0] for r in prev_storia))
 
     classifica_rows_html = build_classifica_rows(teams)
     matchday_options_html = build_matchday_options(max_md)
@@ -136,15 +194,24 @@ def main():
         max_md=max_md,
         teams_json=teams_json,
         matches_json=matches_json,
+        history_json=history_json,
+        prev_storia_json=prev_storia_json,
         n_teams=len(teams),
         n_matches=len(matches),
+        n_history=len(history),
+        n_prev_storia=len(prev_storia),
+        n_prev_snapshots=n_prev_snapshots,
     )
 
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         f.write(html_out)
 
     print(f"Wrote {OUT_PATH} ({len(html_out):,} bytes)")
-    print(f"Teams embedded: {len(teams)}, Matches embedded: {len(matches)}, Matchdays: {max_md}")
+    print(
+        f"Teams embedded: {len(teams)}, Matches embedded: {len(matches)}, "
+        f"History rows embedded: {len(history)}, Matchdays: {max_md}, "
+        f"Previsioni storia rows embedded: {len(prev_storia)} ({n_prev_snapshots} snapshot/s)"
+    )
 
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
@@ -168,6 +235,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     --series-blue:    #2a78d6;
     --series-blue-soft: #cde2fb;
     --series-orange:  #eb6834;
+    --series-aqua:    #1baf7a;
+    --series-yellow:  #eda100;
+    --series-magenta: #e87ba4;
+    --series-green:   #008300;
+    --series-violet:  #4a3aa7;
     --series-red:     #e34948;
     --draw-fill:      #c3c2b7;
     --tint-cl:        rgba(42,120,214,0.09);
@@ -190,6 +262,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       --series-blue:    #3987e5;
       --series-blue-soft: #184f95;
       --series-orange:  #d95926;
+      --series-aqua:    #199e70;
+      --series-yellow:  #c98500;
+      --series-magenta: #d55181;
+      --series-green:   #008300;
+      --series-violet:  #9085e9;
       --series-red:     #e66767;
       --draw-fill:      #52514e;
       --tint-cl:        rgba(57,135,229,0.14);
@@ -212,6 +289,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     --series-blue:    #3987e5;
     --series-blue-soft: #184f95;
     --series-orange:  #d95926;
+    --series-aqua:    #199e70;
+    --series-yellow:  #c98500;
+    --series-magenta: #d55181;
+    --series-green:   #008300;
+    --series-violet:  #9085e9;
     --series-red:     #e66767;
     --draw-fill:      #52514e;
     --tint-cl:        rgba(57,135,229,0.14);
@@ -585,6 +667,137 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     font-size: 14px;
   }}
 
+  /* ---------- Section nav ---------- */
+  .section-nav {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 24px;
+  }}
+  .section-nav a {{
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface-1);
+    box-shadow: var(--shadow);
+  }}
+  .section-nav a:hover {{ color: var(--text-primary); background: var(--tint-cl); }}
+  .section-nav a:focus-visible {{ outline: 2px solid var(--series-blue); outline-offset: 1px; }}
+
+  /* ---------- Cronologia chart ---------- */
+  .btn-group button.metric-btn.active {{
+    background: var(--series-blue);
+    border-color: var(--series-blue);
+    color: #fff;
+  }}
+  .chart-card {{
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 16px 16px 6px;
+  }}
+  .chart-wrap {{
+    position: relative;
+  }}
+  .history-svg {{
+    display: block;
+    width: 100%;
+    height: auto;
+  }}
+  .hx-gridline {{ stroke: var(--gridline); stroke-width: 1; }}
+  .hx-axis-text {{ fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }}
+  .hx-line {{ fill: none; stroke: var(--text-muted); stroke-width: 1.25; opacity: 0.32; }}
+  .hx-line.active {{ stroke-width: 2.25; opacity: 1; stroke: var(--slot-color); }}
+  .hx-line-projected {{ stroke-dasharray: 5 4; opacity: 0.55; }}
+  .hx-line.active.hx-line-projected {{ opacity: 0.6; }}
+  .hx-today-line {{ stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }}
+  .hx-today-label {{ font-size: 10.5px; fill: var(--text-muted); }}
+  .hx-dot {{ fill: var(--text-muted); stroke: var(--surface-1); stroke-width: 2; }}
+  .hx-dot.active {{ fill: var(--slot-color); }}
+  .hx-endlabel {{ font-size: 11.5px; font-weight: 600; fill: var(--text-primary); }}
+  .hx-leader {{ stroke: var(--text-muted); stroke-width: 1; opacity: 0.55; }}
+  .hx-crosshair {{ stroke: var(--baseline); stroke-width: 1; }}
+  .hx-crosshair.hovering {{ stroke: var(--text-secondary); }}
+  .slot-0 {{ --slot-color: var(--series-blue); }}
+  .slot-1 {{ --slot-color: var(--series-orange); }}
+  .slot-2 {{ --slot-color: var(--series-aqua); }}
+  .slot-3 {{ --slot-color: var(--series-yellow); }}
+  .slot-4 {{ --slot-color: var(--series-magenta); }}
+  .slot-5 {{ --slot-color: var(--series-green); }}
+  .slot-6 {{ --slot-color: var(--series-violet); }}
+  .slot-7 {{ --slot-color: var(--series-red); }}
+
+  .hx-tooltip {{
+    position: absolute;
+    top: 8px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: 158px;
+    max-width: 220px;
+    pointer-events: none;
+    display: none;
+    z-index: 5;
+  }}
+  .hx-tooltip.visible {{ display: block; }}
+  .hx-tt-title {{
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 12px;
+  }}
+  .hx-tt-row {{ display: flex; align-items: center; gap: 6px; padding: 2px 0; }}
+  .hx-tt-key {{ width: 11px; height: 2px; border-radius: 1px; flex: none; background: var(--slot-color); }}
+  .hx-tt-name {{ color: var(--text-secondary); flex: 1; }}
+  .hx-tt-val {{ font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }}
+
+  .chip-row {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 12px;
+  }}
+  .team-chip {{
+    font: inherit;
+    font-size: 12px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--page-plane);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+  }}
+  .team-chip:hover {{ background: var(--tint-cl); }}
+  .team-chip:focus-visible {{ outline: 2px solid var(--series-blue); outline-offset: 1px; }}
+  .team-chip .dot {{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--slot-color, var(--baseline));
+    flex: none;
+  }}
+  .team-chip.active {{
+    color: var(--text-primary);
+    font-weight: 600;
+    background: var(--surface-1);
+    box-shadow: var(--shadow);
+  }}
+
+  .table-wrap.mini {{ margin-top: 14px; }}
+  .table-wrap.mini table {{ min-width: 520px; font-size: 12.5px; }}
+
   footer {{
     max-width: 1180px;
     margin: 0 auto;
@@ -599,6 +812,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     .controls-row select, .controls-row input[type="text"] {{ min-width: 0; width: 100%; }}
     .results-info {{ margin-left: 0; }}
     .matches-list {{ grid-template-columns: 1fr; }}
+    .table-wrap.mini table {{ min-width: 420px; }}
   }}
 </style>
 </head>
@@ -641,6 +855,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 </header>
 
 <div class="wrap">
+
+  <nav class="section-nav" aria-label="Sezioni">
+    <a href="#classifica">Classifica</a>
+    <a href="#partite">Partite</a>
+    <a href="#cronologia">Cronologia</a>
+    <a href="#evoluzione">Evoluzione previsione</a>
+  </nav>
 
   <section id="classifica">
     <div class="section-head">
@@ -717,10 +938,110 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <div class="matches-list" id="matches-list"></div>
   </section>
 
+  <section id="cronologia">
+    <div class="section-head">
+      <h2>Cronologia classifica</h2>
+    </div>
+    <p class="section-note">
+      Posizione media prevista di ogni squadra dopo ciascuna delle 38 giornate, calcolata sulle
+      stesse 5.000 simulazioni Monte Carlo della classifica qui sopra (che è semplicemente lo
+      "scatto" alla 38ª giornata). Nelle prime giornate le squadre sono ancora poco separate — più
+      incertezza — mentre verso fine stagione le linee convergono verso la classifica finale.
+      Clicca sui nomi delle squadre per evidenziarle; passa il mouse sul grafico o usa il cursore
+      della giornata per leggere i valori esatti.
+    </p>
+
+    <div class="controls-row">
+      <div class="btn-group" id="metric-toggle" role="group" aria-label="Metrica mostrata">
+        <button type="button" class="metric-btn active" data-metric="pos">Posizione</button>
+        <button type="button" class="metric-btn" data-metric="pts">Punti</button>
+      </div>
+      <label style="flex:1 1 220px; min-width:220px;">
+        Giornata <span id="scrub-value">38</span> / {max_md}
+        <input type="range" id="md-scrub" min="1" max="{max_md}" value="{max_md}" step="1">
+      </label>
+      <span class="results-info" id="history-info"></span>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-wrap" id="history-chart-wrap">
+        <svg class="history-svg" id="history-svg" viewBox="0 0 960 460" role="img" aria-label="Andamento della posizione media in classifica per giornata">
+          <g id="hx-axes"></g>
+          <g id="hx-lines"></g>
+          <g id="hx-endlabels"></g>
+          <line id="hx-crosshair" class="hx-crosshair" x1="0" y1="16" x2="0" y2="412" style="display:none"></line>
+        </svg>
+        <div class="hx-tooltip" id="hx-tooltip">
+          <div class="hx-tt-title" id="hx-tt-title"></div>
+          <div id="hx-tt-rows"></div>
+        </div>
+      </div>
+      <div class="chip-row" id="team-chips"></div>
+    </div>
+
+    <div class="table-wrap mini">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Squadra</th>
+            <th class="num">Pos. media</th>
+            <th class="num">Pt medi</th>
+            <th class="num">DR</th>
+          </tr>
+        </thead>
+        <tbody id="history-mini-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="evoluzione">
+    <div class="section-head">
+      <h2>Evoluzione previsione</h2>
+    </div>
+    <p class="section-note">
+      Come è cambiata nel tempo la classifica finale prevista dal modello, confrontando le
+      previsioni prodotte a ogni nuova esecuzione durante la stagione (ogni volta che vengono
+      incorporati i risultati reali delle giornate nel frattempo giocate). "Giornata di
+      riferimento 0" indica la previsione pre-stagione, senza ancora partite reali giocate.
+      "Piazzamento" è la posizione vera e propria in classifica (1°, 2°, ...); "Posizione media"
+      è invece la posizione media grezza calcolata sulle 5000 simulazioni Monte Carlo — le due
+      possono differire leggermente (una squadra può avere il piazzamento migliore pur con una
+      posizione media superiore a 1, se finisce spesso 2ª o 3ª in singole simulazioni).
+      Clicca sui nomi delle squadre per evidenziarle; passa il mouse sul grafico per leggere i
+      valori esatti.
+    </p>
+
+    <div class="controls-row">
+      <div class="btn-group" id="evo-metric-toggle" role="group" aria-label="Metrica mostrata">
+        <button type="button" class="metric-btn active" data-metric="rank">Piazzamento</button>
+        <button type="button" class="metric-btn" data-metric="pos">Posizione media</button>
+        <button type="button" class="metric-btn" data-metric="pts">Punti</button>
+      </div>
+      <span class="results-info" id="evo-info"></span>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-wrap" id="evo-chart-wrap">
+        <svg class="history-svg" id="evo-svg" viewBox="0 0 960 460" role="img" aria-label="Evoluzione del piazzamento o dei punti finali previsti, per giornata di riferimento">
+          <g id="evo-axes"></g>
+          <g id="evo-lines"></g>
+          <g id="evo-endlabels"></g>
+          <line id="evo-crosshair" class="hx-crosshair" x1="0" y1="16" x2="0" y2="412" style="display:none"></line>
+        </svg>
+        <div class="hx-tooltip" id="evo-tooltip">
+          <div class="hx-tt-title" id="evo-tt-title"></div>
+          <div id="evo-tt-rows"></div>
+        </div>
+      </div>
+      <div class="chip-row" id="evo-chips"></div>
+    </div>
+  </section>
+
 </div>
 
 <footer>
-  Fonte dati: simulazione interna (classifica_prevista_2026_27.csv, {n_teams} squadre — previsioni_partite_2026_27.csv, {n_matches} partite su {max_md} giornate). Nessuna chiamata di rete esterna: tutti i dati sono incorporati nel file al momento della generazione.
+  Fonte dati: simulazione interna (classifica_prevista_2026_27.csv, {n_teams} squadre — previsioni_partite_2026_27.csv, {n_matches} partite su {max_md} giornate — classifica_storia_2026_27.csv, {n_history} righe su {max_md} giornate x {n_teams} squadre — previsioni_storia.csv, {n_prev_storia} righe su {n_prev_snapshots} rilevazioni x {n_teams} squadre). Nessuna chiamata di rete esterna: tutti i dati sono incorporati nel file al momento della generazione.
 </footer>
 
 <script>
@@ -921,6 +1242,793 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   mdSelect.value = "1";
   render();
+}})();
+
+(function () {{
+  "use strict";
+
+  // ---- Embedded data (build-time constant; no network calls) ----
+  // HISTORY: [matchday, team, punti_medi, posizione_media, GF_medi, GS_medi, DR_medio, tipo]
+  // tipo: "reale" (giornata gia' giocata, dato deterministico) o "simulata" (proiezione Monte Carlo)
+  var HISTORY = {history_json};
+  var MAX_MD = {max_md};
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  var svg = document.getElementById("history-svg");
+  if (!svg) return;
+  var axesG = document.getElementById("hx-axes");
+  var linesG = document.getElementById("hx-lines");
+  var labelsG = document.getElementById("hx-endlabels");
+  var crosshair = document.getElementById("hx-crosshair");
+  var chartWrap = document.getElementById("history-chart-wrap");
+  var tooltip = document.getElementById("hx-tooltip");
+  var ttTitle = document.getElementById("hx-tt-title");
+  var ttRows = document.getElementById("hx-tt-rows");
+  var chipRow = document.getElementById("team-chips");
+  var scrub = document.getElementById("md-scrub");
+  var scrubValue = document.getElementById("scrub-value");
+  var historyInfo = document.getElementById("history-info");
+  var miniTbody = document.getElementById("history-mini-tbody");
+  var metricToggle = document.getElementById("metric-toggle");
+
+  var PLOT_X0 = 46, PLOT_X1 = 860, PLOT_Y0 = 16, PLOT_Y1 = 412, VB_W = 960;
+
+  // ---- group HISTORY rows by team (build-time data is already sorted by matchday,team) ----
+  var byTeam = {{}};
+  var teamOrderSeen = [];
+  HISTORY.forEach(function (r) {{
+    var team = r[1];
+    if (!byTeam[team]) {{ byTeam[team] = []; teamOrderSeen.push(team); }}
+    byTeam[team].push({{ md: r[0], pts: r[2], pos: r[3], gf: r[4], gs: r[5], dr: r[6], tipo: r[7] }});
+  }});
+  var TEAM_NAMES = teamOrderSeen.slice().sort();
+
+  var PTS_MAX = 0;
+  HISTORY.forEach(function (r) {{ if (r[2] > PTS_MAX) PTS_MAX = r[2]; }});
+  PTS_MAX = Math.ceil(PTS_MAX / 10) * 10;
+
+  // boundary matchday between "reale" (already played) and "simulata" (projected) rows,
+  // i.e. the last played giornata league-wide; null when no real rows exist yet (pre-season)
+  var REAL_BOUNDARY_MD = null;
+  HISTORY.forEach(function (r) {{
+    if (r[7] === "reale" && (REAL_BOUNDARY_MD === null || r[0] > REAL_BOUNDARY_MD)) REAL_BOUNDARY_MD = r[0];
+  }});
+
+  // final-matchday standings (used for default highlight + zone shading)
+  var finalRows = HISTORY.filter(function (r) {{ return r[0] === MAX_MD; }})
+    .slice()
+    .sort(function (a, b) {{ return a[3] - b[3]; }});
+
+  // ---- plain-JS UI state (no localStorage/sessionStorage) ----
+  var state = {{ metric: "pos", md: MAX_MD, hoverMd: null }};
+
+  var SLOT_COUNT = 8;
+  var teamSlot = {{}};
+  var usedSlots = [false, false, false, false, false, false, false, false];
+  var highlighted = new Set();
+
+  function hashSlot(team) {{
+    var h = 0;
+    for (var i = 0; i < team.length; i++) h = (h * 31 + team.charCodeAt(i)) >>> 0;
+    return h % SLOT_COUNT;
+  }}
+  function acquireSlot(team) {{
+    for (var i = 0; i < SLOT_COUNT; i++) {{
+      if (!usedSlots[i]) {{ usedSlots[i] = true; teamSlot[team] = i; return; }}
+    }}
+    teamSlot[team] = hashSlot(team);
+  }}
+  function releaseSlot(team) {{
+    var s = teamSlot[team];
+    if (s !== undefined && usedSlots[s] !== undefined) usedSlots[s] = false;
+    delete teamSlot[team];
+  }}
+  function highlightTeam(team) {{
+    if (highlighted.has(team)) return;
+    highlighted.add(team);
+    acquireSlot(team);
+  }}
+  function unhighlightTeam(team) {{
+    if (!highlighted.has(team)) return;
+    highlighted.delete(team);
+    releaseSlot(team);
+  }}
+  function toggleTeam(team) {{
+    if (highlighted.has(team)) unhighlightTeam(team);
+    else highlightTeam(team);
+    renderChart();
+    renderChips();
+  }}
+
+  // default: predicted top 4 (Champions zone) + bottom 3 (relegation zone) — the two
+  // storylines a reader most wants to trace across the season, kept under the 8-slot cap
+  var defaultTop = finalRows.slice(0, 4).map(function (r) {{ return r[1]; }});
+  var defaultBottom = finalRows.slice(-3).map(function (r) {{ return r[1]; }});
+  defaultTop.concat(defaultBottom).forEach(highlightTeam);
+
+  function svgEl(tag, attrs) {{
+    var el = document.createElementNS(SVGNS, tag);
+    if (attrs) {{
+      for (var k in attrs) {{ if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]); }}
+    }}
+    return el;
+  }}
+
+  function xForMd(md) {{
+    return PLOT_X0 + (md - 1) / (MAX_MD - 1) * (PLOT_X1 - PLOT_X0);
+  }}
+  function yForValue(v, metric) {{
+    if (metric === "pos") {{
+      var vv = Math.min(20, Math.max(1, v));
+      return PLOT_Y0 + (vv - 1) / (20 - 1) * (PLOT_Y1 - PLOT_Y0);
+    }}
+    var t = Math.min(1, Math.max(0, v / PTS_MAX));
+    return PLOT_Y1 - t * (PLOT_Y1 - PLOT_Y0);
+  }}
+  function mdForX(px) {{
+    var t = (px - PLOT_X0) / (PLOT_X1 - PLOT_X0);
+    var md = Math.round(1 + t * (MAX_MD - 1));
+    return Math.min(MAX_MD, Math.max(1, md));
+  }}
+  function fmtVal(v, metric) {{
+    var s = (Math.round(v * 10) / 10).toFixed(1);
+    return metric === "pos" ? s + "°" : s;
+  }}
+
+  function renderAxes() {{
+    axesG.textContent = "";
+    var metric = state.metric;
+    var ticks;
+    if (metric === "pos") {{
+      ticks = [1, 5, 10, 15, 20];
+    }} else {{
+      var step = PTS_MAX <= 60 ? 10 : 20;
+      ticks = [];
+      for (var v = 0; v <= PTS_MAX; v += step) ticks.push(v);
+    }}
+    ticks.forEach(function (t) {{
+      var y = yForValue(t, metric);
+      axesG.appendChild(svgEl("line", {{ x1: PLOT_X0, x2: PLOT_X1, y1: y, y2: y, "class": "hx-gridline" }}));
+      var lbl = svgEl("text", {{ x: PLOT_X0 - 8, y: y + 3.5, "class": "hx-axis-text", "text-anchor": "end" }});
+      lbl.textContent = String(t);
+      axesG.appendChild(lbl);
+    }});
+    var mdTicks = [1, 5, 10, 15, 20, 25, 30, 35, MAX_MD];
+    mdTicks.forEach(function (md) {{
+      var x = xForMd(md);
+      var lbl = svgEl("text", {{ x: x, y: PLOT_Y1 + 20, "class": "hx-axis-text", "text-anchor": "middle" }});
+      lbl.textContent = String(md);
+      axesG.appendChild(lbl);
+    }});
+    var xTitle = svgEl("text", {{ x: PLOT_X0, y: PLOT_Y1 + 36, "class": "hx-axis-text" }});
+    xTitle.textContent = "Giornata";
+    axesG.appendChild(xTitle);
+    var yTitle = svgEl("text", {{ x: PLOT_X0, y: 10, "class": "hx-axis-text" }});
+    yTitle.textContent = metric === "pos" ? "Posizione (1° in alto)" : "Punti medi";
+    axesG.appendChild(yTitle);
+
+    // "oggi" / ultima giornata giocata marker — only once real ("reale") rows exist
+    if (REAL_BOUNDARY_MD !== null) {{
+      var todayX = xForMd(REAL_BOUNDARY_MD);
+      axesG.appendChild(svgEl("line", {{
+        x1: todayX, x2: todayX, y1: PLOT_Y0, y2: PLOT_Y1, "class": "hx-today-line"
+      }}));
+      var todayLbl = svgEl("text", {{
+        x: todayX + 4, y: PLOT_Y0 + 10, "class": "hx-today-label"
+      }});
+      todayLbl.textContent = "Oggi (g." + REAL_BOUNDARY_MD + ")";
+      axesG.appendChild(todayLbl);
+    }}
+  }}
+
+  // Returns an object with solid/projected path strings: "solid" is the already-played ("reale") portion of the
+  // line up to and including REAL_BOUNDARY_MD, "projected" is the rest (simulated/future),
+  // sharing the boundary point so the two segments join without a visual gap. When there is
+  // no real data yet (REAL_BOUNDARY_MD === null, today's actual state), "projected" is empty
+  // and "solid" is the full line, i.e. rendering is unchanged from before.
+  function pathFor(team, metric) {{
+    var rows = byTeam[team];
+    var solid = "", projected = "";
+    for (var i = 0; i < rows.length; i++) {{
+      var x = xForMd(rows[i].md);
+      var y = yForValue(metric === "pos" ? rows[i].pos : rows[i].pts, metric);
+      var pt = x.toFixed(1) + "," + y.toFixed(1) + " ";
+      var isReal = REAL_BOUNDARY_MD !== null && rows[i].md <= REAL_BOUNDARY_MD;
+      if (isReal) {{
+        solid += (solid === "" ? "M" : "L") + pt;
+      }} else {{
+        if (projected === "" && solid !== "") {{
+          // start the projected segment from the last real point so the lines join
+          var prev = rows[i - 1];
+          var px = xForMd(prev.md).toFixed(1) + "," + yForValue(metric === "pos" ? prev.pos : prev.pts, metric).toFixed(1);
+          projected += "M" + px + " ";
+        }}
+        projected += (projected === "" ? "M" : "L") + pt;
+      }}
+    }}
+    return {{ solid: solid, projected: projected }};
+  }}
+
+  function renderLines() {{
+    linesG.textContent = "";
+    labelsG.textContent = "";
+    var metric = state.metric;
+
+    // muted lines first (background layer, all 20 teams)
+    TEAM_NAMES.forEach(function (team) {{
+      if (highlighted.has(team)) return;
+      var d = pathFor(team, metric);
+      linesG.appendChild(svgEl("path", {{ d: d.solid, "class": "hx-line" }}));
+      if (d.projected) linesG.appendChild(svgEl("path", {{ d: d.projected, "class": "hx-line hx-line-projected" }}));
+    }});
+
+    // highlighted lines on top, full color, thicker stroke, end marker
+    var endPoints = [];
+    TEAM_NAMES.forEach(function (team) {{
+      if (!highlighted.has(team)) return;
+      var slot = teamSlot[team];
+      var d = pathFor(team, metric);
+      linesG.appendChild(svgEl("path", {{ d: d.solid, "class": "hx-line active slot-" + slot }}));
+      if (d.projected) linesG.appendChild(svgEl("path", {{ d: d.projected, "class": "hx-line active hx-line-projected slot-" + slot }}));
+      var rows = byTeam[team];
+      var last = rows[rows.length - 1];
+      var val = metric === "pos" ? last.pos : last.pts;
+      var y = yForValue(val, metric);
+      linesG.appendChild(svgEl("circle", {{ cx: xForMd(last.md), cy: y, r: 4, "class": "hx-dot active slot-" + slot }}));
+      endPoints.push({{ team: team, slot: slot, trueY: y, y: y }});
+    }});
+
+    // direct end-of-line labels; nudge apart + leader line when they'd collide
+    endPoints.sort(function (a, b) {{ return a.trueY - b.trueY; }});
+    var minGap = 14;
+    for (var i = 1; i < endPoints.length; i++) {{
+      if (endPoints[i].y - endPoints[i - 1].y < minGap) endPoints[i].y = endPoints[i - 1].y + minGap;
+    }}
+    var lastX = xForMd(MAX_MD);
+    endPoints.forEach(function (ep) {{
+      if (Math.abs(ep.y - ep.trueY) > 1) {{
+        labelsG.appendChild(svgEl("line", {{ x1: lastX + 5, y1: ep.trueY, x2: lastX + 14, y2: ep.y, "class": "hx-leader" }}));
+      }}
+      var t = svgEl("text", {{ x: lastX + 16, y: ep.y + 4, "class": "hx-endlabel" }});
+      t.textContent = ep.team;
+      labelsG.appendChild(t);
+    }});
+  }}
+
+  function renderChart() {{
+    renderAxes();
+    renderLines();
+    updateCrosshair(state.hoverMd !== null ? state.hoverMd : state.md, state.hoverMd !== null);
+  }}
+
+  function renderChips() {{
+    chipRow.textContent = "";
+    TEAM_NAMES.forEach(function (team) {{
+      var active = highlighted.has(team);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "team-chip" + (active ? " active" : "");
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+      var dot = document.createElement("span");
+      dot.className = "dot" + (active ? " slot-" + teamSlot[team] : "");
+      var label = document.createElement("span");
+      label.textContent = team;
+      chip.appendChild(dot);
+      chip.appendChild(label);
+      chip.addEventListener("click", (function (teamName) {{
+        return function () {{ toggleTeam(teamName); }};
+      }})(team));
+      chipRow.appendChild(chip);
+    }});
+  }}
+
+  function updateCrosshair(md, isHover) {{
+    var x = xForMd(md);
+    crosshair.setAttribute("x1", x);
+    crosshair.setAttribute("x2", x);
+    crosshair.style.display = "block";
+    crosshair.setAttribute("class", "hx-crosshair" + (isHover ? " hovering" : ""));
+
+    var rows = [];
+    TEAM_NAMES.forEach(function (team) {{
+      if (!highlighted.has(team)) return;
+      var r = byTeam[team][md - 1];
+      if (!r) return;
+      rows.push({{ team: team, slot: teamSlot[team], pos: r.pos, pts: r.pts }});
+    }});
+    rows.sort(function (a, b) {{ return a.pos - b.pos; }});
+
+    ttTitle.textContent = "Giornata " + md;
+    ttRows.textContent = "";
+    rows.forEach(function (r) {{
+      var row = document.createElement("div");
+      row.className = "hx-tt-row";
+      var key = document.createElement("span");
+      key.className = "hx-tt-key slot-" + r.slot;
+      var name = document.createElement("span");
+      name.className = "hx-tt-name";
+      name.textContent = r.team;
+      var val = document.createElement("span");
+      val.className = "hx-tt-val";
+      val.textContent = state.metric === "pos" ? fmtVal(r.pos, "pos") : fmtVal(r.pts, "pts") + " pt";
+      row.appendChild(key);
+      row.appendChild(name);
+      row.appendChild(val);
+      ttRows.appendChild(row);
+    }});
+
+    tooltip.classList.toggle("visible", isHover && rows.length > 0);
+    if (isHover) {{
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var relX = x / VB_W * wrapRect.width;
+      var left = Math.min(Math.max(relX + 10, 4), Math.max(4, wrapRect.width - 172));
+      tooltip.style.left = left + "px";
+    }}
+  }}
+
+  function zoneClassFor(rank) {{
+    if (rank <= 4) return "zone-cl";
+    if (rank <= 6) return "zone-europa";
+    if (rank >= 18) return "zone-releg";
+    return "";
+  }}
+
+  function renderMiniTable(md) {{
+    var rows = HISTORY.filter(function (r) {{ return r[0] === md; }})
+      .slice()
+      .sort(function (a, b) {{ return a[3] - b[3]; }});
+    miniTbody.textContent = "";
+    rows.forEach(function (r, idx) {{
+      var rank = idx + 1;
+      var tr = document.createElement("tr");
+      var zc = zoneClassFor(rank);
+      if (zc) tr.className = zc;
+      var tdRank = document.createElement("td");
+      tdRank.className = "col-pos";
+      tdRank.textContent = String(rank);
+      var tdTeam = document.createElement("td");
+      tdTeam.className = "col-team";
+      tdTeam.textContent = r[1];
+      var tdPos = document.createElement("td");
+      tdPos.className = "num";
+      tdPos.textContent = r[3].toFixed(1);
+      var tdPts = document.createElement("td");
+      tdPts.className = "num";
+      tdPts.textContent = r[2].toFixed(1);
+      var tdDr = document.createElement("td");
+      tdDr.className = "num";
+      tdDr.textContent = (r[6] > 0 ? "+" : "") + r[6].toFixed(1);
+      tr.appendChild(tdRank);
+      tr.appendChild(tdTeam);
+      tr.appendChild(tdPos);
+      tr.appendChild(tdPts);
+      tr.appendChild(tdDr);
+      miniTbody.appendChild(tr);
+    }});
+    historyInfo.textContent = rows.length + " squadre — classifica media prevista dopo la giornata " + md;
+  }}
+
+  metricToggle.addEventListener("click", function (e) {{
+    var btn = e.target.closest ? e.target.closest(".metric-btn") : null;
+    if (!btn) return;
+    var metric = btn.getAttribute("data-metric");
+    if (metric === state.metric) return;
+    state.metric = metric;
+    Array.prototype.forEach.call(metricToggle.querySelectorAll(".metric-btn"), function (b) {{
+      b.classList.toggle("active", b === btn);
+    }});
+    renderChart();
+    if (state.hoverMd === null) updateCrosshair(state.md, false);
+  }});
+
+  scrub.addEventListener("input", function () {{
+    state.md = parseInt(scrub.value, 10);
+    scrubValue.textContent = String(state.md);
+    renderMiniTable(state.md);
+    if (state.hoverMd === null) updateCrosshair(state.md, false);
+  }});
+
+  svg.addEventListener("pointermove", function (evt) {{
+    var rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    var scaleX = VB_W / rect.width;
+    var svgX = (evt.clientX - rect.left) * scaleX;
+    state.hoverMd = mdForX(svgX);
+    updateCrosshair(state.hoverMd, true);
+  }});
+  svg.addEventListener("pointerleave", function () {{
+    state.hoverMd = null;
+    updateCrosshair(state.md, false);
+  }});
+
+  renderChips();
+  renderChart();
+  renderMiniTable(state.md);
+}})();
+
+(function () {{
+  "use strict";
+
+  // ---- Embedded data (build-time constant; no network calls) ----
+  // PREV_STORIA: [giornata_riferimento, data_previsione, team, punti_medi, posizione_media,
+  //               DR_medio, prob_titolo_%, prob_champions_top4_%, prob_europa_top6_%,
+  //               prob_retrocessione_%, pos (piazzamento vero e proprio, 1-20)]
+  // "posizione_media" (indice 4) e' la media grezza sulle simulazioni Monte Carlo; "pos"
+  // (indice 10) e' il piazzamento vero e proprio nella classifica prevista (colonna "pos" di
+  // classifica_prevista_2026_27.csv) - possono differire (una squadra puo' avere il miglior
+  // piazzamento pur con posizione media > 1, se finisce spesso 2a/3a nelle singole simulazioni).
+  // One full 20-team snapshot per predict_season.py run (re-running for an already-covered
+  // giornata_riferimento replaces that snapshot, it does not duplicate it). Unlike HISTORY
+  // above (progression within a single run), this tracks how the model's *final* predicted
+  // table itself has shifted from run to run over the course of the season.
+  var PREV_STORIA = {prev_storia_json};
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  var svg = document.getElementById("evo-svg");
+  if (!svg) return;
+  var axesG = document.getElementById("evo-axes");
+  var linesG = document.getElementById("evo-lines");
+  var labelsG = document.getElementById("evo-endlabels");
+  var crosshair = document.getElementById("evo-crosshair");
+  var chartWrap = document.getElementById("evo-chart-wrap");
+  var tooltip = document.getElementById("evo-tooltip");
+  var ttTitle = document.getElementById("evo-tt-title");
+  var ttRows = document.getElementById("evo-tt-rows");
+  var chipRow = document.getElementById("evo-chips");
+  var evoInfo = document.getElementById("evo-info");
+  var metricToggle = document.getElementById("evo-metric-toggle");
+
+  var PLOT_X0 = 46, PLOT_X1 = 860, PLOT_Y0 = 16, PLOT_Y1 = 412, VB_W = 960;
+
+  // ---- group PREV_STORIA rows by team (build-time data is already sorted by giornata,team) ----
+  var byTeam = {{}};
+  var teamOrderSeen = [];
+  PREV_STORIA.forEach(function (r) {{
+    var team = r[2];
+    if (!byTeam[team]) {{ byTeam[team] = []; teamOrderSeen.push(team); }}
+    byTeam[team].push({{
+      gref: r[0], date: r[1], pts: r[3], pos: r[4], dr: r[5],
+      pTitle: r[6], pTop4: r[7], pTop6: r[8], pReleg: r[9], rank: r[10]
+    }});
+  }});
+  var TEAM_NAMES = teamOrderSeen.slice().sort();
+  TEAM_NAMES.forEach(function (team) {{
+    byTeam[team].sort(function (a, b) {{ return a.gref - b.gref; }});
+  }});
+
+  // distinct giornata_riferimento values present, ascending. Generic by construction: works the
+  // same whether there is 1 snapshot (today, pre-season) or 38 of them (end of season).
+  var GREFS = [];
+  var seenGref = {{}};
+  PREV_STORIA.forEach(function (r) {{
+    if (!seenGref.hasOwnProperty(r[0])) {{ seenGref[r[0]] = true; GREFS.push(r[0]); }}
+  }});
+  GREFS.sort(function (a, b) {{ return a - b; }});
+  var GREF_MIN = GREFS[0], GREF_MAX = GREFS[GREFS.length - 1];
+  var SINGLE_X = GREF_MAX === GREF_MIN;
+
+  var dateForGref = {{}};
+  PREV_STORIA.forEach(function (r) {{ dateForGref[r[0]] = r[1]; }});
+
+  var PTS_MAX = 0;
+  PREV_STORIA.forEach(function (r) {{ if (r[3] > PTS_MAX) PTS_MAX = r[3]; }});
+  PTS_MAX = Math.ceil(PTS_MAX / 10) * 10;
+  if (PTS_MAX <= 0) PTS_MAX = 10;
+
+  // most recent snapshot's standings drive the default highlight (predicted top4 + bottom3)
+  var latestRows = PREV_STORIA.filter(function (r) {{ return r[0] === GREF_MAX; }})
+    .slice()
+    .sort(function (a, b) {{ return a[10] - b[10]; }});
+
+  var state = {{ metric: "rank", hoverGref: null }};
+
+  var SLOT_COUNT = 8;
+  var teamSlot = {{}};
+  var usedSlots = [false, false, false, false, false, false, false, false];
+  var highlighted = new Set();
+
+  function hashSlot(team) {{
+    var h = 0;
+    for (var i = 0; i < team.length; i++) h = (h * 31 + team.charCodeAt(i)) >>> 0;
+    return h % SLOT_COUNT;
+  }}
+  function acquireSlot(team) {{
+    for (var i = 0; i < SLOT_COUNT; i++) {{
+      if (!usedSlots[i]) {{ usedSlots[i] = true; teamSlot[team] = i; return; }}
+    }}
+    teamSlot[team] = hashSlot(team);
+  }}
+  function releaseSlot(team) {{
+    var s = teamSlot[team];
+    if (s !== undefined && usedSlots[s] !== undefined) usedSlots[s] = false;
+    delete teamSlot[team];
+  }}
+  function highlightTeam(team) {{
+    if (highlighted.has(team)) return;
+    highlighted.add(team);
+    acquireSlot(team);
+  }}
+  function unhighlightTeam(team) {{
+    if (!highlighted.has(team)) return;
+    highlighted.delete(team);
+    releaseSlot(team);
+  }}
+  function toggleTeam(team) {{
+    if (highlighted.has(team)) unhighlightTeam(team);
+    else highlightTeam(team);
+    renderChart();
+    renderChips();
+  }}
+
+  // default: predicted top 4 (Champions zone) + bottom 3 (relegation zone), same convention
+  // used by the Cronologia chart above
+  var defaultTop = latestRows.slice(0, 4).map(function (r) {{ return r[2]; }});
+  var defaultBottom = latestRows.slice(-3).map(function (r) {{ return r[2]; }});
+  defaultTop.concat(defaultBottom).forEach(highlightTeam);
+
+  function svgEl(tag, attrs) {{
+    var el = document.createElementNS(SVGNS, tag);
+    if (attrs) {{
+      for (var k in attrs) {{ if (attrs.hasOwnProperty(k)) el.setAttribute(k, attrs[k]); }}
+    }}
+    return el;
+  }}
+
+  function xForGref(g) {{
+    if (SINGLE_X) return (PLOT_X0 + PLOT_X1) / 2;
+    return PLOT_X0 + (g - GREF_MIN) / (GREF_MAX - GREF_MIN) * (PLOT_X1 - PLOT_X0);
+  }}
+  function yForValue(v, metric) {{
+    if (metric === "pos" || metric === "rank") {{
+      var vv = Math.min(20, Math.max(1, v));
+      return PLOT_Y0 + (vv - 1) / (20 - 1) * (PLOT_Y1 - PLOT_Y0);
+    }}
+    var t = Math.min(1, Math.max(0, v / PTS_MAX));
+    return PLOT_Y1 - t * (PLOT_Y1 - PLOT_Y0);
+  }}
+  function grefForX(px) {{
+    if (SINGLE_X) return GREF_MIN;
+    var t = (px - PLOT_X0) / (PLOT_X1 - PLOT_X0);
+    var raw = GREF_MIN + t * (GREF_MAX - GREF_MIN);
+    var best = GREFS[0], bestD = Infinity;
+    GREFS.forEach(function (g) {{
+      var d = Math.abs(g - raw);
+      if (d < bestD) {{ bestD = d; best = g; }}
+    }});
+    return best;
+  }}
+  function fmtVal(v, metric) {{
+    if (metric === "rank") return String(Math.round(v)) + "°";
+    var s = (Math.round(v * 10) / 10).toFixed(1);
+    return metric === "pos" ? s + "°" : s;
+  }}
+  function fmtDate(iso) {{
+    if (!iso) return "";
+    var parts = String(iso).split("-");
+    if (parts.length !== 3) return iso;
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+  }}
+
+  function renderAxes() {{
+    axesG.textContent = "";
+    var metric = state.metric;
+    var ticks;
+    if (metric === "pos" || metric === "rank") {{
+      ticks = [1, 5, 10, 15, 20];
+    }} else {{
+      var step = PTS_MAX <= 60 ? 10 : 20;
+      ticks = [];
+      for (var v = 0; v <= PTS_MAX; v += step) ticks.push(v);
+    }}
+    ticks.forEach(function (t) {{
+      var y = yForValue(t, metric);
+      axesG.appendChild(svgEl("line", {{ x1: PLOT_X0, x2: PLOT_X1, y1: y, y2: y, "class": "hx-gridline" }}));
+      var lbl = svgEl("text", {{ x: PLOT_X0 - 8, y: y + 3.5, "class": "hx-axis-text", "text-anchor": "end" }});
+      lbl.textContent = String(t);
+      axesG.appendChild(lbl);
+    }});
+
+    // x ticks: the distinct giornata_riferimento values actually present, thinned if many
+    var xTicks = GREFS;
+    if (GREFS.length > 12) {{
+      xTicks = [];
+      var n = GREFS.length;
+      var everyK = Math.ceil(n / 10);
+      for (var i = 0; i < n; i += everyK) xTicks.push(GREFS[i]);
+      if (xTicks[xTicks.length - 1] !== GREFS[n - 1]) xTicks.push(GREFS[n - 1]);
+    }}
+    xTicks.forEach(function (g) {{
+      var x = xForGref(g);
+      var lbl = svgEl("text", {{ x: x, y: PLOT_Y1 + 20, "class": "hx-axis-text", "text-anchor": "middle" }});
+      lbl.textContent = String(g);
+      axesG.appendChild(lbl);
+    }});
+    var xTitle = svgEl("text", {{ x: PLOT_X0, y: PLOT_Y1 + 36, "class": "hx-axis-text" }});
+    xTitle.textContent = "Giornata di riferimento (0 = pre-stagione)";
+    axesG.appendChild(xTitle);
+    var yTitle = svgEl("text", {{ x: PLOT_X0, y: 10, "class": "hx-axis-text" }});
+    yTitle.textContent = metric === "rank" ? "Piazzamento finale previsto (1° in alto)" :
+      (metric === "pos" ? "Posizione media finale prevista (1° in alto)" : "Punti finali medi previsti");
+    axesG.appendChild(yTitle);
+  }}
+
+  function valueFor(row, metric) {{
+    return metric === "rank" ? row.rank : (metric === "pos" ? row.pos : row.pts);
+  }}
+
+  function pathFor(team, metric) {{
+    var rows = byTeam[team];
+    var d = "";
+    for (var i = 0; i < rows.length; i++) {{
+      var x = xForGref(rows[i].gref);
+      var y = yForValue(valueFor(rows[i], metric), metric);
+      d += (d === "" ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+    }}
+    return d;
+  }}
+
+  function renderLines() {{
+    linesG.textContent = "";
+    labelsG.textContent = "";
+    var metric = state.metric;
+
+    // muted teams first (background layer, all 20 teams). With a single giornata_riferimento
+    // in the data a 1-point path is invisible (a lone "M", no segment) so we draw a dot instead;
+    // as soon as a 2nd snapshot appears the same code naturally starts drawing a full line.
+    TEAM_NAMES.forEach(function (team) {{
+      if (highlighted.has(team)) return;
+      var rows = byTeam[team];
+      if (rows.length < 2) {{
+        var last = rows[rows.length - 1];
+        if (!last) return;
+        var y = yForValue(valueFor(last, metric), metric);
+        linesG.appendChild(svgEl("circle", {{ cx: xForGref(last.gref), cy: y, r: 3, "class": "hx-dot" }}));
+      }} else {{
+        linesG.appendChild(svgEl("path", {{ d: pathFor(team, metric), "class": "hx-line" }}));
+      }}
+    }});
+
+    // highlighted teams on top, full color, thicker stroke, end marker + direct label
+    var endPoints = [];
+    TEAM_NAMES.forEach(function (team) {{
+      if (!highlighted.has(team)) return;
+      var slot = teamSlot[team];
+      var rows = byTeam[team];
+      var last = rows[rows.length - 1];
+      if (!last) return;
+      if (rows.length >= 2) {{
+        linesG.appendChild(svgEl("path", {{ d: pathFor(team, metric), "class": "hx-line active slot-" + slot }}));
+      }}
+      var val = valueFor(last, metric);
+      var y = yForValue(val, metric);
+      linesG.appendChild(svgEl("circle", {{ cx: xForGref(last.gref), cy: y, r: 4, "class": "hx-dot active slot-" + slot }}));
+      endPoints.push({{ team: team, slot: slot, trueY: y, y: y }});
+    }});
+
+    // direct end-of-line labels; nudge apart + leader line when they'd collide
+    endPoints.sort(function (a, b) {{ return a.trueY - b.trueY; }});
+    var minGap = 14;
+    for (var i = 1; i < endPoints.length; i++) {{
+      if (endPoints[i].y - endPoints[i - 1].y < minGap) endPoints[i].y = endPoints[i - 1].y + minGap;
+    }}
+    var lastX = xForGref(GREF_MAX);
+    endPoints.forEach(function (ep) {{
+      if (Math.abs(ep.y - ep.trueY) > 1) {{
+        labelsG.appendChild(svgEl("line", {{ x1: lastX + 5, y1: ep.trueY, x2: lastX + 14, y2: ep.y, "class": "hx-leader" }}));
+      }}
+      var t = svgEl("text", {{ x: lastX + 16, y: ep.y + 4, "class": "hx-endlabel" }});
+      t.textContent = ep.team;
+      labelsG.appendChild(t);
+    }});
+  }}
+
+  function renderChart() {{
+    renderAxes();
+    renderLines();
+    updateCrosshair(state.hoverGref !== null ? state.hoverGref : GREF_MAX, state.hoverGref !== null);
+  }}
+
+  function renderChips() {{
+    chipRow.textContent = "";
+    TEAM_NAMES.forEach(function (team) {{
+      var active = highlighted.has(team);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "team-chip" + (active ? " active" : "");
+      chip.setAttribute("aria-pressed", active ? "true" : "false");
+      var dot = document.createElement("span");
+      dot.className = "dot" + (active ? " slot-" + teamSlot[team] : "");
+      var label = document.createElement("span");
+      label.textContent = team;
+      chip.appendChild(dot);
+      chip.appendChild(label);
+      chip.addEventListener("click", (function (teamName) {{
+        return function () {{ toggleTeam(teamName); }};
+      }})(team));
+      chipRow.appendChild(chip);
+    }});
+  }}
+
+  function updateCrosshair(gref, isHover) {{
+    var x = xForGref(gref);
+    crosshair.setAttribute("x1", x);
+    crosshair.setAttribute("x2", x);
+    crosshair.style.display = "block";
+    crosshair.setAttribute("class", "hx-crosshair" + (isHover ? " hovering" : ""));
+
+    var rows = [];
+    TEAM_NAMES.forEach(function (team) {{
+      if (!highlighted.has(team)) return;
+      var teamRows = byTeam[team];
+      var r = null;
+      for (var i = 0; i < teamRows.length; i++) {{
+        if (teamRows[i].gref === gref) {{ r = teamRows[i]; break; }}
+      }}
+      if (!r) return;
+      rows.push({{ team: team, slot: teamSlot[team], pos: r.pos, pts: r.pts, rank: r.rank }});
+    }});
+    rows.sort(function (a, b) {{ return a.rank - b.rank; }});
+
+    ttTitle.textContent = "Giornata di riferimento " + gref + " · " + fmtDate(dateForGref[gref]);
+    ttRows.textContent = "";
+    rows.forEach(function (r) {{
+      var row = document.createElement("div");
+      row.className = "hx-tt-row";
+      var key = document.createElement("span");
+      key.className = "hx-tt-key slot-" + r.slot;
+      var name = document.createElement("span");
+      name.className = "hx-tt-name";
+      name.textContent = r.team;
+      var val = document.createElement("span");
+      val.className = "hx-tt-val";
+      val.textContent = state.metric === "rank" ? fmtVal(r.rank, "rank") :
+        (state.metric === "pos" ? fmtVal(r.pos, "pos") : fmtVal(r.pts, "pts") + " pt");
+      row.appendChild(key);
+      row.appendChild(name);
+      row.appendChild(val);
+      ttRows.appendChild(row);
+    }});
+
+    tooltip.classList.toggle("visible", isHover && rows.length > 0);
+    if (isHover) {{
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var relX = x / VB_W * wrapRect.width;
+      var left = Math.min(Math.max(relX + 10, 4), Math.max(4, wrapRect.width - 172));
+      tooltip.style.left = left + "px";
+    }}
+  }}
+
+  metricToggle.addEventListener("click", function (e) {{
+    var btn = e.target.closest ? e.target.closest(".metric-btn") : null;
+    if (!btn) return;
+    var metric = btn.getAttribute("data-metric");
+    if (metric === state.metric) return;
+    state.metric = metric;
+    Array.prototype.forEach.call(metricToggle.querySelectorAll(".metric-btn"), function (b) {{
+      b.classList.toggle("active", b === btn);
+    }});
+    renderChart();
+    if (state.hoverGref === null) updateCrosshair(GREF_MAX, false);
+  }});
+
+  svg.addEventListener("pointermove", function (evt) {{
+    var rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    var scaleX = VB_W / rect.width;
+    var svgX = (evt.clientX - rect.left) * scaleX;
+    state.hoverGref = grefForX(svgX);
+    updateCrosshair(state.hoverGref, true);
+  }});
+  svg.addEventListener("pointerleave", function () {{
+    state.hoverGref = null;
+    updateCrosshair(GREF_MAX, false);
+  }});
+
+  evoInfo.textContent = GREFS.length + (GREFS.length === 1 ? " rilevazione disponibile" : " rilevazioni disponibili") +
+    " — ultima: giornata di riferimento " + GREF_MAX + " (" + fmtDate(dateForGref[GREF_MAX]) + ")";
+
+  renderChips();
+  renderChart();
 }})();
 </script>
 

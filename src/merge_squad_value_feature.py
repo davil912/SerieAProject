@@ -28,11 +28,17 @@ def main():
     squad_value.loc[~squad_value["affidabile"], "valore_rosa_milioni"] = np.nan
     sv = squad_value.set_index(["team", "season"])["valore_rosa_milioni"]
 
-    features = features.drop(columns=[c for c in ["home_squad_value", "away_squad_value", "squad_value_diff"] if c in features.columns])
+    features = features.drop(columns=[c for c in ["home_squad_value", "away_squad_value", "squad_value_diff", "squad_value_log_ratio"] if c in features.columns])
 
     features["home_squad_value"] = features.apply(lambda r: sv.get((r["home_team"], r["season"]), np.nan), axis=1)
     features["away_squad_value"] = features.apply(lambda r: sv.get((r["away_team"], r["season"]), np.nan), axis=1)
     features["squad_value_diff"] = features["home_squad_value"] - features["away_squad_value"]
+    # Rapporto (in scala log) oltre alla differenza assoluta: 50M€ di differenza pesano
+    # molto di piu' tra due squadre da 60M€ che tra due da 600M€ - il rapporto cattura questo
+    # effetto moltiplicativo che la sola differenza assoluta non vede. +0.1 per evitare log(0).
+    features["squad_value_log_ratio"] = np.log(
+        (features["home_squad_value"] + 0.1) / (features["away_squad_value"] + 0.1)
+    )
 
     coverage = features["squad_value_diff"].notna().mean() * 100
     print(f"Copertura squad_value_diff sul dataset di feature completo: {coverage:.1f}%")

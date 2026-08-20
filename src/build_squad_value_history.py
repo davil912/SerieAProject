@@ -28,7 +28,10 @@ from pathlib import Path
 import pandas as pd
 
 BASE = Path(__file__).resolve().parent.parent
-VALUATIONS_PATH = Path("/mnt/user-data/uploads/SerieAProject/data/raw/player_valuations.csv")
+# Percorso relativo al progetto (portabile in locale) - il file va scaricato a parte
+# dal dataset Kaggle davidcariboo/player-scores (player_valuations.csv, non incluso
+# nel repo per dimensione) e messo qui prima di lanciare questo script.
+VALUATIONS_PATH = BASE / "data" / "raw" / "player_valuations.csv"
 OUT_PATH = BASE / "data" / "processed" / "squad_values_by_season.csv"
 
 # squadra (nome usato nel nostro dataset) -> lista di alias esatti su Transfermarkt
