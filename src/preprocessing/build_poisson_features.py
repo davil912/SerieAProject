@@ -8,15 +8,19 @@ walk-forward già usato altrove nel progetto: nessuna informazione futura
 entra nel calcolo delle feature di una partita.
 
 Uso:
-    python src/build_poisson_features.py
+    python src/preprocessing/build_poisson_features.py
 """
 
+import sys
 from pathlib import Path
+
 import pandas as pd
 import numpy as np
-from poisson_model import fit_poisson_model
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE / "src" / "common"))
+from poisson_model import fit_poisson_model  # noqa: E402
+
 MATCHES_PATH = BASE / "data" / "processed" / "serieA_matches.csv"
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 

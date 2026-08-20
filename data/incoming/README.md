@@ -10,7 +10,7 @@ versione piu' recente scaricata).
 
 ## Perche' manuale
 
-Il progetto ha provato ad automatizzare il download (`src/update_pipeline.py`),
+Il progetto ha provato ad automatizzare il download (`src/live_update/update_pipeline.py`),
 ma le due fonti disponibili si sono rivelate inaffidabili per la stagione in
 corso: il mirror GitHub storico usato finora si e' fermato al 2025 e non
 arriva alla stagione 2026/2027, mentre football-data.co.uk blocca le
@@ -23,11 +23,11 @@ affidabile per procurarsi i dati aggiornati.
 Lanciare (a mano, o via il task pianificato settimanale):
 
 ```
-python src/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
-python src/prepare_data.py
-python src/feature_builder.py
-python src/build_poisson_features.py
-python src/predict_season.py
+python src/live_update/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
+python src/preprocessing/prepare_data.py
+python src/preprocessing/feature_builder.py
+python src/preprocessing/build_poisson_features.py
+python src/simulation/predict_season.py
 python dashboard/build_dashboard.py
 ```
 
@@ -36,6 +36,6 @@ settimana con il file scaricato di nuovo (che contiene sempre tutte le
 partite dalla giornata 1 ad oggi) - vengono integrate solo le partite non
 ancora presenti, senza duplicati e senza sballare l'Elo.
 
-`predict_season.py` si accorge da solo delle partite 2026/2027 gia'
+`predict_season.py` (src/simulation/) si accorge da solo delle partite 2026/2027 gia'
 integrate: le usa come classifica reale di partenza e simula solo le
 giornate rimanenti (vedi FASE6_AGGIORNAMENTO_LIVE.md).

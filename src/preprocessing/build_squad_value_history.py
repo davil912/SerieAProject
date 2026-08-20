@@ -21,13 +21,13 @@ errore silenzioso troppo alto per il beneficio - meglio lasciare il dato
 mancante che sbagliarlo.
 
 Uso:
-    python src/build_squad_value_history.py
+    python src/preprocessing/build_squad_value_history.py
 """
 
 from pathlib import Path
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 # Percorso relativo al progetto (portabile in locale) - il file va scaricato a parte
 # dal dataset Kaggle davidcariboo/player-scores (player_valuations.csv, non incluso
 # nel repo per dimensione) e messo qui prima di lanciare questo script.

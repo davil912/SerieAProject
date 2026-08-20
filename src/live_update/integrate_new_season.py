@@ -5,7 +5,7 @@ FTR,...) nello storico pulito del progetto (data/processed/serieA_matches.csv).
 
 A differenza delle stagioni precedenti (arrivate gia' complete di Elo/forma
 dal mirror GitHub), qui Elo e forma NON sono forniti dalla fonte: vengono
-calcolati da noi (src/elo_updater.py) a partire dall'ultimo valore noto per
+calcolati da noi (src/common/elo_updater.py) a partire dall'ultimo valore noto per
 ciascuna squadra (Serie A o, se piu' recente, Serie B - utile per le
 neopromosse). Vedi FASE4_REPORT.md per la spiegazione completa.
 
@@ -19,16 +19,19 @@ con Elo/forma che ripartono correttamente dall'ultimo stato gia' salvato
 (niente doppio conteggio, niente Elo "ricominciato da capo" ogni settimana).
 
 Uso:
-    python src/integrate_new_season.py <path_csv_football-data> <stagione es. 2026/2027>
+    python src/live_update/integrate_new_season.py <path_csv_football-data> <stagione es. 2026/2027>
 """
 
 import sys
 from pathlib import Path
 from collections import deque
-import pandas as pd
-from elo_updater import seed_ratings, update_ratings
 
-BASE = Path(__file__).resolve().parent.parent
+import pandas as pd
+
+BASE = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE / "src" / "common"))
+from elo_updater import seed_ratings, update_ratings  # noqa: E402
+
 PROCESSED_A = BASE / "data" / "processed" / "serieA_matches.csv"
 PROCESSED_B = BASE / "data" / "processed" / "serieB_matches.csv"
 
@@ -54,7 +57,7 @@ def points(result: str, is_home: bool) -> int:
 
 def main():
     if len(sys.argv) != 3:
-        print("Uso: python src/integrate_new_season.py <path_csv> <stagione es. 2025/2026>")
+        print("Uso: python src/live_update/integrate_new_season.py <path_csv> <stagione es. 2025/2026>")
         sys.exit(1)
     csv_path, season = sys.argv[1], sys.argv[2]
 

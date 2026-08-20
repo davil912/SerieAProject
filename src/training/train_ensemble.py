@@ -13,7 +13,7 @@ Per scegliere il peso w in modo onesto (senza "spiare" tutto il backtest), le
     w, servono solo per valutare la scelta finale in modo imparziale
 
 Uso:
-    python src/train_ensemble.py
+    python src/training/train_ensemble.py
 """
 
 from pathlib import Path
@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, log_loss
 from xgboost import XGBClassifier
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 
 LOGREG_FEATURES = [

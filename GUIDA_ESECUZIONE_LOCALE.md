@@ -51,6 +51,21 @@ tutti i comandi della guida sotto (`python src/...`) funzionano identici a
 macOS/Linux — l'attivazione fa sì che `python` punti automaticamente
 all'interprete giusto dentro `.venv`.
 
+### Struttura di `src/`
+
+Gli script sono organizzati in sottocartelle per fase dell'architettura:
+
+- `src/common/` — moduli condivisi tra le altre fasi: `elo_updater.py`,
+  `classifica.py`, `poisson_model.py`.
+- `src/preprocessing/` — pulizia dati e feature engineering.
+- `src/training/` — addestramento dei modelli.
+- `src/simulation/` — simulazione Monte Carlo della stagione.
+- `src/live_update/` — integrazione dei risultati reali durante la stagione.
+
+Tutti i comandi sotto vanno quindi lanciati con il percorso completo, es.
+`python src/preprocessing/prepare_data.py` (non più semplicemente `python src/prepare_data.py`
+come nella struttura precedente).
+
 ### macOS / Linux
 
 ```bash
@@ -83,7 +98,7 @@ serve rigenerare quel file, puoi saltare il passaggio 5 e usare
 ## 2. Pulizia e unificazione dati
 
 ```bash
-python src/prepare_data.py
+python src/preprocessing/prepare_data.py
 ```
 
 Legge i CSV grezzi di Serie A/B e produce `data/processed/serieA_matches.csv`
@@ -92,7 +107,7 @@ e `serieB_matches.csv` (dati puliti, uniti, pronti per il resto della pipeline).
 ## 3. Feature engineering di base
 
 ```bash
-python src/feature_builder.py
+python src/preprocessing/feature_builder.py
 ```
 
 Crea `data/processed/serieA_features.csv`: differenza Elo/forma, scontri
@@ -103,7 +118,7 @@ temporale).
 ## 4. Feature del modello Poisson (gol attesi)
 
 ```bash
-python src/build_poisson_features.py
+python src/preprocessing/build_poisson_features.py
 ```
 
 Aggiunge a `serieA_features.csv` le colonne `poisson_exp_goals_*` e
@@ -114,9 +129,9 @@ stagioni per ogni punto del backtest).
 ## 5. Valore rosa (opzionale se non hai `player_valuations.csv`)
 
 ```bash
-python src/build_squad_value_current.py     # snapshot attuale -> squad_values_current.csv
-python src/build_squad_value_history.py     # storico per stagione -> squad_values_by_season.csv (richiede player_valuations.csv in data/raw/)
-python src/merge_squad_value_feature.py     # unisce il valore rosa a serieA_features.csv
+python src/preprocessing/build_squad_value_current.py     # snapshot attuale -> squad_values_current.csv
+python src/preprocessing/build_squad_value_history.py     # storico per stagione -> squad_values_by_season.csv (richiede player_valuations.csv in data/raw/)
+python src/preprocessing/merge_squad_value_feature.py     # unisce il valore rosa a serieA_features.csv
 ```
 
 Se salti `build_squad_value_history.py` (perché non hai scaricato
@@ -127,8 +142,8 @@ Se salti `build_squad_value_history.py` (perché non hai scaricato
 ## 6. Training dei modelli
 
 ```bash
-python src/train_baseline.py     # Logistic Regression -> models/baseline_logreg.pkl
-python src/train_xgboost.py      # XGBoost -> models/xgboost_final.pkl
+python src/training/train_baseline.py     # Logistic Regression -> models/baseline_logreg.pkl
+python src/training/train_xgboost.py      # XGBoost -> models/xgboost_final.pkl
 ```
 
 Entrambi fanno un backtest walk-forward (mai split casuale) su 15 stagioni e
@@ -137,7 +152,7 @@ mercato e la baseline "vince sempre la casa". Alla fine salvano il modello
 allenato su TUTTA la storia disponibile, pronto per la simulazione.
 
 ```bash
-python src/train_ensemble.py     # opzionale: ri-deriva w (peso ensemble) e half-life
+python src/training/train_ensemble.py     # opzionale: ri-deriva w (peso ensemble) e half-life
 ```
 
 Questo script è **esplorativo/di validazione**, non produce un modello da
@@ -153,7 +168,7 @@ cambiati (es. dopo aver integrato molte nuove partite reali).
 ## 7. Simulazione della stagione 2026/2027
 
 ```bash
-python src/predict_season.py
+python src/simulation/predict_season.py
 ```
 
 Simula 5000 volte l'intera stagione (Monte Carlo), giornata per giornata,
@@ -217,11 +232,11 @@ sforzo computazionale inutile per un guadagno pressoché nullo.
 2. Rilancia in ordine:
 
 ```bash
-python src/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
-python src/prepare_data.py
-python src/feature_builder.py
-python src/build_poisson_features.py
-python src/predict_season.py
+python src/live_update/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
+python src/preprocessing/prepare_data.py
+python src/preprocessing/feature_builder.py
+python src/preprocessing/build_poisson_features.py
+python src/simulation/predict_season.py
 python dashboard/build_dashboard.py
 ```
 
@@ -240,15 +255,15 @@ della guida) subito dopo aver aggiornato i dati e PRIMA di rilanciare la
 simulazione:
 
 ```bash
-python src/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
-python src/prepare_data.py
-python src/feature_builder.py
-python src/build_poisson_features.py
-python src/build_squad_value_current.py      # opzionale: solo se hai un export Transfermarkt piu' recente
-python src/merge_squad_value_feature.py
-python src/train_baseline.py
-python src/train_xgboost.py
-python src/predict_season.py
+python src/live_update/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
+python src/preprocessing/prepare_data.py
+python src/preprocessing/feature_builder.py
+python src/preprocessing/build_poisson_features.py
+python src/preprocessing/build_squad_value_current.py      # opzionale: solo se hai un export Transfermarkt piu' recente
+python src/preprocessing/merge_squad_value_feature.py
+python src/training/train_baseline.py
+python src/training/train_xgboost.py
+python src/simulation/predict_season.py
 python dashboard/build_dashboard.py
 ```
 
@@ -270,21 +285,21 @@ apprezzabili.
 ## Utilità: classifica di una stagione qualsiasi
 
 ```bash
-python src/classifica.py --season 2023/2024
-python src/classifica.py --season 2023/2024 --upto-date 2024-01-15   # classifica "congelata" a una data
+python src/common/classifica.py --season 2023/2024
+python src/common/classifica.py --season 2023/2024 --upto-date 2024-01-15   # classifica "congelata" a una data
 ```
 
 ## Riepilogo — pipeline completa da zero in un unico blocco
 
 ```bash
-python src/prepare_data.py
-python src/feature_builder.py
-python src/build_poisson_features.py
-python src/build_squad_value_current.py
-python src/build_squad_value_history.py   # salta se non hai player_valuations.csv
-python src/merge_squad_value_feature.py
-python src/train_baseline.py
-python src/train_xgboost.py
-python src/predict_season.py
+python src/preprocessing/prepare_data.py
+python src/preprocessing/feature_builder.py
+python src/preprocessing/build_poisson_features.py
+python src/preprocessing/build_squad_value_current.py
+python src/preprocessing/build_squad_value_history.py   # salta se non hai player_valuations.csv
+python src/preprocessing/merge_squad_value_feature.py
+python src/training/train_baseline.py
+python src/training/train_xgboost.py
+python src/simulation/predict_season.py
 python dashboard/build_dashboard.py
 ```

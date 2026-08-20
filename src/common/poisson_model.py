@@ -17,7 +17,7 @@ valle (XGBoost), non come predittore finale, quindi la semplificazione ha
 un impatto limitato.
 
 Uso:
-    python src/poisson_model.py   # esegue un self-test rapido
+    python src/common/poisson_model.py   # esegue un self-test rapido
 """
 
 from pathlib import Path
@@ -111,7 +111,7 @@ def fit_poisson_model(train_df: pd.DataFrame, alpha: float = 0.01) -> PoissonMod
 
 
 if __name__ == "__main__":
-    BASE = Path(__file__).resolve().parent.parent
+    BASE = Path(__file__).resolve().parent.parent.parent
     df = pd.read_csv(BASE / "data" / "processed" / "serieA_matches.csv", parse_dates=["date"])
     train = df[df["season"] < "2023/2024"]
     model = fit_poisson_model(train)

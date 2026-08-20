@@ -10,7 +10,7 @@ delle probabilità XGBoost, ottenuta tenendo da parte l'ultima stagione del
 training come set di calibrazione (mai la stagione di test).
 
 Uso:
-    python src/train_xgboost.py
+    python src/training/train_xgboost.py
 """
 
 from pathlib import Path
@@ -22,7 +22,7 @@ from sklearn.frozen import FrozenEstimator
 from sklearn.metrics import accuracy_score, log_loss
 import joblib
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 MODELS_DIR = BASE / "models"
 

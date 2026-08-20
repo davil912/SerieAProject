@@ -7,7 +7,7 @@ Generare, per la stagione 2026/2027 (non ancora iniziata: si parte il 22-23 agos
 1. **Previsioni partita per partita**: probabilità 1X2 per tutte le 380 partite del calendario completo.
 2. **Classifica finale prevista**: posizione attesa di ogni squadra a fine stagione, con probabilità di titolo, qualificazione europea e retrocessione.
 
-Finora il progetto aveva solo script di **backtest storico** (`train_baseline.py`, `train_xgboost.py`, `train_ensemble.py`): allenano e valutano i modelli su stagioni già giocate, non generano previsioni per partite future. Questa fase aggiunge il pezzo mancante: `src/predict_season.py`.
+Finora il progetto aveva solo script di **backtest storico** (`train_baseline.py`, `train_xgboost.py`, `train_ensemble.py`, ora in src/training/): allenano e valutano i modelli su stagioni già giocate, non generano previsioni per partite future. Questa fase aggiunge il pezzo mancante: `src/simulation/predict_season.py`.
 
 ## Il problema da risolvere: una stagione intera non è ancora giocata
 
@@ -95,7 +95,7 @@ Tutte le 380 righe sono in `data/processed/previsioni_partite_2026_27.csv` (veri
 - **Valore rosa**: Frosinone (5 giocatori valutati) e Monza (14) restano sotto la soglia di affidabilità di 15 giocatori valutati anche nell'ultima stagione disponibile — il loro valore rosa usato nel modello è quindi da trattare con cautela.
 - **Nessun ricalcolo durante la simulazione** di valore rosa, vantaggio-casa "di periodo" e rating Poisson attacco/difesa: restano fissi allo snapshot pre-stagione per tutte le 38 giornate simulate, esattamente come già avveniva nel backtest storico (rifit una volta per stagione, non partita per partita).
 - **Spareggio classifica**: a parità di punti la simulazione ordina per differenza reti poi gol fatti, SENZA il criterio degli scontri diretti (che in Serie A ha priorità sulla differenza reti) — semplificazione che ha impatto trascurabile su medie e probabilità aggregate su 5.000 simulazioni, ma va tenuta presente se si guarda una singola simulazione isolata.
-- **Va ri-eseguito periodicamente**: appena si giocano partite reali, vanno integrate in `data/processed/serieA_matches.csv` (stesso procedimento già usato per il 2025/26, vedi `src/integrate_new_season.py`) e lo script va ri-lanciato per aggiornare le previsioni con i risultati reali nel frattempo.
+- **Va ri-eseguito periodicamente**: appena si giocano partite reali, vanno integrate in `data/processed/serieA_matches.csv` (stesso procedimento già usato per il 2025/26, vedi `src/live_update/integrate_new_season.py`) e lo script va ri-lanciato per aggiornare le previsioni con i risultati reali nel frattempo.
 
 ## File prodotti
 
@@ -104,12 +104,12 @@ serieA_predictor/
 ├── data/raw/calendario_2026_27.csv                   # calendario completo 380 partite (fonte: worldfootball.net)
 ├── data/processed/previsioni_partite_2026_27.csv       # probabilità 1X2 per tutte le 380 partite
 ├── data/processed/classifica_prevista_2026_27.csv      # classifica finale prevista + probabilità titolo/Europa/retrocessione
-├── src/predict_season.py                                # motore di simulazione Monte Carlo
+├── src/simulation/predict_season.py                                # motore di simulazione Monte Carlo
 └── dashboard/previsioni_2026_27.html                     # dashboard visuale (classifica + partite filtrabili)
 ```
 
 ## Come aggiornare le previsioni durante la stagione
 
-1. Integrare i risultati reali giocati in `data/processed/serieA_matches.csv` (formato football-data.co.uk, stesso procedimento di `src/integrate_new_season.py` usato per il 2025/26).
-2. Ri-lanciare `python src/predict_season.py` — ricalcola automaticamente Elo/forma/scontri diretti aggiornati e ri-simula tutte le partite rimanenti.
-3. (Opzionale, periodicamente) ri-lanciare `src/train_xgboost.py` e `src/train_ensemble.py` per includere le partite appena giocate anche nel training dei modelli, non solo nello stato Elo/forma.
+1. Integrare i risultati reali giocati in `data/processed/serieA_matches.csv` (formato football-data.co.uk, stesso procedimento di `src/live_update/integrate_new_season.py` usato per il 2025/26).
+2. Ri-lanciare `python src/simulation/predict_season.py` — ricalcola automaticamente Elo/forma/scontri diretti aggiornati e ri-simula tutte le partite rimanenti.
+3. (Opzionale, periodicamente) ri-lanciare `src/training/train_xgboost.py` e `src/training/train_ensemble.py` per includere le partite appena giocate anche nel training dei modelli, non solo nello stato Elo/forma.

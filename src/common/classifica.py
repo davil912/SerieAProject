@@ -12,14 +12,14 @@ Lega Serie A prevede anche gli scontri diretti in caso di parità in due
 squadre, non implementati qui in Fase 1 - nota per iterazioni future).
 
 Uso:
-    python src/classifica.py --season 2023/2024
+    python src/common/classifica.py --season 2023/2024
 """
 
 import argparse
 from pathlib import Path
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 PROCESSED = BASE / "data" / "processed" / "serieA_matches.csv"
 
 

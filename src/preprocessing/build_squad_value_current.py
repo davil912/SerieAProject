@@ -11,13 +11,13 @@ cambia lentamente rispetto alla forza/Elo, quindi un solo snapshot recente
 resta informativo anche per confrontare le squadre tra loro.
 
 Uso:
-    python src/build_squad_value_current.py
+    python src/preprocessing/build_squad_value_current.py
 """
 
 from pathlib import Path
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 PLAYERS_PATH = BASE / "data" / "raw" / "transfermarkt_players.csv"
 OUT_PATH = BASE / "data" / "processed" / "squad_values_current.csv"
 

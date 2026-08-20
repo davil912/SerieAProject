@@ -45,7 +45,7 @@ def seed_ratings(serieA_matches: pd.DataFrame, serieB_matches: pd.DataFrame, tea
     leakage temporale nelle feature di training). Per ottenere il rating
     "oggi" bisogna quindi applicare un ultimo update_ratings() con il
     risultato reale di quella partita - stessa correzione gia' usata in
-    src/predict_season.py (compute_current_elo). Senza questo passaggio,
+    src/simulation/predict_season.py (compute_current_elo). Senza questo passaggio,
     ogni volta che si integra una nuova stagione/giornata (Fase 4, Fase 6)
     si riparte da un Elo "vecchio di una partita" per ciascuna squadra."""
     ratings = {}

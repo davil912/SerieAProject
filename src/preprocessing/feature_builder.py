@@ -13,7 +13,7 @@ input al modello: vengono tenute da parte come benchmark esterno di
 validazione (Fase 2 - modello baseline), per un confronto onesto.
 
 Uso:
-    python src/feature_builder.py
+    python src/preprocessing/feature_builder.py
 """
 
 from pathlib import Path
@@ -21,7 +21,7 @@ from collections import defaultdict, deque
 import pandas as pd
 import numpy as np
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 PROCESSED = BASE / "data" / "processed" / "serieA_matches.csv"
 OUT_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 

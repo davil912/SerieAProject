@@ -10,14 +10,14 @@ nativamente, la Logistic Regression li gestisce con l'imputazione gia'
 presente nella sua pipeline (vedi train_baseline.py / train_ensemble.py).
 
 Uso:
-    python src/merge_squad_value_feature.py
+    python src/preprocessing/merge_squad_value_feature.py
 """
 
 from pathlib import Path
 import numpy as np
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 SQUAD_VALUE_PATH = BASE / "data" / "processed" / "squad_values_by_season.csv"
 

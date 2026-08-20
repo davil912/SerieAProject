@@ -7,14 +7,14 @@ e produce un dataset pulito e pronto per l'analisi/feature engineering in
 data/processed/.
 
 Uso:
-    python src/prepare_data.py
+    python src/preprocessing/prepare_data.py
 """
 
 from pathlib import Path
 import pandas as pd
 
-RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
-PROCESSED_DIR = Path(__file__).resolve().parent.parent / "data" / "processed"
+RAW_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "raw"
+PROCESSED_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "processed"
 
 # Colonne che ci interessano dal dataset grezzo (le altre, principalmente quote
 # di bookmaker aggiuntive e statistiche di dettaglio, restano nel raw e potranno

@@ -14,16 +14,16 @@ download automatico qui sotto resta quindi un "best effort" che oggi non
 trova nulla di nuovo per la stagione corrente. La via affidabile e' manuale:
 scaricare dal sito il CSV "stagione 2026/2027 ad oggi", metterlo in
 data/incoming/serieA_2026_27.csv (vedi data/incoming/README.md) e lanciare
-    python src/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
+    python src/live_update/integrate_new_season.py data/incoming/serieA_2026_27.csv 2026/2027
 che e' IDEMPOTENTE: si puo' rilanciare ogni settimana con il file scaricato
 di nuovo senza creare duplicati.
 
 Se vengono aggiunte nuove partite (automaticamente o via integrate_new_season.py),
 ricorda di rilanciare a mano:
-    python src/prepare_data.py
-    python src/feature_builder.py
-    python src/build_poisson_features.py
-    python src/predict_season.py        # si accorge da solo delle partite 2026/2027 gia' giocate (Fase 6)
+    python src/preprocessing/prepare_data.py
+    python src/preprocessing/feature_builder.py
+    python src/preprocessing/build_poisson_features.py
+    python src/simulation/predict_season.py   # si accorge da solo delle partite 2026/2027 gia' giocate (Fase 6)
     python dashboard/build_dashboard.py
 per aggiornare anche il dataset di feature usato dai modelli (non lo si fa
 automaticamente qui per tenere il refresh dati separato dal retraining,
@@ -31,15 +31,17 @@ come indicato nel piano d'azione originale: il retraining va fatto ogni
 poche giornate, non ad ogni singola partita).
 
 Uso:
-    python src/update_pipeline.py
+    python src/live_update/update_pipeline.py
 """
 
-from pathlib import Path
 import sys
+import urllib.request
+from pathlib import Path
+
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE / "src"))
+BASE = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE / "src" / "common"))
 from classifica import calcola_classifica  # noqa: E402
 
 MIRROR_URL = "https://raw.githubusercontent.com/xgabora/Club-Football-Match-Data-2000-2025/main/data/Matches.csv"
@@ -48,7 +50,6 @@ RAW_DIR = BASE / "data" / "raw"
 
 def download_latest():
     """Scarica di nuovo il dataset sorgente. Ritorna (serieA_df, serieB_df) o (None, None) se non raggiungibile."""
-    import urllib.request
     try:
         tmp_path = RAW_DIR / "_latest_download.csv"
         urllib.request.urlretrieve(MIRROR_URL, tmp_path)
@@ -88,9 +89,9 @@ def main():
         print(f"Nuove partite Serie A aggiunte: {n_added_a}")
         print(f"Nuove partite Serie B aggiunte: {n_added_b}")
         if n_added_a > 0:
-            print("\n[Azione richiesta] Nuove partite trovate: rilancia prepare_data.py, "
-                  "feature_builder.py e build_poisson_features.py per aggiornare le feature, "
-                  "poi eventualmente src/train_*.py per ri-addestrare i modelli.")
+            print("\n[Azione richiesta] Nuove partite trovate: rilancia gli script in "
+                  "src/preprocessing/ (prepare_data.py, feature_builder.py, build_poisson_features.py) "
+                  "per aggiornare le feature, poi eventualmente quelli in src/training/ per ri-addestrare i modelli.")
     else:
         print("Nessun aggiornamento scaricato in questa esecuzione (vedi messaggio sopra).")
 
@@ -103,7 +104,8 @@ def main():
         print(f"\n=== Classifica live — {latest_season} (dati puliti in data/processed/) ===")
         print(classifica.to_string())
     else:
-        print("\n[Nota] data/processed/serieA_matches.csv non trovato: esegui prima src/prepare_data.py.")
+        print("\n[Nota] data/processed/serieA_matches.csv non trovato: esegui prima "
+              "src/preprocessing/prepare_data.py.")
 
 
 if __name__ == "__main__":

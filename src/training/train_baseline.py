@@ -8,7 +8,7 @@ Confronta il modello con due benchmark:
   - probabilità implicite del mercato (quote bookmaker): benchmark esterno
 
 Uso:
-    python src/train_baseline.py
+    python src/training/train_baseline.py
 """
 
 from pathlib import Path
@@ -20,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, log_loss, brier_score_loss
 import joblib
 
-BASE = Path(__file__).resolve().parent.parent
+BASE = Path(__file__).resolve().parent.parent.parent
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
 MODELS_DIR = BASE / "models"
 

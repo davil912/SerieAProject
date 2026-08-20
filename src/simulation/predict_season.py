@@ -31,9 +31,9 @@ FASE 6 - IBRIDO REALE/SIMULATO
 -------------------------------
 Appena il campionato inizia e le partite vengono integrate nello storico
 (data/processed/serieA_matches.csv, stagione "2026/2027" - vedi
-src/integrate_new_season.py), questo script se ne accorge da solo:
+src/live_update/integrate_new_season.py), questo script se ne accorge da solo:
   - le giornate gia' giocate REALMENTE non vengono piu' simulate: la classifica
-    reale (src/classifica.py) diventa il punto di partenza degli accumulatori
+    reale (src/common/classifica.py) diventa il punto di partenza degli accumulatori
     (punti/GF/GS/V/N/P), ed Elo/forma/H2H ripartono gia' dallo stato post-ultima-
     partita reale (le stesse funzioni di seed della Fase 5 leggono comunque
     "l'ultima partita disponibile", che ora puo' essere una partita 2026/2027);
@@ -64,7 +64,7 @@ calcolate UNA volta sola: giorni di riposo, partite giocate in stagione,
 valore rosa (snapshot piu' recente disponibile), vantaggio-casa "di periodo"
 (congelato all'ultimo valore storico), rating Poisson attacco/difesa
 (rifittati una volta sola su una finestra mobile di 5 stagioni, esattamente
-come nel backtest storico - src/build_poisson_features.py).
+come nel backtest storico - src/preprocessing/build_poisson_features.py).
 
 Feature che DIPENDONO dalla simulazione (diverse traiettoria per traiettoria,
 perche' dipendono dai risultati simulati): Elo, forma (ultime 3/5), scontri
@@ -94,9 +94,10 @@ LIMITI DICHIARATI
   su 1000 simulazioni.
 
 Uso:
-    python src/predict_season.py
+    python src/simulation/predict_season.py
 """
 
+import sys
 from pathlib import Path
 from collections import defaultdict, deque
 from datetime import date
@@ -106,10 +107,12 @@ import numpy as np
 import pandas as pd
 import joblib
 
-from elo_updater import update_ratings
-from classifica import calcola_classifica
+BASE = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(BASE / "src" / "common"))
+from elo_updater import update_ratings  # noqa: E402
+from classifica import calcola_classifica  # noqa: E402
+from poisson_model import fit_poisson_model  # noqa: E402
 
-BASE = Path(__file__).resolve().parent.parent
 MATCHES_PATH = BASE / "data" / "processed" / "serieA_matches.csv"
 MATCHES_B_PATH = BASE / "data" / "processed" / "serieB_matches.csv"
 FEATURES_PATH = BASE / "data" / "processed" / "serieA_features.csv"
@@ -123,7 +126,7 @@ PREVISIONI_STORIA_PATH = OUT_DIR / "previsioni_storia.csv"
 
 N_SIMULATIONS = 5000
 RNG_SEED = 42
-ENSEMBLE_W_LOGREG = 0.5  # scelto in Fase 4d (src/train_ensemble.py) su holdout imparziale, dopo aver dato piu' peso al valore rosa
+ENSEMBLE_W_LOGREG = 0.5  # scelto in Fase 4d (src/training/train_ensemble.py) su holdout imparziale, dopo aver dato piu' peso al valore rosa
 POISSON_ROLLING_WINDOW = 5
 POISSON_ALPHA = 0.01
 MAX_GOALS = 8
@@ -156,8 +159,8 @@ def points(result: str, is_home: bool) -> int:
 
 def load_played_current_season(matches_a: pd.DataFrame) -> pd.DataFrame:
     """Partite della stagione 2026/2027 gia' presenti nello storico pulito
-    (integrate a mano con src/integrate_new_season.py, o dalla pipeline
-    automatica in src/update_pipeline.py). Vuoto finche' il campionato non
+    (integrate a mano con src/live_update/integrate_new_season.py, o dalla
+    pipeline automatica in src/live_update/update_pipeline.py). Vuoto finche' il campionato non
     e' iniziato o finche' non viene integrato alcun risultato reale."""
     return matches_a[matches_a["season"] == CURRENT_SEASON].copy()
 
@@ -439,7 +442,6 @@ def main():
     # --- Poisson: rifit una sola volta, finestra mobile ultime 5 stagioni ---
     seasons = sorted(matches_a["season"].unique())
     window = seasons[-POISSON_ROLLING_WINDOW:]
-    from poisson_model import fit_poisson_model
     poisson_model = fit_poisson_model(matches_a[matches_a["season"].isin(window)], alpha=POISSON_ALPHA)
     print(f"\nModello Poisson rifittato su: {window}")
 
