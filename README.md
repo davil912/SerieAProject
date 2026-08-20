@@ -1,6 +1,6 @@
 # ⚽ Serie A Predictor
 
-**Simulazione Monte Carlo del campionato di Serie A 2026/2027**, con classifica che si aggiorna da sola man mano che le partite vengono giocate.
+**Simulazione Monte Carlo del campionato di Serie A 2026/2027**, con classifica aggiornata man mano che le partite vengono giocate.
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python&logoColor=white)
 ![pandas](https://img.shields.io/badge/pandas-2.0%2B-150458?logo=pandas&logoColor=white)
@@ -8,7 +8,7 @@
 ![XGBoost](https://img.shields.io/badge/XGBoost-2.0%2B-006400)
 ![status](https://img.shields.io/badge/stato-in%20corso%20(stagione%202026%2F27)-brightgreen)
 
-Il progetto allena un ensemble di modelli statistici sullo storico di Serie A (2005/06 → 2025/26, 26 stagioni), poi simula l'intera stagione 2026/2027 **5.000 volte** per stimare probabilità 1X2 partita per partita e la classifica finale attesa — titolo, Champions, Europa, retrocessione comprese. Appena il campionato inizia, lo script riconosce da solo le partite già giocate e le usa come punto di partenza reale, simulando solo le giornate rimanenti.
+Il progetto allena un ensemble di modelli statistici sullo storico di Serie A (2005/06 → 2025/26, 26 stagioni), poi simula l'intera stagione 2026/2027 **5.000 volte** per stimare probabilità 1X2 partita per partita e la classifica finale attesa — titolo, Champions, Europa, retrocessione comprese. Appena il campionato inizia, lo script rileva automaticamente le partite già giocate e le usa come punto di partenza reale, simulando solo le giornate rimanenti.
 
 <p align="center">
   <img src="docs/assets/dashboard_classifica.png" alt="Dashboard — Classifica prevista 2026/2027" width="850">
@@ -63,12 +63,12 @@ Ogni previsione nasce dalla combinazione di più segnali, ciascuno costruito e v
 
 Queste feature alimentano un **ensemble** di due modelli allenati con validazione **walk-forward** (mai split casuale: si allena solo sul passato, si valuta sul futuro, esattamente come si farebbe in produzione):
 
-- **Logistic Regression** — modello lineare, sorprendentemente competitivo con dataset di questa dimensione.
+- **Logistic Regression** — modello lineare, competitivo con dataset di questa dimensione.
 - **XGBoost** — cattura interazioni non lineari, con calibrazione delle probabilità (sigmoid/Platt scaling).
 
 Le stagioni più recenti pesano di più nel training (decadimento esponenziale, half-life di 10 stagioni), così il modello si adatta senza dimenticare lo storico più lontano.
 
-**Perché una simulazione Monte Carlo e non una previsione diretta?** Perché lo stato delle squadre (Elo, forma, scontri diretti) cambia partita dopo partita in base a risultati che non conosciamo ancora. La stagione viene quindi **giocata virtualmente 5.000 volte**: ad ogni simulazione si gioca ogni giornata in ordine cronologico, si estraggono le probabilità 1X2 dall'ensemble con lo stato aggiornato *di quella specifica simulazione*, si estrae un esito casuale, si aggiorna lo stato, si passa alla giornata successiva. Mediando le 5.000 traiettorie si ottengono probabilità più realistiche di una previsione "statica" fatta con lo stato di oggi proiettato su tutta la stagione.
+**Simulazione Monte Carlo anziché previsione diretta.** Lo stato delle squadre (Elo, forma, scontri diretti) cambia partita dopo partita in base a risultati non ancora noti al momento della previsione. La stagione viene quindi **giocata virtualmente 5.000 volte**: ad ogni simulazione si gioca ogni giornata in ordine cronologico, si estraggono le probabilità 1X2 dall'ensemble con lo stato aggiornato *di quella specifica simulazione*, si estrae un esito casuale, si aggiorna lo stato, si passa alla giornata successiva. Mediando le 5.000 traiettorie si ottengono probabilità più realistiche rispetto a una previsione "statica" fatta con lo stato di oggi proiettato su tutta la stagione.
 
 ## Quanto è affidabile
 
@@ -82,7 +82,7 @@ Tutti i modelli sono validati con backtest walk-forward su **16 stagioni storich
 | XGBoost | 53,6% | 0,977 |
 | **Ensemble (peso 0,5/0,5, half-life 10 stagioni)** | **53,9%** | **0,968** |
 
-L'ensemble è il modello di riferimento del progetto: non batte le quote di mercato (che incorporano informazioni non disponibili qui, come notizie su formazioni e infortuni), ma se ne avvicina molto con sole ~19 feature interpretabili, ed è nettamente sopra la baseline banale. Ogni scelta di iperparametro (peso dell'ensemble, moltiplicatore del valore rosa, half-life della ponderazione stagionale) è stata validata **onestamente**: mai guardando l'holdout finale mentre si sceglieva il parametro.
+L'ensemble è il modello di riferimento del progetto: non supera le quote di mercato (che incorporano informazioni non disponibili qui, come notizie su formazioni e infortuni), ma si avvicina con sole ~19 feature interpretabili, ed è al di sopra della baseline "vince sempre la casa". Ogni scelta di iperparametro (peso dell'ensemble, moltiplicatore del valore rosa, half-life della ponderazione stagionale) è stata validata senza osservare l'holdout finale durante la selezione del parametro.
 
 <details>
 <summary><strong>Vedi l'evoluzione dei modelli fase per fase</strong></summary>
@@ -91,7 +91,7 @@ L'ensemble è il modello di riferimento del progetto: non batte le quote di merc
 |---|---|---|
 | 1 | Raccolta dati, pulizia, classifica storica | 9.012 partite Serie A 2000/01-2024/25, verificate contro dati ufficiali |
 | 2 | Feature engineering + Logistic Regression | 54,0% accuracy, già vicino alle quote di mercato |
-| 3 | Modello Poisson + XGBoost + calibrazione | XGBoost non batte la Logistic Regression da solo (risultato onesto, non un errore) |
+| 3 | Modello Poisson + XGBoost + calibrazione | XGBoost non supera la Logistic Regression da solo in questa fase |
 | 4 | Ensemble + pipeline di aggiornamento | Il log-loss dell'ensemble supera entrambi i modelli singoli |
 | 4b | Integrazione stagione 2025/26 | Backtest esteso a 16 stagioni, mai viste durante lo sviluppo |
 | 4c | Valore rosa (Transfermarkt) | XGBoost supera per la prima volta la Logistic Regression sull'holdout |
@@ -143,7 +143,7 @@ python src/simulation/predict_season.py
 python dashboard/build_dashboard.py
 ```
 
-Apri `dashboard/previsioni_2026_27.html` nel browser: fatto. La guida completa — inclusi i passaggi opzionali (valore rosa da zero), i tempi di esecuzione di ciascuno script e le istruzioni dettagliate per Windows — è in [`GUIDA_ESECUZIONE_LOCALE.md`](GUIDA_ESECUZIONE_LOCALE.md).
+Il file `dashboard/previsioni_2026_27.html` generato dall'ultimo comando è pronto per essere aperto nel browser. La guida completa — inclusi i passaggi opzionali (valore rosa da zero), i tempi di esecuzione di ciascuno script e le istruzioni dettagliate per Windows — è in [`GUIDA_ESECUZIONE_LOCALE.md`](GUIDA_ESECUZIONE_LOCALE.md).
 
 ## Dashboard
 
@@ -156,7 +156,7 @@ Un unico file HTML autonomo (nessuna chiamata di rete, nessuna dipendenza estern
 
 ## Aggiornamento durante la stagione
 
-Una volta iniziato il campionato, `src/simulation/predict_season.py` riconosce da solo le partite 2026/2027 già giocate nello storico: le usa come classifica reale di partenza (Elo, forma e scontri diretti ripartono dallo stato post-ultima-partita reale) e simula solo le giornate rimanenti — nessun parametro da passare.
+Una volta iniziato il campionato, `src/simulation/predict_season.py` rileva automaticamente le partite 2026/2027 già giocate nello storico: le usa come classifica reale di partenza (Elo, forma e scontri diretti ripartono dallo stato post-ultima-partita reale) e simula solo le giornate rimanenti — nessun parametro da passare.
 
 Ritmo consigliato (dettagli e comandi completi in [`GUIDA_ESECUZIONE_LOCALE.md`](GUIDA_ESECUZIONE_LOCALE.md#9-durante-la-stagione-integrare-risultati-reali-e-cadenza-consigliata-fase-6)):
 
